@@ -120,6 +120,23 @@ async def main():
         if shutil.which("pdflatex"):  # the Overleaf zip compiles the Beamer deck: only with TeX (not on the CI runners)
             ov = text(await s.call_tool("exportar", {"formato": "overleaf"}))
             assert "Zip do Overleaf" in ov and "sem nenhum [?]" in ov, ov
+        # the tools and the editor speak the deck's language: an English project
+        en = work / "English project"
+        text(await s.call_tool("novo_projeto", {"fonte": str(work / "artigo.pdf"), "nome": "English project",
+                                                "pasta": str(en), "idioma": "en"}))
+        assert "Built with no errors" in text(await s.call_tool("construir", {"projeto": str(en)}))
+        assert "Playwright's Chromium" in text(await s.call_tool("verificar", {"idioma": "en"}))
+        url_en = re.search(r"http://127\.0\.0\.1:\d+/\?t=\S+", text(await s.call_tool("abrir_editor", {"projeto": str(en)})))[0]
+        async with async_playwright() as p:
+            b = await p.chromium.launch()
+            page = await b.new_page(viewport={"width": 1600, "height": 900})
+            await page.goto(url_en)
+            await page.wait_for_function("() => window.deck && window.deck.state")
+            await page.get_by_role("button", name="Send to Claude").wait_for()
+            await page.get_by_label("Go to slide").wait_for()
+            await page.get_by_text("Follow the agent").wait_for()
+            await b.close()
+        await s.call_tool("construir", {"projeto": str(project)})  # back to the Portuguese project for what follows
         pub = text(await s.call_tool("publicar", {"site": "deck-teste"}))
         assert "deck-teste.netlify.app" in pub and deploys, pub
         assert (project / "deck/tools/netlify-site.json").is_file()
@@ -128,7 +145,7 @@ async def main():
     assert guard(project / "deck/dist/deck.html") == "deny"
     assert guard(project / "qa/check_deck.py") == "ask"
     assert guard(work / "fora-do-projeto.txt") == "allow"
-    print(f"fumaça ok: {len(names)} ferramentas, projeto, build, check, captura, QA, editor (ir para o slide, seguir o agente), publicar e guarda ({work})")
+    print(f"fumaça ok: {len(names)} ferramentas, projeto, build, check, captura, QA, editor (ir para o slide, seguir o agente), publicar, os dois idiomas e guarda ({work})")
 
 
 if __name__ == "__main__":

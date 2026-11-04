@@ -13,6 +13,9 @@ from urllib.parse import parse_qs, urlsplit
 SCRIPT = r"""<script>
 (() => {
   const T = new URLSearchParams(location.search).get('t');
+  // the panel speaks the deck's language: an English deck (lang="en") gets an English panel
+  const EN = /^en/i.test(document.documentElement.lang || '');
+  const L = (pt, en) => (EN ? en : pt);
   const css = document.createElement('style');
   css.textContent = `.ds-hover{outline:3px dashed #eb6834!important;outline-offset:3px!important}
     .ds-sel{outline:4px solid #eb6834!important;outline-offset:3px!important}
@@ -26,12 +29,12 @@ SCRIPT = r"""<script>
   document.head.append(css);
   const panel = document.createElement('aside');
   panel.id = 'ds-panel';
-  panel.setAttribute('aria-label', 'Seleção para o Claude');
-  panel.innerHTML = '<b>Deck Studio: clique numa caixa (Shift soma)</b><ol></ol>' +
-    '<textarea aria-label="O que mudar" placeholder="O que mudar nas caixas selecionadas"></textarea>' +
-    '<button type="button" data-a="send">Enviar ao Claude</button><button type="button" data-a="clear">Limpar</button><p role="status"></p>' +
-    '<div class="ds-row"><label>Ir para o slide <input data-a="goto" size="5" placeholder="7 ou B1" aria-label="Ir para o slide"></label>' +
-    '<label><input type="checkbox" data-a="follow"> Seguir o agente</label></div>';
+  panel.setAttribute('aria-label', L('Seleção para o Claude', 'Selection for Claude'));
+  panel.innerHTML = `<b>${L('Deck Studio: clique numa caixa (Shift soma)', 'Deck Studio: click a box (Shift adds)')}</b><ol></ol>` +
+    `<textarea aria-label="${L('O que mudar', 'What to change')}" placeholder="${L('O que mudar nas caixas selecionadas', 'What to change in the selected boxes')}"></textarea>` +
+    `<button type="button" data-a="send">${L('Enviar ao Claude', 'Send to Claude')}</button><button type="button" data-a="clear">${L('Limpar', 'Clear')}</button><p role="status"></p>` +
+    `<div class="ds-row"><label>${L('Ir para o slide', 'Go to slide')} <input data-a="goto" size="5" placeholder="${L('7 ou B1', '7 or B1')}" aria-label="${L('Ir para o slide', 'Go to slide')}"></label>` +
+    `<label><input type="checkbox" data-a="follow"> ${L('Seguir o agente', 'Follow the agent')}</label></div>`;
   document.body.append(panel);
   const list = panel.querySelector('ol'), note = panel.querySelector('textarea'), status = panel.querySelector('p');
   const goto = panel.querySelector('[data-a=goto]'), follow = panel.querySelector('[data-a=follow]');
@@ -43,7 +46,7 @@ SCRIPT = r"""<script>
     if (e.key !== 'Enter' || !window.deck) return;
     const want = goto.value.trim().toUpperCase(), labels = window.deck.labels().map((l) => String(l).toUpperCase());
     const i = labels.indexOf(want);
-    if (i < 0) { status.textContent = `Não há slide ${goto.value.trim()}.`; return; }
+    if (i < 0) { status.textContent = L(`Não há slide ${goto.value.trim()}.`, `There is no slide ${goto.value.trim()}.`); return; }
     window.deck.go(i + 1, 0);
     status.textContent = '';
   });
@@ -82,10 +85,11 @@ SCRIPT = r"""<script>
     const a = e.target.dataset && e.target.dataset.a;
     if (a === 'clear') { sel.forEach((s) => s.el.classList.remove('ds-sel')); sel = []; note.value = ''; render(); status.textContent = ''; }
     if (a !== 'send') return;
-    if (!sel.length && !note.value.trim()) { status.textContent = 'Selecione uma caixa ou escreva o pedido.'; return; }
+    if (!sel.length && !note.value.trim()) { status.textContent = L('Selecione uma caixa ou escreva o pedido.', 'Select a box or write the request.'); return; }
     const body = { itens: sel.map(({ el, ...s }) => s), pedido: note.value.trim() };
     const r = await fetch(`/selecao?t=${T}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    status.textContent = r.ok ? 'Enviado. No Claude Code, diga: "aplique a seleção do editor".' : `Não foi (erro ${r.status}).`;
+    status.textContent = r.ok ? L('Enviado. No Claude Code, diga: "aplique a seleção do editor".', 'Sent. In Claude Code, say: "apply the selection from the editor".')
+      : L(`Não foi (erro ${r.status}).`, `Not sent (error ${r.status}).`);
   });
   // the deck built again: reload on the same slide and step, or with Seguir o agente on the slide the agent changed
   const ready = (fn) => (window.deck && window.deck.go ? fn() : setTimeout(() => ready(fn), 100));
@@ -99,7 +103,7 @@ SCRIPT = r"""<script>
       window.deck.go(hit.slide, window.deck.steps()[hit.slide - 1]);
       hit.el.classList.add('ds-flash');
       setTimeout(() => hit.el.classList.remove('ds-flash'), 2500);
-      status.textContent = `Seguindo o agente: slide ${window.deck.labels()[hit.slide - 1]}.`;
+      status.textContent = L('Seguindo o agente: slide ', 'Following the agent: slide ') + `${window.deck.labels()[hit.slide - 1]}.`;
     });
   }
   // the box at or just before the changed line (file:line) of the agent's last change, and its slide

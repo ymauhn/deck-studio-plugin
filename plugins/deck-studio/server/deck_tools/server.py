@@ -2,6 +2,7 @@
 a folder made from the template (it has a studio.json); a tool works on `projeto`, else on the last project used,
 else on the session's folder. The deck_studio package beside this one is a copy made by scripts/montar_plugin.py."""
 import asyncio
+import contextvars
 import hashlib
 import json
 import os
@@ -32,6 +33,12 @@ mcp = MCPServer("deck", instructions=(
     "Ferramentas do Deck Studio para apresentações (HTML e Beamer) feitas a partir de um artigo, uma tese ou uma pasta. "
     "Comece com novo_projeto; a skill deck-studio:criar-apresentacao conduz o método. Responda ao autor no idioma em que ele escreve."))
 _states, _current = {}, {"path": None}
+LANG = contextvars.ContextVar("lang", default="pt")  # the deck's language for this call's messages: pt or en
+
+
+def t(pt, en):
+    """The message in the deck's language (2026-11-04: the tools speak the deck's language, pt or en)."""
+    return en if LANG.get() == "en" else pt
 
 
 class Tool(Exception):
@@ -48,8 +55,10 @@ def project_of(projeto=None):
     """The project folder a tool works on, checked: it must hold a studio.json (a project from the template)."""
     path = Path(projeto or _current["path"] or os.getcwd()).resolve()
     if not ((path / "studio.json").is_file() or (path / "deck" / "build.mjs").is_file()):  # a project, or the example
-        raise Tool(f"{path} não é um projeto do Deck Studio (falta o studio.json). Crie um com novo_projeto, ou passe "
-                   "a pasta do projeto em `projeto`.")
+        raise Tool(t(f"{path} não é um projeto do Deck Studio (falta o studio.json). Crie um com novo_projeto, ou "
+                     "passe a pasta do projeto em `projeto`.",
+                     f"{path} is not a Deck Studio project (no studio.json). Make one with novo_projeto, or pass the "
+                     "project's folder in `projeto`."))
     _current["path"] = path
     return path
 
@@ -60,6 +69,7 @@ def state_of(projeto=None):
         st = StudioState(load_config(path), data_dir(path), port=0)
         st.extras["renderer"] = Renderer(st)
         _states[path] = st
+    LANG.set(_states[path].config.get("language") or "pt")
     return _states[path]
 
 
@@ -67,11 +77,11 @@ async def guarded(job):
     try:
         return await job
     except Tool as e:
-        return f"Erro: {e}"
+        return t("Erro: ", "Error: ") + str(e)
     except FileNotFoundError:
-        return "Erro: o deck ainda não foi construído: chame construir."
+        return t("Erro: o deck ainda não foi construído: chame construir.", "Error: the deck is not built yet: call construir.")
     except ValueError as e:
-        return f"Erro: {e}"
+        return t("Erro: ", "Error: ") + str(e)
 
 
 @mcp.tool()
@@ -80,24 +90,27 @@ async def novo_projeto(fonte: str, nome: str, pasta: str = "", idioma: str = "pt
     caminho do PDF ou da pasta. nome: o título. pasta: onde criar (padrão: <pasta da sessão>/<nome>). idioma: pt ou en.
     formato: html ou beamer. Cada PDF é extraído (texto, figuras, legendas) em context/<slug>/."""
     async def job():
+        LANG.set("en" if idioma == "en" else "pt")
         src = Path(fonte).expanduser().resolve()
         if idioma not in projects.LANGUAGES or formato not in projects.FORMATS:
-            raise Tool("idioma é pt ou en, e formato é html ou beamer.")
+            raise Tool(t("idioma é pt ou en, e formato é html ou beamer.", "idioma is pt or en, and formato is html or beamer."))
         files = {}
         if src.is_file():
             if src.suffix.lower() != ".pdf":
-                raise Tool("A fonte é um PDF ou uma pasta.")
+                raise Tool(t("A fonte é um PDF ou uma pasta.", "The source is a PDF or a folder."))
             files[projects.pdf_name(src.name)] = src.read_bytes()
         elif src.is_dir():
             for f in sorted(p for p in src.rglob("*") if p.is_file() and p.suffix.lower() in KEPT):
                 files[f.relative_to(src).as_posix()] = f.read_bytes()
         else:
-            raise Tool(f"Não achei {fonte}.")
+            raise Tool(t(f"Não achei {fonte}.", f"{fonte} was not found."))
         if not files or sum(map(len, files.values())) > LIMIT:
-            raise Tool("A fonte não tem arquivos que servem, ou passa de 100 MB.")
+            raise Tool(t("A fonte não tem arquivos que servem, ou passa de 100 MB.",
+                         "The source has no usable files, or is over 100 MB."))
         target = Path(pasta).expanduser().resolve() if pasta else Path(os.getcwd()) / projects.slug_of(nome, set())
         if target.exists() and any(target.iterdir()):
-            raise Tool(f"{target} já existe e tem arquivos: escolha uma pasta nova ou vazia.")
+            raise Tool(t(f"{target} já existe e tem arquivos: escolha uma pasta nova ou vazia.",
+                         f"{target} already exists and has files: choose a new or empty folder."))
         slug = projects.slug_of(nome, set())
         pdfs = [rel for rel in files if rel.lower().endswith(".pdf")]
         await asyncio.to_thread(projects.create_from_files, target, nome, slug, formato, idioma, files,
@@ -108,13 +121,16 @@ async def novo_projeto(fonte: str, nome: str, pasta: str = "", idioma: str = "pt
             taken.add(out)
             extracted.append(out)
             info = await projects.extract(target / "context" / pdf, target / "context" / out)
-            lines.append(f"- context/{pdf}: texto em context/{out}/texto.md, figuras em context/{out}/figuras "
-                         f"({info.get('pages', '?')} páginas)")
+            lines.append(t(f"- context/{pdf}: texto em context/{out}/texto.md, figuras em context/{out}/figuras "
+                           f"({info.get('pages', '?')} páginas)",
+                           f"- context/{pdf}: text in context/{out}/texto.md, figures in context/{out}/figuras "
+                           f"({info.get('pages', '?')} pages)"))
         projects.point_to_sources(target, slug, {pdf: out for pdf, out in zip(pdfs, extracted)})
         lines += [f"- context/{rel}" for rel in files if rel not in pdfs]
         _current["path"] = target
-        return (f"Projeto criado em {target}.\n" + "\n".join(lines) +
-                "\nAgora siga a skill deck-studio:criar-apresentacao neste projeto (as ferramentas já trabalham nele).")
+        return (t(f"Projeto criado em {target}.", f"Project created in {target}.") + "\n" + "\n".join(lines) + "\n" +
+                t("Agora siga a skill deck-studio:criar-apresentacao neste projeto (as ferramentas já trabalham nele).",
+                  "Now follow the deck-studio:criar-apresentacao skill in this project (the tools already work on it)."))
     return await guarded(job())
 
 
@@ -124,7 +140,9 @@ async def construir(projeto: str = "") -> str:
     async def job():
         st = state_of(projeto)
         build = await st.builder.build_studio()
-        return f"Build sem erros em {build['ms']} ms." if build["ok"] else f"Erro: o build falhou:\n{build['error']}"
+        if build["ok"]:
+            return t(f"Build sem erros em {build['ms']} ms.", f"Built with no errors in {build['ms']} ms.")
+        return t("Erro: o build falhou:\n", "Error: the build failed:\n") + build["error"]
     return await guarded(job())
 
 
@@ -146,8 +164,9 @@ async def check_slide(slide: int, step: int | None = None, projeto: str = "") ->
     async def job():
         problems, label = await state_of(projeto).extras["renderer"].check(slide, step)
         if not problems:
-            return f"{label[:-1]}: nada cortado e nada fora do quadro."
-        return f"{label[:-1]}: {len(problems)} problema(s).\n" + "\n".join(f"- {p}" for p in problems)
+            return label[:-1] + t(": nada cortado e nada fora do quadro.", ": nothing clipped and nothing outside the frame.")
+        return (label[:-1] + t(f": {len(problems)} problema(s).", f": {len(problems)} problem(s).") + "\n"
+                + "\n".join(f"- {p}" for p in problems))
     return await guarded(job())
 
 
@@ -159,10 +178,12 @@ async def add_image(contextFile: str, name: str = "", projeto: str = "") -> str:
         context = (st.kit_root / st.config["contextDir"]).resolve()
         source = (context / contextFile).resolve()
         if not (source.is_relative_to(context) and source.is_file()):
-            raise Tool(f"A imagem tem de ser um arquivo de context/; {contextFile} não é.")
+            raise Tool(t(f"A imagem tem de ser um arquivo de context/; {contextFile} não é.",
+                         f"The image must be a file in context/; {contextFile} is not."))
         ext = IMAGE_TYPES.get(source.suffix.lower())
         if not ext:
-            raise Tool(f"Só png, jpg, webp ou svg vão num slide; {source.name} não é.")
+            raise Tool(t(f"Só png, jpg, webp ou svg vão num slide; {source.name} não é.",
+                         f"Only png, jpg, webp or svg go on a slide; {source.name} is not one."))
         images = st.kit_root / st.config["imagesDir"]
         stem = projects.slug_of(Path(name or source.name).stem, set())
         target, n = images / f"{stem}{ext}", 1
@@ -172,7 +193,8 @@ async def add_image(contextFile: str, name: str = "", projeto: str = "") -> str:
         images.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
         rel = Path(os.path.relpath(target, st.kit_root / Path(st.config["slidesDir"]).parent)).as_posix()
-        return f'Copiada para {target.relative_to(st.kit_root).as_posix()}. No slide: <img src="{rel}" alt="...">.'
+        return t(f"Copiada para {target.relative_to(st.kit_root).as_posix()}. No slide: ",
+                 f"Copied to {target.relative_to(st.kit_root).as_posix()}. On a slide: ") + f'<img src="{rel}" alt="...">.'
     return await guarded(job())
 
 
@@ -185,11 +207,11 @@ async def run_qa(which: str = "all", projeto: str = "") -> str:
         st = state_of(projeto)
         names = list(QA) if which == "all" else [which]
         if any(n not in QA for n in names):
-            raise Tool("which é all, check, audit ou shoot.")
+            raise Tool(t("which é all, check, audit ou shoot.", "which is all, check, audit or shoot."))
         async with st.builder.lock:
             code, out, _ = await run_command(st.config, st.config["cleanBuild"])
         if code != 0:
-            return f"Erro: o build limpo falhou:\n{out[-3000:]}"
+            return t("Erro: o build limpo falhou:\n", "Error: the clean build failed:\n") + out[-3000:]
         parts = []
         for n in names:
             code, out, ms = await run_command(st.config, [sys.executable, "-I", "-X", "utf8", QA[n]])
@@ -217,11 +239,13 @@ async def screenshot_beamer_page(page: int, path: str = "", projeto: str = ""):
         deck = beamer.deck_for(st, path or None)
         view = deck.current()
         if not view:
-            raise Tool(f"{deck.rel} ainda não foi compilado: chame compile_beamer.")
+            raise Tool(t(f"{deck.rel} ainda não foi compilado: chame compile_beamer.",
+                         f"{deck.rel} is not compiled yet: call compile_beamer."))
         if not 1 <= page <= view["pages"]:
-            raise Tool(f"{deck.rel} tem {view['pages']} páginas.")
+            raise Tool(t(f"{deck.rel} tem {view['pages']} páginas.", f"{deck.rel} has {view['pages']} pages."))
         png = await asyncio.to_thread(engine.render_page, view["pdf"], page, round(1600 * 72 / view["width"]))
-        return [f"Página {page} de {view['pages']} de {deck.rel}.", Image(data=png, format="png")]
+        return [t(f"Página {page} de {view['pages']} de {deck.rel}.", f"Page {page} of {view['pages']} of {deck.rel}."),
+                Image(data=png, format="png")]
     return await guarded(job())
 
 
@@ -232,28 +256,32 @@ async def exportar(formato: str = "", projeto: str = "") -> str:
     async def job():
         st = state_of(projeto)
         if formato not in ("", "pdf", "overleaf"):
-            raise Tool('formato é "pdf" ou "overleaf".')
+            raise Tool(t('formato é "pdf" ou "overleaf".', 'formato is "pdf" or "overleaf".'))
         if formato == "overleaf" or (not formato and st.config.get("format") == "beamer"):  # checked by a lone copy
             deck = beamer.deck_for(st, None)
             r = await deck.full()
             view = deck.current()
             if not r["ok"] or not view:
-                return "Erro: o Beamer não compila agora: chame compile_beamer e corrija os erros."
+                return t("Erro: o Beamer não compila agora: chame compile_beamer e corrija os erros.",
+                         "Error: the Beamer deck does not compile now: call compile_beamer and fix the errors.")
             zip_path, names = await asyncio.to_thread(overleaf.build, deck.main, view["pdf"], st.kit_root / "exports",
                                                       deck.work)
             c = await asyncio.to_thread(overleaf.check, zip_path, deck.main.name)
-            return (f"Zip do Overleaf: {zip_path} ({len(names)} arquivos). " +
-                    ("Uma cópia compilou sozinha, sem nenhum [?]." if c["ok"] else f"A cópia sozinha falhou: {c}"))
+            head = t(f"Zip do Overleaf: {zip_path} ({len(names)} arquivos). ", f"Overleaf zip: {zip_path} ({len(names)} files). ")
+            if c["ok"]:
+                return head + t("Uma cópia compilou sozinha, sem nenhum [?].", "A copy compiled on its own, with no [?].")
+            return head + t(f"A cópia sozinha falhou: {c}", f"The copy on its own failed: {c}")
         name = "export-pdf"
         commands = st.config["jobs"].get(name)
         if not commands:
-            raise Tool('Este projeto não tem o PDF do deck HTML: use formato "overleaf".')
+            raise Tool(t('Este projeto não tem o PDF do deck HTML: use formato "overleaf".',
+                         'This project has no PDF of the HTML deck: use formato "overleaf".'))
         for argv in commands:
             code, out, _ = await run_command(st.config, argv)
             if code != 0:
-                return f"Erro: {name} falhou:\n{out[-3000:]}"
+                return t(f"Erro: {name} falhou:\n", f"Error: {name} failed:\n") + out[-3000:]
         out_file = st.config["jobOutputs"].get(name)
-        return f"{name} pronto" + (f": {st.kit_root / out_file}" if out_file else ".")
+        return t(f"{name} pronto", f"{name} done") + (f": {st.kit_root / out_file}" if out_file else ".")
     return await guarded(job())
 
 
@@ -267,44 +295,54 @@ async def publicar(site: str = "", projeto: str = "") -> str:
         st = state_of(projeto)
         script = "deck/tools/publish_netlify.py"
         if not (st.kit_root / script).is_file():
-            raise Tool("Este projeto não publica no Netlify (falta deck/tools/publish_netlify.py): só os decks HTML do "
-                       "modelo de projeto.")
+            raise Tool(t("Este projeto não publica no Netlify (falta deck/tools/publish_netlify.py): só os decks HTML do "
+                         "modelo de projeto.", "This project does not publish on Netlify (no deck/tools/publish_netlify.py): "
+                         "only the HTML decks of the project template do."))
         steps = []
         if not (st.kit_root / "deck/tools/netlify-site.json").is_file():
             if not site:
-                raise Tool("Diga o nome do site novo (ele fica NOME.netlify.app) para cadastrar o projeto.")
+                raise Tool(t("Diga o nome do site novo (ele fica NOME.netlify.app) para cadastrar o projeto.",
+                             "Give the new site's name (it becomes NAME.netlify.app) to register the project."))
             steps.append([sys.executable, "-I", script, "register", "--name", site, "--create"])
         steps += [st.config["cleanBuild"], [sys.executable, "-I", script]]
         out = ""
         for argv in steps:
             code, out, _ = await run_command(st.config, argv)
             if code != 0:
-                return f"Erro: a publicação parou em `{' '.join(argv[2:]) or argv[0]}`:\n{out[-2000:]}"
+                return t("Erro: a publicação parou em ", "Error: publishing stopped at ") + \
+                    f"`{' '.join(argv[2:]) or argv[0]}`:\n{out[-2000:]}"
         return out.strip()[-1500:]
     return await guarded(job())
 
 
 @mcp.tool()
-async def verificar() -> str:
+async def verificar(idioma: str = "pt") -> str:
     """Confere o que o plugin precisa nesta máquina (Python, Chromium do Playwright, Node, TeX, Perl) e diz como
-    instalar o que falta. Instala o Chromium do Playwright se ele faltar (download gratuito)."""
-    lines = [f"Python {sys.version.split()[0]} em {sys.executable}"]
+    instalar o que falta. Instala o Chromium do Playwright se ele faltar (download gratuito). idioma: pt ou en, o
+    idioma em que o autor escreve."""
+    LANG.set("en" if idioma == "en" else "pt")
+    lines = [f"Python {sys.version.split()[0]}" + t(" em ", " in ") + sys.executable]
     try:
         from playwright.async_api import async_playwright
         async with async_playwright() as p:
             await (await p.chromium.launch()).close()
-        lines.append("Chromium do Playwright: ok")
+        lines.append(t("Chromium do Playwright: ok", "Playwright's Chromium: ok"))
     except Exception:
         code, out, _ = await run_command({"kitRoot": os.getcwd()},
                                          [sys.executable, "-m", "playwright", "install", "chromium"])
-        lines.append("Chromium do Playwright: instalado agora" if code == 0 else
-                     f"Chromium do Playwright: falhou ao instalar ({out[-500:]}). No Linux: "
-                     "`uv run playwright install --with-deps chromium` (pede sudo).")
-    for tool, how in [("node", "Node LTS (nodejs.org; no Ubuntu, sudo apt install nodejs npm): só para o exemplo"),
-                      ("pdflatex", "TeX: MiKTeX no Windows; no Ubuntu, sudo apt install texlive-latex-extra latexmk"),
-                      ("perl", "Perl (para o latexmk): vem no Git for Windows; no Ubuntu, sudo apt install perl")]:
+        lines.append(t("Chromium do Playwright: instalado agora", "Playwright's Chromium: installed now") if code == 0 else
+                     t(f"Chromium do Playwright: falhou ao instalar ({out[-500:]}). No Linux: ",
+                       f"Playwright's Chromium: the install failed ({out[-500:]}). On Linux: ")
+                     + t("`uv run playwright install --with-deps chromium` (pede sudo).",
+                         "`uv run playwright install --with-deps chromium` (asks for sudo)."))
+    for tool, how in [("node", t("Node LTS (nodejs.org; no Ubuntu, sudo apt install nodejs npm): só para o exemplo",
+                                 "Node LTS (nodejs.org; on Ubuntu, sudo apt install nodejs npm): for the example only")),
+                      ("pdflatex", t("TeX: MiKTeX no Windows; no Ubuntu, sudo apt install texlive-latex-extra latexmk",
+                                     "TeX: MiKTeX on Windows; on Ubuntu, sudo apt install texlive-latex-extra latexmk")),
+                      ("perl", t("Perl (para o latexmk): vem no Git for Windows; no Ubuntu, sudo apt install perl",
+                                 "Perl (for latexmk): comes with Git for Windows; on Ubuntu, sudo apt install perl"))]:
         found = shutil.which(tool)
-        lines.append(f"{tool}: {found}" if found else f"{tool}: falta. {how}")
+        lines.append(f"{tool}: {found}" if found else f"{tool}: " + t("falta. ", "missing. ") + how)
     return "\n".join(lines)
 
 
@@ -319,19 +357,24 @@ async def abrir_exemplo(pasta: str = "") -> str:
     async def job():
         target = Path(pasta).expanduser().resolve() if pasta else Path(os.getcwd()) / "exemplo-nexus-go"
         if target.exists() and any(target.iterdir()):
-            raise Tool(f"{target} já existe e tem arquivos: escolha uma pasta nova ou vazia.")
+            raise Tool(t(f"{target} já existe e tem arquivos: escolha uma pasta nova ou vazia.",
+                         f"{target} already exists and has files: choose a new or empty folder."))
         await asyncio.to_thread(shutil.copytree, EXAMPLE, target, dirs_exist_ok=True)
         _current["path"] = target
         npm = shutil.which("npm")
         if not npm:
-            return (f"Exemplo copiado para {target}. Falta o Node (nodejs.org) para construir o deck: instale e rode "
-                    "`npm ci` em deck/.")
+            return t(f"Exemplo copiado para {target}. Falta o Node (nodejs.org) para construir o deck: instale e rode "
+                     "`npm ci` em deck/.", f"Example copied to {target}. Node (nodejs.org) is missing to build the deck: "
+                     "install it and run `npm ci` in deck/.")
         code, out, _ = await run_command({"kitRoot": str(target / "deck")}, [npm, "ci", "--no-audit", "--no-fund"])
         if code != 0:
-            return f"Exemplo copiado para {target}, mas o `npm ci` falhou:\n{out[-1500:]}"
+            return t(f"Exemplo copiado para {target}, mas o `npm ci` falhou:\n",
+                     f"Example copied to {target}, but `npm ci` failed:\n") + out[-1500:]
         build = await state_of(str(target)).builder.build_studio()
-        return (f"Exemplo pronto em {target}" + ("." if build["ok"] else f", mas o build falhou:\n{build['error']}") +
-                " Abra o editor (abrir_editor) para ver, ou leia docs/STORYLINE.md para o método.")
+        return (t(f"Exemplo pronto em {target}", f"Example ready in {target}")
+                + ("." if build["ok"] else t(", mas o build falhou:\n", ", but the build failed:\n") + build["error"])
+                + t(" Abra o editor (abrir_editor) para ver, ou leia docs/STORYLINE.md para o método.",
+                    " Open the editor (abrir_editor) to see it, or read docs/STORYLINE.md for the method."))
     return await guarded(job())
 
 
@@ -346,11 +389,12 @@ async def abrir_editor(projeto: str = "") -> str:
         st = state_of(projeto)
         build = await st.builder.build_studio()
         if not build["ok"]:
-            return f"Erro: o build falhou:\n{build['error']}"
+            return t("Erro: o build falhou:\n", "Error: the build failed:\n") + build["error"]
         url = _editor.open(st.kit_root)
         if not os.environ.get("DECK_NO_BROWSER"):
             webbrowser.open(url)
-        return f"Editor aberto em {url} (só neste computador). Peça ao autor para selecionar e enviar."
+        return t(f"Editor aberto em {url} (só neste computador). Peça ao autor para selecionar e enviar.",
+                 f"Editor open at {url} (this computer only). Ask the author to select and send.")
     return await guarded(job())
 
 
@@ -360,7 +404,8 @@ async def ler_selecao() -> str:
     passo) e o pedido. Edite as fontes nesses locs, depois construir, screenshot_slide e check_slide."""
     sel = _editor.read()
     if not sel:
-        return "Nada foi enviado ainda: chame abrir_editor e peça ao autor para clicar nas caixas e enviar."
+        return t("Nada foi enviado ainda: chame abrir_editor e peça ao autor para clicar nas caixas e enviar.",
+                 "Nothing was sent yet: call abrir_editor and ask the author to click the boxes and send.")
     return json.dumps(sel, ensure_ascii=False, indent=1)
 
 
