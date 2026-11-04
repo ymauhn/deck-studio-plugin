@@ -50,6 +50,14 @@ Abra uma sessão nova e rode `/deck-studio:verificar`. Ela diz o que falta nesta
 2. A skill `/deck-studio:criar-apresentacao` conduz o resto. Ela para duas vezes para você decidir: no briefing e na storyline.
 3. No fim, o QA e o juiz ficam verdes. O deck é um arquivo HTML único em `deck/dist/deck.html`, e `exportar` dá o PDF (ou o zip do Overleaf, no Beamer).
 
+## Editar e publicar
+
+- **Editor visual:** peça "abra o editor". O deck abre no navegador, e você clica nas caixas (Shift soma), escreve o que mudar e envia ao Claude. No painel do editor:
+  - **Ir para o slide:** um número, ou B1 para a reserva;
+  - **Seguir o agente:** o deck vai sozinho ao slide que o Claude acabou de mudar.
+- **Publicar:** peça "publique o deck". A ferramenta `publicar` põe o deck HTML no Netlify como um site de uma página, sem indexação, pelo seu login da Netlify CLI (`netlify login`). Na primeira vez, ela pergunta o nome do site (NOME.netlify.app).
+- **Idioma:** o Claude responde no idioma em que você escreve. Os slides seguem o idioma escolhido no projeto.
+
 ## O deck de exemplo
 
 Peça "abra o deck de exemplo", que usa a ferramenta `abrir_exemplo`. Ela copia para uma pasta nova a defesa de mestrado NEXUS-GO, feita com este método, com:

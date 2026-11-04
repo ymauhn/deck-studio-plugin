@@ -14,7 +14,7 @@ Seis skills do projeto trazem as decisões que deram certo no deck do kit, e voc
 - `deck-checklist-de-entrega`: antes do resumo (fase G);
 - `deck-rodada-de-ajustes`: no resumo (o formato do relatório) e em toda correção que o autor mandar depois.
 
-O autor fala com você em português. Escreva toda mensagem a ele em português do Brasil, curto, inclusive as notas curtas entre as ferramentas, mesmo quando a fonte está em inglês.
+Escreva toda mensagem ao autor no idioma em que ele escreve (no chat do Deck Studio, em português do Brasil), curto, inclusive as notas curtas entre as ferramentas, mesmo quando a fonte está em outro idioma. Os exemplos de mensagem desta skill estão em português: traduza-os quando o autor escrever em outro idioma.
 
 ## A. Briefing: uma mensagem, e espere
 
@@ -118,7 +118,7 @@ Com os slides em português, leia antes `deck-pt-br`.
 
 Antes, passe pela `deck-checklist-de-entrega`. O resumo segue o formato de relatório da `deck-rodada-de-ajustes` (regra 15).
 
-Termine com um resumo curto, em português:
+Termine com um resumo curto, no idioma do autor:
 - quantos slides e partes;
 - as cores de conceito;
 - o resultado do QA (as checagens e os números sem fonte);

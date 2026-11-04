@@ -20,16 +20,33 @@ SCRIPT = r"""<script>
       border:1px solid #888;border-radius:8px;padding:10px 12px;font:14px/1.35 system-ui,sans-serif;box-shadow:0 6px 24px #0004}
     #ds-panel b{display:block;margin-bottom:4px}#ds-panel ol{max-height:150px;overflow:auto;margin:6px 0;padding-left:20px}
     #ds-panel li{margin:2px 0}#ds-panel code{font-size:12px;color:#555}#ds-panel textarea{width:100%;box-sizing:border-box;height:64px}
-    #ds-panel button{margin:6px 6px 0 0;padding:6px 10px;font:inherit;cursor:pointer}#ds-panel p{margin:6px 0 0;color:#333}`;
+    #ds-panel button{margin:6px 6px 0 0;padding:6px 10px;font:inherit;cursor:pointer}#ds-panel p{margin:6px 0 0;color:#333}
+    #ds-panel .ds-row{display:flex;gap:14px;align-items:center;margin-top:8px;border-top:1px solid #ddd;padding-top:8px}
+    #ds-panel input[data-a=goto]{font:inherit;width:5em}.ds-flash{outline:4px solid #2a78d6!important;outline-offset:4px!important}`;
   document.head.append(css);
   const panel = document.createElement('aside');
   panel.id = 'ds-panel';
   panel.setAttribute('aria-label', 'Seleção para o Claude');
   panel.innerHTML = '<b>Deck Studio: clique numa caixa (Shift soma)</b><ol></ol>' +
     '<textarea aria-label="O que mudar" placeholder="O que mudar nas caixas selecionadas"></textarea>' +
-    '<button type="button" data-a="send">Enviar ao Claude</button><button type="button" data-a="clear">Limpar</button><p role="status"></p>';
+    '<button type="button" data-a="send">Enviar ao Claude</button><button type="button" data-a="clear">Limpar</button><p role="status"></p>' +
+    '<div class="ds-row"><label>Ir para o slide <input data-a="goto" size="5" placeholder="7 ou B1" aria-label="Ir para o slide"></label>' +
+    '<label><input type="checkbox" data-a="follow"> Seguir o agente</label></div>';
   document.body.append(panel);
   const list = panel.querySelector('ol'), note = panel.querySelector('textarea'), status = panel.querySelector('p');
+  const goto = panel.querySelector('[data-a=goto]'), follow = panel.querySelector('[data-a=follow]');
+  follow.checked = localStorage.getItem('ds-follow') !== 'off';  // on by default
+  follow.addEventListener('change', () => localStorage.setItem('ds-follow', follow.checked ? 'on' : 'off'));
+  // Ir para o slide: the number on screen, or a backup slide's label (B1)
+  goto.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if (e.key !== 'Enter' || !window.deck) return;
+    const want = goto.value.trim().toUpperCase(), labels = window.deck.labels().map((l) => String(l).toUpperCase());
+    const i = labels.indexOf(want);
+    if (i < 0) { status.textContent = `Não há slide ${goto.value.trim()}.`; return; }
+    window.deck.go(i + 1, 0);
+    status.textContent = '';
+  });
   let sel = [];
   const box = (e) => e.target.closest && e.target.closest('[data-loc]');
   const render = () => {
@@ -70,25 +87,45 @@ SCRIPT = r"""<script>
     const r = await fetch(`/selecao?t=${T}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     status.textContent = r.ok ? 'Enviado. No Claude Code, diga: "aplique a seleção do editor".' : `Não foi (erro ${r.status}).`;
   });
-  // the deck built again: reload on the same slide and step
-  let version = null;
+  // the deck built again: reload on the same slide and step, or with Seguir o agente on the slide the agent changed
+  const ready = (fn) => (window.deck && window.deck.go ? fn() : setTimeout(() => ready(fn), 100));
   const back = sessionStorage.getItem('ds-pos');
   if (back) {
     sessionStorage.removeItem('ds-pos');
-    const [n, f] = JSON.parse(back);
-    const go = () => (window.deck && window.deck.go ? window.deck.go(n, f) : setTimeout(go, 100));
-    go();
+    const [n, f, loc] = JSON.parse(back);
+    ready(() => {
+      const hit = follow.checked && loc && followed(loc);
+      if (!hit) return window.deck.go(n, f);
+      window.deck.go(hit.slide, window.deck.steps()[hit.slide - 1]);
+      hit.el.classList.add('ds-flash');
+      setTimeout(() => hit.el.classList.remove('ds-flash'), 2500);
+      status.textContent = `Seguindo o agente: slide ${window.deck.labels()[hit.slide - 1]}.`;
+    });
   }
+  // the box at or just before the changed line (file:line) of the agent's last change, and its slide
+  function followed(loc) {
+    const [file, line] = [loc.slice(0, loc.lastIndexOf(':')), +loc.slice(loc.lastIndexOf(':') + 1)];
+    const at = (el) => { const [f, l] = el.dataset.loc.split(':'); return f === file ? +l : -1; };
+    const slides = [...document.querySelectorAll('section.slide')];
+    let best = null;
+    for (const el of document.querySelectorAll('section.slide [data-loc], section.slide[data-loc]')) {
+      const l = at(el);
+      if (l >= 0 && l <= line && (!best || l >= at(best))) best = el;
+    }
+    if (!best) return null;
+    return { el: best, slide: slides.indexOf(best.closest('section.slide')) + 1 };
+  }
+  let version = window.__dsVersion || null;  // the version this page shows, from the server
   setInterval(async () => {
     const r = await fetch(`/versao?t=${T}`).catch(() => null);
     if (!r || !r.ok) return;
-    const v = await r.text();
-    if (version !== null && v !== version) {
+    const v = await r.json();
+    if (version !== null && v.v !== version) {
       const st = (window.deck && window.deck.state && window.deck.state()) || {};
-      sessionStorage.setItem('ds-pos', JSON.stringify([st.slide || 1, st.fragment || 0]));
+      sessionStorage.setItem('ds-pos', JSON.stringify([st.slide || 1, st.fragment || 0, v.loc]));
       location.reload();
     }
-    version = v;
+    version = v.v;
   }, 1000);
 })();
 </script>"""
@@ -102,6 +139,36 @@ class Editor:
         self.project = None
         self.selection = None
         self.server = None
+        self.version = self.texts = self.loc = None  # the slide sources at the deck's last version (Seguir o agente)
+        self.lock = threading.Lock()
+
+    def slides(self):
+        """The slide sources the deck is built from: {project-relative path: text}."""
+        out = {}
+        for folder in ("deck/src/slides", "deck/src-pt/slides"):
+            for f in sorted((Path(self.project) / folder).glob("*.html")):
+                out[f"{folder}/{f.name}"] = f.read_text(encoding="utf-8", errors="replace")
+        return out
+
+    def changed(self, version):
+        """For Seguir o agente: when the deck's version changes, the first changed line of the slide sources since the
+        version before, as "file:line" (None when no slide changed, or on the first call)."""
+        with self.lock:
+            if version == self.version:
+                return self.loc
+            now = self.slides()
+            loc = None
+            if self.texts is not None:
+                for rel, text in now.items():
+                    old = self.texts.get(rel)
+                    if old == text:
+                        continue
+                    a, b = (old or "").split("\n"), text.split("\n")
+                    line = next((i + 1 for i, (x, y) in enumerate(zip(a, b)) if x != y), min(len(a), len(b)) + 1)
+                    loc = f"{rel}:{line}"
+                    break
+            self.version, self.texts, self.loc = version, now, loc
+            return loc
 
     def deck(self):
         return Path(self.project) / "deck" / "build" / "studio" / "deck.html"
@@ -109,6 +176,7 @@ class Editor:
     def open(self, project):
         """The editor's URL on `project` (the server starts on first use, on a free port of 127.0.0.1)."""
         self.project, self.selection = Path(project), None
+        self.version = self.texts = self.loc = None
         if self.server is None:
             editor = self
 
@@ -136,15 +204,19 @@ class Editor:
                     path = urlsplit(self.path).path
                     deck = editor.deck()
                     if path == "/versao":
-                        return self._send(str(deck.stat().st_mtime_ns if deck.is_file() else 0).encode(), "text/plain")
+                        v = str(deck.stat().st_mtime_ns if deck.is_file() else 0)
+                        return self._send(json.dumps({"v": v, "loc": editor.changed(v)}).encode(), "application/json")
                     if path != "/":
                         return self.send_error(404)
                     if not deck.is_file():
                         return self._send("<p>O deck ainda não foi construído: peça ao Claude para construir.</p>"
                                           .encode(), "text/html; charset=utf-8")
+                    version = str(deck.stat().st_mtime_ns)
+                    editor.changed(version)  # the sources as this page shows them: Seguir compares with these
                     html = deck.read_text(encoding="utf-8")
+                    script = f"<script>window.__dsVersion = {json.dumps(version)};</script>" + SCRIPT
                     at = html.lower().rfind("</body>")
-                    html = html[:at] + SCRIPT + html[at:] if at >= 0 else html + SCRIPT
+                    html = html[:at] + script + html[at:] if at >= 0 else html + script
                     self._send(html.encode("utf-8"), "text/html; charset=utf-8")
 
                 def do_POST(self):

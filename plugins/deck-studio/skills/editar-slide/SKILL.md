@@ -9,4 +9,4 @@ description: "Aplica no deck o que o autor selecionou e pediu pelo editor visual
 2. Chame `mcp__plugin_deck-studio_deck__ler_selecao`. Cada item traz o `loc` (`arquivo:linha:coluna` da fonte do slide), o texto, o slide e o passo, e há também o pedido.
 3. Abra cada arquivo no `loc` e mude só o que o pedido diz. Use as classes dos exemplos da skill `deck-studio:criar-apresentacao`, e todo número vem do `docs/FACTS.md`. Um pedido sobre um slide vale para os casos irmãos do deck (a skill `deck-studio:deck-rodada-de-ajustes`).
 4. Chame `construir`, depois `screenshot_slide` e `check_slide` nos slides mudados, e corrija o que transbordar. O editor recarrega sozinho, no mesmo slide.
-5. Responda ao autor em português, em uma ou duas frases: o que mudou, em qual slide.
+5. Responda ao autor no idioma em que ele escreve, em uma ou duas frases: o que mudou, em qual slide.

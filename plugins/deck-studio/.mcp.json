@@ -2,11 +2,20 @@
   "mcpServers": {
     "deck": {
       "command": "uv",
-      "args": ["run", "--quiet", "--project", "${CLAUDE_PLUGIN_ROOT}/server", "python", "-m", "deck_tools"],
+      "args": [
+        "run",
+        "--quiet",
+        "--project",
+        "${CLAUDE_PLUGIN_ROOT}/server",
+        "python",
+        "-m",
+        "deck_tools"
+      ],
       "env": {
         "UV_PROJECT_ENVIRONMENT": "${CLAUDE_PLUGIN_DATA}/venv",
         "DECK_DATA": "${CLAUDE_PLUGIN_DATA}",
-        "PYTHONIOENCODING": "utf-8"
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}/server"
       }
     }
   }

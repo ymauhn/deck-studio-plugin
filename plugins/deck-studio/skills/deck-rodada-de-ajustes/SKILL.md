@@ -24,6 +24,6 @@ description: "Use quando o autor ou o orientador manda correções num deck do D
 
 ## Registro e relatório
 14. Cada decisão de julgamento entra no DECISIONS.md com um id ([tabelas-melhor]). As recusas entram como NÃO ENTROU, e uma decisão substituída é marcada, não apagada (p01:103-106; DEC:188,191).
-15. O relatório vai em PT-BR, com a frase de resultado primeiro e depois as seções Onde está, O que entrou, Verificação e Precisa de você. Traz caminhos completos, números concretos, o que mudou além do pedido e o que olhar primeiro, e fecha com as decisões abertas numeradas, de sim ou não (p01:140-143,294-319; wf681:17).
+15. O relatório vai no idioma do autor (PT-BR no Deck Studio), com a frase de resultado primeiro e depois as seções Onde está, O que entrou, Verificação e Precisa de você. Traz caminhos completos, números concretos, o que mudou além do pedido e o que olhar primeiro, e fecha com as decisões abertas numeradas, de sim ou não (p01:140-143,294-319; wf681:17).
 
 Evidência: as regras foram mineradas das falas do autor do kit NEXUS-GO nas sessões do deck, das rodadas de crítica e dos documentos do kit; os códigos entre parênteses (p01, wfXXX, DEC, DES, INT, QA, COMP, STO, FIG, PED) apontam para essas fontes, que ficam fora do projeto. O NEXUS-GO aparece só como exemplo.
