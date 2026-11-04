@@ -1,0 +1,143 @@
+<section class="slide" id="s13" data-part="3 · Dados e avaliação">
+<h2 class="title">Dados: um corpus derivado do CAFA5</h2>
+<div class="bd">
+  <div class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="tbl lg" data-table="corpus"></div>
+  </div>
+  <ul class="b" style="grid-column: 8 / 13">
+    <li class="f" data-f="2">Partição 80 / 10 / 10, disjunta por proteína, sem restrição temporal ou de homologia</li>
+    <li class="f" data-f="3"><b>Rótulos por proteína (média):</b> 25,91 BP, 12,48 CC, 7,55 MF</li>
+    <li class="f" data-f="4"><b>Densidade da matriz de rótulos:</b>
+      <span class="dens"><span class="num">BP</span><i class="dbar" style="--v:5.18"></i><span class="num">5,18%</span></span>
+      <span class="dens"><span class="num">CC</span><i class="dbar" style="--v:2.51"></i><span class="num">2,51%</span></span>
+      <span class="dens"><span class="num">MF</span><i class="dbar" style="--v:1.51"></i><span class="num">1,51%</span></span>
+    </li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Os rótulos oficiais de teste do CAFA5 não estavam disponíveis, então as partições vêm do corpus de treinamento.</p>
+<p>Só os cerca de quinhentos termos mais frequentes por ontologia são mantidos, então os valores absolutos não são comparáveis aos números do CAFA.</p>
+</aside>
+</section>
+
+<section class="slide" id="s14" data-part="3 · Dados e avaliação">
+<h2 class="title">STRING v11.5: uma única rede agregada</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="plate"><div class="fig">
+      <img src="img/fig_4_1.webp" alt="À esquerda: escores combinados de 0,400 a 0,999; à direita: o grau tem cauda pesada, a maioria das proteínas tem poucos vizinhos e alguns hubs têm centenas">
+      <div class="mask fo" data-f="4" style="left:50%; top:0; right:0; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 4.1 · à esquerda escore combinado, à direita grau</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 8 / 13">
+    <li class="f net" data-f="1">2.422.234 registros, 791.011 pares distintos, 86.423 proteínas</li>
+    <li class="f net" data-f="2">Escore combinado em [0,400; 0,999]: confiança, não força de ligação</li>
+    <li class="f net" data-f="3">Cada par se repete 3,06 vezes em média (até 170), sempre com o mesmo escore</li>
+    <li class="f net" data-f="4"><b>Grau com cauda pesada:</b> mediana de 5 a 7, máximo entre 763 e 805</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>O piso de confiança média, 400, vem com o arquivo herdado.</p>
+<p>Registros repetidos não trazem informação extra de escore, o que depois define a regra de deduplicação. Não se pode excluir alguma circularidade de conhecimento com as anotações.</p>
+</aside>
+</section>
+
+<section class="slide" id="s15" data-part="3 · Dados e avaliação">
+<h2 class="title">Um terço das proteínas não tem arestas</h2>
+<div class="bd s15">
+  <div class="stack" style="grid-column: 1 / 7">
+    <figure class="f" data-f="1">
+      <div class="plate"><div class="fig"><img src="img/fig_4_2.webp" alt="Em toda ontologia e partição, entre 31 e 37 por cento das proteínas não têm interação mantida"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 4.2</span></figcaption>
+    </figure>
+    <ul class="b">
+      <li class="f" data-f="1"><b>Isoladas:</b> 36,65% BP, 34,95% CC, 32,19% MF</li>
+      <li class="f" data-f="2">Estáveis entre treinamento, validação e teste</li>
+    </ul>
+  </div>
+  <div class="stack" style="grid-column: 7 / 13">
+    <figure class="f" data-f="3">
+      <div class="plate"><div class="fig"><img src="img/fig_4_3.webp" alt="A fração isolada fica estável até o limiar 0,40 e passa da metade das proteínas em 0,90"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 4.3</span></figcaption>
+    </figure>
+    <ul class="b f" data-f="3">
+      <li>Limiares até 0,40 não têm efeito; em 0,90, mais da metade das proteínas fica isolada</li>
+    </ul>
+  </div>
+</div>
+<aside class="notes">
+<p>As proteínas isoladas foram mantidas como nós para que toda proteína seja avaliada. Para um modelo que só vê a rede, elas não têm entrada nenhuma.</p>
+<p>É essa a limitação que a segunda geração foi construída para remover.</p>
+</aside>
+</section>
+
+<section class="slide" id="s16" data-part="3 · Dados e avaliação">
+<h2 class="title">Seis métricas centradas na proteína</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1"><b>Critério principal:</b> wF<sub>max</sub>, ponderada pelo conteúdo de informação</li>
+    <li class="f" data-f="2">Também F<sub>max</sub>, F*<sub>max</sub>, S<sub>min</sub>, AuPRC e IAuPRC</li>
+    <li class="f" data-f="3">Predições tornadas consistentes com a hierarquia antes da avaliação</li>
+    <li class="f" data-f="4">101 limiares; modo de avaliação completo (proteína sem predição conta como revocação zero)</li>
+  </ul>
+  <div class="col-b stack" style="gap:30px">
+    <div class="f" data-f="1">
+      <div class="m d">wF_{\max} = \max_{\tau}\, \frac{2 \cdot wpr(\tau) \cdot wrc(\tau)}{wpr(\tau) + wrc(\tau)}</div>
+      <p class="small" style="margin:14px 0 0">cada termo ponderado pelo seu conteúdo de informação, <span class="m">\mathrm{IC}(v) = -\log_2 \widehat{P}\bigl(v \mid \mathrm{pa}(v)\bigr)</span></p>
+    </div>
+    <div class="f s16-tpr" data-f="3">
+      <div class="m d">\tilde{s}_{iv} = \max_{u \in \mathcal{D}(v)} s_{iu}</div>
+      <svg viewBox="0 0 640 170" role="img" aria-label="Um termo pai com escore abaixo do filho é elevado ao escore do filho">
+        <g class="s16-tree">
+          <text x="0" y="22">antes</text>
+          <line x1="110" y1="60" x2="70" y2="130"/><line x1="110" y1="60" x2="150" y2="130"/>
+          <circle cx="110" cy="52" r="16"/><circle cx="70" cy="138" r="16"/><circle cx="150" cy="138" r="16"/>
+          <rect x="132" y="50" width="12" height="18" class="lo"/><rect x="92" y="104" width="12" height="50" class="hi"/><rect x="172" y="140" width="12" height="14" class="lo"/>
+          <text x="330" y="22">depois</text>
+          <line x1="440" y1="60" x2="400" y2="130"/><line x1="440" y1="60" x2="480" y2="130"/>
+          <circle cx="440" cy="52" r="16"/><circle cx="400" cy="138" r="16"/><circle cx="480" cy="138" r="16"/>
+          <rect x="462" y="18" width="12" height="50" class="hi"/><rect x="422" y="104" width="12" height="50" class="hi"/><rect x="502" y="140" width="12" height="14" class="lo"/>
+          <path d="M226 95 h64" class="arr"/><path d="M280 87 l11 8 l-11 8" class="arr"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+<aside class="notes">
+<p>A wF<sub>max</sub> pondera cada termo pelo conteúdo de informação, então termos frequentes perto da raiz contam pouco. É o critério de seleção em todo o trabalho.</p>
+<p>O fechamento por ancestrais das predições usa só <code>is_a</code>, o que pesa mais em CC.</p>
+</aside>
+</section>
+
+<section class="slide" id="s17" data-part="3 · Dados e avaliação">
+<h2 class="title">Regime de aprendizado e protocolo</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="plate"><div class="fig"><img src="img/fig_5_2.webp" alt="Um grafo sobre as proteínas de treinamento, validação e teste; só as de treinamento contribuem com rótulos para a perda"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 5.2</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 8 / 13">
+    <li class="f" data-f="1">Um grafo sobre treino ∪ validação ∪ teste; rótulos lidos só nas proteínas de treinamento</li>
+    <li class="f" data-f="2">Toda decisão de projeto na validação; teste lido uma única vez</li>
+    <li class="f warn" data-f="3"><b>Semente única:</b> diferenças abaixo de 0,5 p.p. são empates (piso de interpretação)</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>As proteínas de validação e teste contribuem com atributos e arestas, mas nunca com rótulos. A primeira geração usa uma construção mais estrita, com base só no treinamento.</p>
+<p>Com uma semente única, a apresentação trata diferenças abaixo de 0,5 p.p. como empates.</p>
+</aside>
+</section>
+
+<style>
+.s15 .fig img { height: 384px; object-fit: contain; }
+.dens { display: flex; align-items: center; margin-top: 10px; font-size: 22px; }
+.dens .num:first-child { width: 40px; color: var(--ink-2); }
+.s16-tree text { font: 400 18px var(--font-data); fill: var(--ink-2); }
+.s16-tree line { stroke: var(--ink-2); stroke-width: 2; }
+.s16-tree circle { fill: var(--slide); stroke: var(--ink); stroke-width: 2.5; }
+.s16-tree .lo { fill: var(--muted); }
+.s16-tree .hi { fill: var(--fuse); }
+.s16-tree .arr { fill: none; stroke: var(--ink-2); stroke-width: 2.5; }
+.s16-tpr > svg { width: 640px; height: 170px; margin-top: 14px; }
+</style>

@@ -1,0 +1,22 @@
+<!-- TIPO: números que contam (componente NUMERO) e transições entre passos
+QUANDO USAR: o número grande de um slide de resultado ou de motivação (o tamanho dos dados, o ganho, o erro): ele
+conta até o valor quando o passo chega. E as transições, com .f: .esq (entra da esquerda), .cresce (cresce do
+centro), .marca (acende um fundo quando chega) e .fo (some no passo dele, para trocar uma coisa por outra no mesmo
+lugar).
+REGRAS: o texto do span já é o valor final, igual ao do FACTS.md (o PDF e a auditoria leem esse texto), e data-opts
+traz o mesmo valor, com as casas da fonte, e o passo em que ele conta; no máximo 3 números que contam por slide; uma
+transição por slide, a mesma em todos os itens dele (variar o efeito distrai). Os números abaixo são de mentira:
+troque todos. -->
+<section class="slide" id="s35" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: o resultado em uma frase]</h2>
+<div class="bd">
+  <div class="band3" style="grid-column: 1 / 13">
+    <div class="c1 f cresce" data-f="1"><b class="big"><span data-component="NUMERO" data-opts='{"valor": 1111, "passo": 1}'>1.111</span></b>[o que o número mede]</div>
+    <div class="c2 f cresce" data-f="2"><b class="big"><span data-component="NUMERO" data-opts='{"valor": 22.2, "casas": 1, "sufixo": " %", "passo": 2}'>22,2 %</span></b>[o que o número mede]</div>
+    <div class="c3 f cresce" data-f="3"><b class="big"><span data-component="NUMERO" data-opts='{"valor": 3.33, "casas": 2, "prefixo": "+", "passo": 3}'>+3,33</span></b>[o que o número mede]</div>
+  </div>
+</div>
+<aside class="notes">
+<p>[Um número por passo, com a fonte de cada um.] (p. [p])</p>
+</aside>
+</section>

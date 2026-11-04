@@ -1,0 +1,2 @@
+# Overleaf and latexmk: compile with pdfLaTeX (Deck Studio itself compiles with -norc)
+$pdf_mode = 1;

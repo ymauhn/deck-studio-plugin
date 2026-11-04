@@ -1,0 +1,32 @@
+/* INT-PLM: protein language model, schematic (S10) */
+.plm svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.plm-tok rect { fill: var(--slide); stroke: var(--ink-2); stroke-width: 1.5; }
+.plm-tok text { font: 500 22px var(--font-data); fill: var(--ink); }
+.plm-arc { fill: none; stroke: var(--seq); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.plm-note, .plm-lab { font: 400 18px var(--font-body); fill: var(--ink-2); }
+.plm-lab { font-family: var(--font-data); }
+.plm-dim { font: 500 20px var(--font-data); fill: var(--ink); }
+.plm-cap { font: 400 15px var(--font-data); fill: var(--muted); }
+.plm-pool { fill: color-mix(in oklab, var(--seq) 70%, var(--slide)); transform-box: fill-box; transform-origin: 0 50%; }
+.plm-arrow line { stroke: var(--ink-2); stroke-width: 2; }
+.plm-arrow path { fill: var(--ink-2); }
+.plm-seg rect { fill: var(--seq); }
+.plm-seg text { font: 400 16px var(--font-data); fill: var(--ink-2); }
+
+/* hidden until their step; transitions only on the way in, so going back is instant */
+.plm-tok, .plm-arcs, .plm-band, .plm-cap, .plm-note, .plm-pool, .plm-arrow, .plm-dim, .plm-seg, .plm-total { opacity: 0; }
+.plm-seg { transform: translate(var(--dx), var(--dy)); }
+.plm-band { transform: translateY(-8px); }
+.plm.g1 .plm-tok { opacity: 1; transition: opacity 260ms var(--ease) calc(var(--i) * 30ms); }
+.plm.g1 .plm-cap, .plm.g1 .plm-n1 { opacity: 1; transition: opacity 260ms var(--ease); }
+.plm.g2 .plm-arcs, .plm.g2 .plm-n2 { opacity: 1; }
+.plm.g2 .plm-arc { stroke-dashoffset: 0; transition: stroke-dashoffset 700ms var(--ease) calc(var(--k) * 90ms); }
+.plm.g2 .plm-src rect { stroke: var(--seq); stroke-width: 3.5; }
+.plm.g3 .plm-arcs { opacity: .35; transition: opacity 300ms var(--ease); }
+.plm.g3 .plm-band { opacity: 1; transform: none; transition: opacity 300ms var(--ease) calc(var(--k) * 150ms), transform 300ms var(--ease) calc(var(--k) * 150ms); }
+/* mean-pool: a copy of each band squeezes into its 1024 bar, then the three join */
+.plm.g4 .plm-cells { opacity: .3; transition: opacity 500ms var(--ease); }
+.plm.g4 .plm-pool { opacity: 1; transform: translateX(var(--px)) scaleX(var(--s)); transition: transform 800ms var(--ease) 100ms, opacity 200ms; }
+.plm.g4 .plm-arrow, .plm.g4 .plm-dim, .plm.g4 .plm-n4 { opacity: 1; transition: opacity 300ms var(--ease) 800ms; }
+.plm.g4 .plm-seg { opacity: 1; transform: none; transition: transform 700ms var(--ease) calc(1100ms + var(--j) * 120ms), opacity 150ms linear calc(1100ms + var(--j) * 120ms); }
+.plm.g4 .plm-n4b, .plm.g4 .plm-total { opacity: 1; transition: opacity 300ms var(--ease) 1900ms; }

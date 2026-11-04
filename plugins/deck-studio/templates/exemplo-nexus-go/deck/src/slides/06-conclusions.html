@@ -1,0 +1,123 @@
+<section class="slide" id="s42" data-part="6 · Conclusions">
+<h2 class="title">Answers to the research questions (1/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">RQ1</span><span><small>How do different representations of the STRING PPI network data impact the quality of functional prediction across the three GO domains?</small>The representation and its inductive bias matter. The unreduced score profile leads the pooled alternatives by up to 4.53 pp on the three-ontology mean, and architectures that impose a 1-D order or 2-D locality on coordinates that are training proteins in arbitrary order perform worse in all three domains.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">RQ2</span><span><small>To what extent does fixed propagation of ProtT5 embeddings over the STRING network improve upon the network-only representation, and how does this effect vary across BP, MF, and CC?</small>Large, but mostly from the sequence embedding. On test, the network-only route trails the graph-free ProtT5 control by 16.44 (BP), 16.39 (CC) and 23.95 pp (MF); propagation then adds +1.87 BP and +2.15 CC over that control, and nothing in MF, where the optimal depth is zero. The graph corrects the representation; it does not replace it.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Full question on top; below, the answer of Section 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42b" data-part="6 · Conclusions">
+<h2 class="title">Answers to the research questions (2/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">RQ3</span><span><small>How do different strategies, ranging from simple graph embeddings to fixed non-parametric propagation and GNN approaches, compare under a common experimental protocol and across vector- and image-based classification architectures?</small>By mean validation wF<sub>max</sub>: Late 67.06 &gt; Early 65.84 &gt; Fixed 65.12 &gt; GNN 63.32. The graph-embedding methods of the literature fall below the term-frequency prior in at least one domain, and among the routes run with both heads the ordering holds for each of them.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">RQ4</span><span><small>Do early- and late-fusion ensembles improve the primary evaluation metric over their individual fixed-propagation and GNN components?</small>Both help, and combining predictions helps more than combining representations. Early gains 0.72 pp on the mean over the better representation it fuses. Late gains +2.18 BP, +1.85 CC and +1.26 MF over its better component; one scalar beats five stacking meta-classifiers, at the cost of one parameter fitted on validation.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Full question on top; below, the answer of Section 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42c" data-part="6 · Conclusions">
+<h2 class="title">Answers to the research questions (3/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">RQ5</span><span><small>How do the propagation depth and the retention coefficient affect predictive performance, and at what point does additional propagation begin to dilute the protein-specific signal?</small>With the vector head the optimum is one or two steps, and dilution starts right after: performance falls 13.60 (BP), 12.80 (CC) and 17.60 pp (MF) from the peak to ten steps. In BP and CC retention dominates, with <span class="m">\alpha</span> between 0.7 and 0.8; in MF the optimal depth is zero. A protein with no neighbours is only scaled by <span class="m">\alpha^{T}</span>.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">RQ6</span><span><small>How does the proposed approach compare against established state-of-the-art network-driven algorithms when all methods are evaluated using the same data splits and transductive graph setting?</small>NEXUS-GO/Late has the best value in every column of the three test tables, with one exception: AuPRC in MF, where NEXUS-GO/Early leads. Its margin over the strongest baseline is +9.77 BP, +8.67 CC and +4.93 MF pp of wF<sub>max</sub>, and S<sub>min</sub> agrees.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Full question on top; below, the answer of Section 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42d" data-part="6 · Conclusions">
+<h2 class="title">Answers to the research questions (4/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">RQ7</span><span><small>Can the proposed methodology generalize effectively when applied directly to global, aggregated-evidence networks, without the need to partition the graph by specific species or evidence channels?</small>On the network tested, yes: NEXUS-GO runs on one global, multi-species network with its evidence channels already aggregated, needs no partitioning stage and reaches the highest wF<sub>max</sub> of the comparison, while the configurations built for several separate networks, deepNF among them, do worst on it. This shows applicability, not superiority over partitioning by species or channel: that counterfactual was not run.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Full question on top; below, the answer of Section 7.1.</p>
+<p>RQ7 is applicability, not superiority over partitioned graphs.</p>
+</aside>
+</section>
+
+<section class="slide" id="s43" data-part="6 · Conclusions">
+<h2 class="title">Limitations</h2>
+<div class="bd">
+  <ul class="b col-w" style="max-width:1240px">
+    <li class="f warn" data-f="1">Single seed; the 0.5 pp floor is a reading convention, not a confidence interval</li>
+    <li class="f warn" data-f="2"><b>Random protein-level split:</b> transductive interpolation, possible homology leakage</li>
+    <li class="f warn" data-f="3">STRING scores may encode annotation knowledge (circularity)</li>
+    <li class="f warn" data-f="4">Fixed vs learned is not a single-factor ablation (<span class="m">\alpha^{T}</span> scaling, normalization)</li>
+    <li class="f warn" data-f="5">Baselines adapted to one aggregated network and a reduced label space</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>State these before the committee does.</p>
+<p>Each one is documented in the dissertation with its consequence.</p>
+</aside>
+</section>
+
+<section class="slide" id="s44" data-part="6 · Conclusions">
+<h2 class="title">Next steps</h2>
+<div class="bd">
+  <div class="cards col-w">
+    <div class="card f" data-f="1">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="12" cy="18" r="5"/><circle cx="24" cy="38" r="5"/><circle cx="8" cy="44" r="5"/><path d="M14 23 21 33M13 41l6-2"/><circle cx="44" cy="14" r="5"/><circle cx="52" cy="34" r="5"/><circle cx="38" cy="44" r="5"/><path d="M46 19 50 29M48 37l-6 4"/><path d="M31 6v48" stroke-dasharray="3 4"/></svg>
+      Separate the graph by organism, or one model per organism
+    </div>
+    <div class="card f" data-f="2">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="9" cy="30" r="6"/><circle cx="51" cy="30" r="6"/><path d="M15 22 Q30 12 45 22M15 30h30M15 38 Q30 48 45 38"/></svg>
+      Keep STRING evidence channels apart (typed or parallel edges)
+    </div>
+    <div class="card f" data-f="3">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="14" cy="16" r="7"/><rect x="40" y="9" width="13" height="13" rx="1"/><path d="M30 40l9 15H21z"/><path d="M21 16h19M18 22l9 16M44 23 36 39"/></svg>
+      Heterogeneous graphs (proteins, terms, evidence); compare with ProtHGT
+    </div>
+    <div class="card f" data-f="4">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="6"/><circle cx="8" cy="12" r="4"/><circle cx="52" cy="12" r="4"/><circle cx="8" cy="48" r="4"/><circle cx="52" cy="48" r="4"/><circle cx="30" cy="6" r="4"/><path d="M25 25 11 15M35 35l14 10"/><path d="M35 25l14-10M25 35 11 45M30 24V10" stroke-dasharray="2 4"/></svg>
+      Sampled aggregation (GraphSAGE) for a cheaper learned route
+    </div>
+    <div class="card f" data-f="5">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="16" cy="30" r="9"/><path d="M34 46V36M42 46V22M50 46V30M30 46h24"/></svg>
+      Richer node features: structure, domains, expression; most promising for MF
+    </div>
+  </div>
+</div>
+<aside class="notes">
+<p>The two most immediate are taxonomic scope and evidence channels.</p>
+<p>MF is where the network contributed least, so new node features matter most there.</p>
+</aside>
+</section>
+
+<section class="slide s-title s45" id="s45" data-part="6 · Conclusions">
+<div data-component="INT-HERO" data-opts='{"calm":true}' style="height:200px; flex:none"></div>
+<h2 class="title">Thank you</h2>
+<ul class="b s45-list">
+  <li>NEXUS-GO: fixed propagation of ProtT5 over STRING, fused with a GCN, best in every ontology at a fraction of the cost</li>
+  <li>Code: <span class="code">github.com/ymauhn/nexus-go</span></li>
+  <li>Publications: VISAPP 2026; extended version accepted in CCIS (expected December 2026)</li>
+  <li>Funding: CAPES, BTG Pactual · Computing resources: IC/Unicamp</li>
+</ul>
+<p class="s45-q">Questions</p>
+<aside class="notes">
+<p>Thank the committee, the advisors and the funders.</p>
+<p>Open for questions.</p>
+</aside>
+</section>
+
+<style>
+.s45 .title { font-size: 104px; margin-top: 28px; }
+.s45-list { margin-top: 30px; max-width: 1240px; font-size: 27px; }
+.s45-list > li { margin-bottom: 14px; }
+.s45-q { margin: auto 0 0; font: 650 40px/1 var(--font-display); color: var(--ink); }
+</style>

@@ -1,0 +1,93 @@
+<section class="slide" id="s08" data-part="2 · Background and related work">
+<h2 class="title">Graphs, adjacency and message passing</h2>
+<div class="bd" style="grid-template-rows: 435px auto; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_2_3.webp" alt="A weighted graph of proteins and its adjacency matrix, where each nonzero entry is an edge weight" style="height:370px; object-fit:contain"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 2.3</span></figcaption>
+  </figure>
+  <div class="f" data-f="3" data-component="INT-MP" data-opts='{"at":[0,1,1,2,3,4]}' style="grid-column: 7 / 13; height:400px"></div>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns:1fr 1fr; column-gap:32px">
+    <li class="f" data-f="1"><span class="m">G = (V, E, w)</span>: proteins, associations, STRING confidence</li>
+    <li class="f" data-f="3"><b>Message passing:</b> aggregate neighbours, update the node</li>
+    <li class="f" data-f="2">Adjacency matrix <span class="m">A</span>; sparse storage <span class="m">O(|E|)</span></li>
+    <li class="f" data-f="5"><span class="m">L</span> layers reach <span class="m">L</span> hops; too many cause oversmoothing</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>GCN aggregates with a symmetrically normalized adjacency; GAT learns attention weights over neighbours.</p>
+<p>Each layer widens the receptive field by one hop, and too many layers make neighbouring representations indistinguishable.</p>
+</aside>
+</section>
+
+<section class="slide" id="s09" data-part="2 · Background and related work">
+<h2 class="title">Building blocks</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 18px">
+  <p class="small f" data-f="1" style="grid-column: 1 / 5; margin:0; color:var(--ink)"><b>MLP</b>: the vector prediction head</p>
+  <p class="small f" data-f="2" style="grid-column: 5 / 9; margin:0; color:var(--ink)"><b>CNN</b>: the backbone of the image route (ResNet-50, ConvNeXt-Tiny)</p>
+  <p class="small f" data-f="3" style="grid-column: 9 / 13; margin:0; color:var(--ink)"><b>Autoencoder</b>: the compression inside deepNF, one of the baselines</p>
+  <figure class="f" data-f="1" style="grid-column: 1 / 5; display:flex; flex-direction:column">
+    <div class="plate" style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px">
+      <div class="fig"><img src="svg/tikz_perceptron.svg" alt="A perceptron: weighted inputs are summed with a bias and passed through an activation"></div>
+      <div class="fig"><img src="svg/tikz_mlp.svg" alt="An MLP with two hidden layers, every unit connected to every unit of the next layer"></div>
+    </div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Figs. 2.4 and 2.5</span></figcaption>
+  </figure>
+  <figure class="f" data-f="2" style="grid-column: 5 / 9; display:flex; flex-direction:column">
+    <div class="plate center" style="flex:1"><div class="fig"><img src="img/fig_2_6.webp" alt="A convolutional network turns an image into feature maps and then into class scores"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 2.6</span></figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 9 / 13; display:flex; flex-direction:column">
+    <div class="plate center" style="flex:1"><div class="fig"><img src="img/fig_2_7.webp" alt="An autoencoder compresses its input to a small code and reconstructs it"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 2.7</span></figcaption>
+  </figure>
+</div>
+<aside class="notes">
+<p>Only what the rest of the talk needs.</p>
+<p>The MLP is the vector head, the CNN is the vision head, and the autoencoder is how deepNF compresses diffusion states.</p>
+</aside>
+</section>
+
+<section class="slide" id="s10" data-part="2 · Background and related work">
+<h2 class="title">Protein language models</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f seq" data-f="1">Self-supervised pretraining on hundreds of millions of sequences</li>
+    <li class="f seq" data-f="2">Transformer encoder: every residue attends to every other</li>
+    <li class="f seq" data-f="3"><b>ProtT5-XL-U50:</b> T5 encoder, BFD then UniRef50, 15% residue masking</li>
+    <li class="f seq" data-f="4">Used here as a frozen feature extractor</li>
+  </ul>
+  <div class="col-b" data-component="INT-PLM" style="height:560px"></div>
+</div>
+<aside class="notes">
+<p>Language models turn function prediction into ordinary multi-label classification over a fixed-length vector.</p>
+<p>No gradient from our task reaches ProtT5; we read three encoder layers and keep them fixed.</p>
+</aside>
+</section>
+
+<section class="slide" id="s11" data-part="2 · Background and related work" data-steps="3">
+<h2 class="title">From neighbour voting to graph transformers</h2>
+<div class="bd">
+  <div class="col-w" data-component="INT-RW" style="height:630px"
+    data-opts='{"statement":"Each step added parameters, tuning surface and cost","stripTitle":"Five methods retrained here: Mashup, deepNF, MELISSA, DeepGraphGO, SEGT-GO"}'></div>
+</div>
+<aside class="notes">
+<p>The field moved from fixed diffusion to learned attention, and each step added parameters.</p>
+<p>Decoupled methods such as SGC and APPNP move against that trend, and SEGT-GO's multi-hop aggregation is itself a plain matrix product.</p>
+</aside>
+</section>
+
+<section class="slide" id="s12" data-part="2 · Background and related work">
+<h2 class="title">The open question</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 52px">
+  <p class="q col-w f" data-f="1">Is a learned graph component still needed once the propagated object is informative?</p>
+  <ul class="b col-w" style="max-width:1180px">
+    <li class="f net" data-f="2"><b>Proposal:</b> propagate ProtT5 embeddings with a fixed, finite-step operator, then use an ordinary head</li>
+    <li class="f seq" data-f="3">A sequence representation exists for every protein, so the network adds instead of supplies</li>
+    <li class="f" data-f="4">No prior visual route starts from a propagated language-model embedding</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The contribution is an architectural placement, not a new propagation mechanism.</p>
+<p>To our knowledge no previous work propagates protein language model embeddings directly while simplifying what consumes them.</p>
+</aside>
+</section>

@@ -1,0 +1,25 @@
+<!-- TIPO: figura com máscara
+QUANDO USAR: uma figura de vários painéis que se explica por partes (esquerda, depois direita; ou linha a linha). A
+figura ocupa a largura toda e uma máscara da cor da placa cobre a parte ainda não explicada; ela some no passo certo.
+REGRAS: nunca recorte o arquivo da figura; a altura da imagem tem teto (max-height) e a figura encolhe até ela (fitw), para a
+máscara cobrir a imagem e não a caixa; a máscara (.mask.fo, com data-f do passo em que some) usa left/top/right/
+bottom em %; os itens embaixo, um por passo, no máximo 3. -->
+<section class="slide" id="s09" data-part="[Parte]">
+<h2 class="title">[Título afirmativo sobre o que a figura prova]</h2>
+<div class="bd" style="row-gap:24px">
+  <figure class="col-w fitw f" data-f="1" style="margin:0 auto">
+    <div class="plate"><div class="fig">
+      <img src="img/exemplo-figura.png" alt="[Painel A: o que mostra; painel B: o que mostra]" style="max-height:430px">
+      <div class="mask fo" data-f="2" style="left:50%; top:0; right:0; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap">[Fonte], Fig. [n], p. [p]</figcaption>
+  </figure>
+  <ul class="b sm col-w">
+    <li class="f" data-f="1">[O que o painel A mostra]</li>
+    <li class="f" data-f="2">[O que o painel B acrescenta]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[Primeiro o painel A; no clique seguinte, o B.] (p. [p])</p>
+</aside>
+</section>

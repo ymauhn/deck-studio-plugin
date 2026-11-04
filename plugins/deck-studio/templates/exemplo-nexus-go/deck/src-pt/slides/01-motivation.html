@@ -1,0 +1,106 @@
+<section class="slide" id="s03" data-part="1 · Motivação">
+<h2 class="title">Milhões de sequências, poucas funções conhecidas</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1">Proteínas participam de quase todos os processos celulares</li>
+    <li class="f" data-f="2">Sequenciar é rápido; a caracterização experimental é lenta e cara</li>
+    <li class="f" data-f="3">Poucos registros têm anotações com suporte experimental</li>
+    <li class="f" data-f="4">A predição automática tenta reduzir a lacuna (desafio CAFA)</li>
+  </ul>
+  <div class="col-b stack" style="gap:24px">
+    <div class="f" data-f="1" data-component="INT-FOLD" style="width:520px; height:440px"></div>
+    <div class="f" data-f="2" data-component="INT-GAP" style="width:817px; height:130px"></div>
+  </div>
+</div>
+<aside class="notes">
+<p>As proteínas catalisam reações, transmitem sinais, transportam moléculas e dão estrutura à célula.</p>
+<p>As bases de sequências crescem muito mais depressa do que a anotação experimental, então a maioria das proteínas não tem função com suporte experimental.</p>
+<p>O CAFA avalia preditores automáticos em proteínas cuja função ainda não era pública.</p>
+</aside>
+</section>
+
+<section class="slide" id="s04" data-part="1 · Motivação">
+<h2 class="title">Função como hierarquia de termos</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1"><b>Três ontologias:</b> Processo Biológico (BP), Componente Celular (CC), Função Molecular (MF)</li>
+    <li class="f" data-f="2">Cada uma é um grafo acíclico dirigido de termos (<code>is_a</code>, <code>part_of</code>)</li>
+    <li class="f" data-f="3"><b><i>True Path Rule</i>:</b> um termo implica todos os seus ancestrais</li>
+    <li class="f" data-f="4"><b>Tarefa:</b> classificação hierárquica multirrótulo</li>
+  </ul>
+  <figure class="col-b f" data-f="2">
+    <div class="plate"><div class="fig">
+      <img src="img/fig_2_1.webp" alt="À esquerda, um conjunto de anotações que viola a True Path Rule; à direita, o mesmo conjunto completado com todos os ancestrais, que é consistente">
+      <div class="mask fo" data-f="3" style="left:50%; top:0; right:0; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 2.1 · esquerda inconsistente, direita consistente</span></figcaption>
+  </figure>
+</div>
+<aside class="notes">
+<p>Uma proteína recebe muitos termos, em níveis diferentes de especificidade. Se um termo específico é anotado, todos os seus ancestrais também precisam ser.</p>
+<p>As predições são tornadas consistentes com a hierarquia antes do cálculo de qualquer métrica.</p>
+</aside>
+</section>
+
+<section class="slide" id="s05" data-part="1 · Motivação">
+<h2 class="title">A função também depende do contexto</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1">Proteínas atuam em complexos e vias</li>
+    <li class="f net" data-f="2"><b>Redes PPI:</b> os nós são proteínas, e as arestas, associações</li>
+    <li class="f net" data-f="3"><b>Culpa por associação:</b> proteínas conectadas tendem a compartilhar funções</li>
+    <li class="f warn" data-f="4">Mas o STRING mistura evidências de confiabilidade desigual, e cerca de um terço das proteínas não tem nenhuma aresta</li>
+  </ul>
+  <div class="col-b" style="display:flex; gap:32px; align-items:flex-start">
+    <figure class="f" data-f="1" style="width:265px; flex:none">
+      <div class="plate"><div class="fig"><img src="img/fig_2_2.webp" alt="Duas proteínas, A e B, se ligam num complexo que realiza uma função que nenhuma delas realiza sozinha"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 2.2</span></figcaption>
+    </figure>
+    <div class="f" data-f="3" data-component="INT-GBA" data-opts='{"at":[0,0,0,2]}' style="width:520px; height:460px; flex:none"></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Os atributos derivados da sequência são fortes, mas parte da função de uma proteína é definida pelo seu contexto celular.</p>
+<p>O STRING agrega experimentos, bases curadas, coexpressão, contexto genômico e mineração de textos num único escore de confiança.</p>
+<p>A cobertura é desigual, e isso se torna a limitação central de um modelo só de rede.</p>
+</aside>
+</section>
+
+<section class="slide" id="s06" data-part="1 · Motivação">
+<h2 class="title">Sete questões de pesquisa</h2>
+<div class="bd">
+  <div class="rq-list rq-full col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">QP1</span><span>Como diferentes representações dos dados da rede PPI do STRING afetam a qualidade da predição funcional nos três domínios da GO?</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">QP2</span><span>Em que medida a propagação fixa de <i>embeddings</i> do ProtT5 pela rede STRING melhora a representação só de rede, e como esse efeito varia entre BP, MF e CC?</span></div>
+    <div class="rq f" data-f="3"><span class="rq-id">QP3</span><span>Como diferentes estratégias, de <i>embeddings</i> de grafo simples à propagação fixa não paramétrica e às abordagens com GNN, se comparam sob um protocolo experimental comum e entre arquiteturas de classificação vetoriais e baseadas em imagem?</span></div>
+    <div class="rq f" data-f="4"><span class="rq-id">QP4</span><span>Os <i>ensembles</i> de fusão precoce e tardia melhoram a métrica principal de avaliação em relação aos seus componentes individuais de propagação fixa e de GNN?</span></div>
+    <div class="rq f" data-f="5"><span class="rq-id">QP5</span><span>Como a profundidade de propagação e o coeficiente de retenção afetam o desempenho preditivo, e a partir de que ponto a propagação adicional começa a diluir o sinal específico de cada proteína?</span></div>
+    <div class="rq f" data-f="6"><span class="rq-id">QP6</span><span>Como a abordagem proposta se compara a algoritmos consolidados do estado da arte guiados por rede quando todos os métodos são avaliados com as mesmas partições de dados e o mesmo cenário transdutivo de grafo?</span></div>
+    <div class="rq f" data-f="7"><span class="rq-id">QP7</span><span>A metodologia proposta generaliza bem quando aplicada diretamente a redes globais de evidências agregadas, sem a necessidade de particionar o grafo por espécie ou por canal de evidência?</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>As questões como estão na Seção 1.3. O parêntese da QP7: redes de evidências agregadas combinam várias fontes de interação e dados de várias espécies numa única topologia. Cada questão é respondida no slide de conclusões.</p>
+</aside>
+</section>
+
+<section class="slide" id="s07" data-part="1 · Motivação">
+<h2 class="title">Contribuições</h2>
+<div class="bd" style="grid-template-rows: auto 1fr">
+  <ol class="contrib col-w">
+    <li class="f" data-f="1"><b>NEXUS-GO:</b> propagação não paramétrica de múltiplos saltos de <i>embeddings</i> do ProtT5 pelo STRING</li>
+    <li class="f" data-f="2">Comparação controlada de agregação fixa e aprendida (GCN, GAT)</li>
+    <li class="f" data-f="3">Cabeças de classificação vetorial e visual sobre os mesmos <i>embeddings</i></li>
+    <li class="f" data-f="4">Fusão precoce e tardia das rotas fixa e aprendida</li>
+    <li class="f" data-f="5">Comparação com cinco métodos reimplementados, nas mesmas partições e no mesmo cenário</li>
+  </ol>
+  <div class="pubs col-w f" data-f="6" style="align-self:end">
+    <div class="pub"><span class="v">VISAPP 2026 · publicado, pp. 157–166</span><i>From Graphs to Images: Non-Parametric PPI Context Integration for Vision-Based Protein Function Prediction</i></div>
+    <div class="pub"><span class="v">CCIS · aceito, previsto para dezembro de 2026</span><i>Beyond Learnable Graphs: Fixed Multi-Hop PPI Diffusion of Sequence Embeddings for Robust Protein Function Prediction</i> · versão estendida</div>
+  </div>
+</div>
+<aside class="notes">
+<p>Cinco contribuições, cada uma respondida com um resultado no final.</p>
+<p>O primeiro artigo relatou a primeira campanha, com deduplicação por soma; a versão estendida continua a rota fixa e acrescenta uma cabeça vetorial ao lado da cabeça visual. Ela foi aceita na série Communications in Computer and Information Science.</p>
+</aside>
+</section>

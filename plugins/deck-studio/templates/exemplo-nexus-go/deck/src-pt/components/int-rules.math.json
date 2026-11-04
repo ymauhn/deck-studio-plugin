@@ -1,0 +1,12 @@
+{
+  "rules:linear": "\\hat{\\mathbf{Y}}_{\\text{ens}} = \\gamma\\, \\hat{\\mathbf{Y}}_{\\text{fix}} + (1 - \\gamma)\\, \\hat{\\mathbf{Y}}_{\\text{gnn}}",
+  "rules:max": "\\hat{\\mathbf{Y}}_{\\text{ens}} = \\max\\!\\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}},\\, \\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)",
+  "rules:min": "\\hat{\\mathbf{Y}}_{\\text{ens}} = \\min\\!\\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}},\\, \\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)",
+  "rules:gj": "\\omega_j = \\sigma\\!\\bigl(\\kappa_{\\mathrm{IC}} \\cdot (\\mathrm{IC}_j - \\mathrm{IC}_{\\text{thr}})\\bigr)",
+  "rules:ic": "\\bigl(\\hat{\\mathbf{Y}}_{\\text{ens}}\\bigr)_{i,j} = \\omega_j \\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}}\\bigr)_{i,j} + (1 - \\omega_j) \\bigl(\\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)_{i,j}",
+  "rules:beta": "\\beta_i = \\sigma\\!\\bigl(\\kappa_{\\deg} \\cdot (d_{\\text{thr}} - d_i)\\bigr)",
+  "rules:degree": "\\bigl(\\hat{\\mathbf{Y}}_{\\text{ens}}\\bigr)_{i,j} = \\beta_i \\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}}\\bigr)_{i,j} + (1 - \\beta_i) \\bigl(\\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)_{i,j}",
+  "rules:w": "\\Omega_{i,j} = \\lambda\\, \\omega_j + (1 - \\lambda)\\, \\beta_i",
+  "rules:master": "\\bigl(\\hat{\\mathbf{Y}}_{\\text{ens}}\\bigr)_{i,j} = \\Omega_{i,j} \\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}}\\bigr)_{i,j} + (1 - \\Omega_{i,j}) \\bigl(\\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)_{i,j}",
+  "rules:stack": "\\mathbf{x}_{i,j} = \\left[\\, \\bigl(\\hat{\\mathbf{Y}}_{\\text{fix}}\\bigr)_{i,j} ,\\; \\bigl(\\hat{\\mathbf{Y}}_{\\text{gnn}}\\bigr)_{i,j} ,\\; \\mathrm{IC}_j ,\\; \\log(d_i + 1) \\,\\right]"
+}

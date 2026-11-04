@@ -1,0 +1,123 @@
+<section class="slide" id="s42" data-part="6 · Conclusões">
+<h2 class="title">Respostas às questões de pesquisa (1/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">QP1</span><span><small>Como diferentes representações dos dados da rede PPI do STRING afetam a qualidade da predição funcional nos três domínios da GO?</small>A representação e o seu viés indutivo pesam muito. O perfil de escores sem redução lidera as alternativas com <i>pooling</i> por até 4,53 p.p. na média das três ontologias, e as arquiteturas que impõem ordem 1-D ou localidade 2-D a coordenadas que são proteínas de treino em ordem arbitrária pioram nos três domínios.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">QP2</span><span><small>Em que medida a propagação fixa de <i>embeddings</i> do ProtT5 pela rede STRING melhora a representação só de rede, e como esse efeito varia entre BP, MF e CC?</small>O ganho é grande, mas vem sobretudo do <i>embedding</i> de sequência. No teste, a rota só de rede fica 16,44 (BP), 16,39 (CC) e 23,95 p.p. (MF) abaixo do controle ProtT5 sem grafo; a propagação acrescenta +1,87 BP e +2,15 CC sobre esse controle, e nada em MF, onde a profundidade ótima é zero. O grafo corrige a representação; não a substitui.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Pergunta completa em cima; embaixo, a resposta da Seção 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42b" data-part="6 · Conclusões">
+<h2 class="title">Respostas às questões de pesquisa (2/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">QP3</span><span><small>Como diferentes estratégias, de <i>embeddings</i> de grafo simples à propagação fixa não paramétrica e às abordagens com GNN, se comparam sob um protocolo experimental comum e entre arquiteturas de classificação vetoriais e baseadas em imagem?</small>Pela wF<sub>max</sub> média na validação: Late 67,06 &gt; Early 65,84 &gt; Fixed 65,12 &gt; GNN 63,32. Os métodos de <i>embedding</i> de grafo da literatura ficam abaixo do prior de frequência de termos em ao menos um domínio e, entre as rotas avaliadas com as duas cabeças, a ordem se mantém em cada uma.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">QP4</span><span><small>Os <i>ensembles</i> de fusão precoce e tardia melhoram a métrica principal de avaliação em relação aos seus componentes individuais de propagação fixa e de GNN?</small>As duas ajudam, e combinar predições ajuda mais que combinar representações. A Early ganha 0,72 p.p. na média sobre a melhor das representações que funde. A Late ganha +2,18 BP, +1,85 CC e +1,26 MF sobre o melhor componente; um único escalar supera cinco metaclassificadores de <i>stacking</i>, ao custo de um parâmetro ajustado na validação.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Pergunta completa em cima; embaixo, a resposta da Seção 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42c" data-part="6 · Conclusões">
+<h2 class="title">Respostas às questões de pesquisa (3/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">QP5</span><span><small>Como a profundidade de propagação e o coeficiente de retenção afetam o desempenho preditivo, e a partir de que ponto a propagação adicional começa a diluir o sinal específico de cada proteína?</small>Com a cabeça vetorial, o ótimo fica em um ou dois saltos, e a diluição começa logo depois: o desempenho cai 13,60 (BP), 12,80 (CC) e 17,60 p.p. (MF) entre o pico e dez saltos. Em BP e CC a retenção domina, com <span class="m">\alpha</span> entre 0,7 e 0,8; em MF a profundidade ótima é zero. Uma proteína sem vizinhos só é multiplicada por <span class="m">\alpha^{T}</span>.</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">QP6</span><span><small>Como a abordagem proposta se compara a algoritmos consolidados do estado da arte guiados por rede quando todos os métodos são avaliados com as mesmas partições de dados e o mesmo cenário transdutivo de grafo?</small>A NEXUS-GO/Late tem o melhor valor de todas as colunas das três tabelas de teste, com uma exceção: AuPRC em MF, em que a NEXUS-GO/Early fica à frente. A margem sobre o <i>baseline</i> mais forte é de +9,77 BP, +8,67 CC e +4,93 MF p.p. de wF<sub>max</sub>, e a S<sub>min</sub> concorda.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Pergunta completa em cima; embaixo, a resposta da Seção 7.1.</p>
+</aside>
+</section>
+
+<section class="slide" id="s42d" data-part="6 · Conclusões">
+<h2 class="title">Respostas às questões de pesquisa (4/4)</h2>
+<div class="bd">
+  <div class="rq-list rq-ans col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">QP7</span><span><small>A metodologia proposta generaliza bem quando aplicada diretamente a redes globais de evidências agregadas, sem a necessidade de particionar o grafo por espécie ou por canal de evidência?</small>Na rede testada, sim: a NEXUS-GO opera numa rede global e multiespécie, com os canais de evidência já agregados, sem etapa de particionamento, e alcança a maior wF<sub>max</sub> da comparação; as configurações pensadas para várias redes separadas, entre elas o deepNF, são as que pior se saem nela. Isso mostra aplicabilidade, não superioridade sobre particionar por espécie ou por canal: esse contrafactual não foi executado.</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Pergunta completa em cima; embaixo, a resposta da Seção 7.1.</p>
+<p>A QP7 trata de aplicabilidade, não de superioridade sobre grafos separados.</p>
+</aside>
+</section>
+
+<section class="slide" id="s43" data-part="6 · Conclusões">
+<h2 class="title">Limitações</h2>
+<div class="bd">
+  <ul class="b col-w" style="max-width:1240px">
+    <li class="f warn" data-f="1"><b>Semente única:</b> o piso de 0,5 p.p. é uma convenção de leitura, não um intervalo de confiança</li>
+    <li class="f warn" data-f="2"><b>Partição aleatória por proteína:</b> interpolação transdutiva, possível vazamento por homologia</li>
+    <li class="f warn" data-f="3">Os escores do STRING podem codificar conhecimento de anotação (circularidade)</li>
+    <li class="f warn" data-f="4">Fixa contra aprendida não é uma ablação de fator único (escala <span class="m">\alpha^{T}</span>, normalização)</li>
+    <li class="f warn" data-f="5"><i>Baselines</i> adaptados a uma única rede agregada e a um espaço de rótulos reduzido</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Apresente-as antes que a banca o faça.</p>
+<p>Cada uma está documentada na dissertação, com sua consequência.</p>
+</aside>
+</section>
+
+<section class="slide" id="s44" data-part="6 · Conclusões">
+<h2 class="title">Próximos passos</h2>
+<div class="bd">
+  <div class="cards col-w">
+    <div class="card f" data-f="1">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="12" cy="18" r="5"/><circle cx="24" cy="38" r="5"/><circle cx="8" cy="44" r="5"/><path d="M14 23 21 33M13 41l6-2"/><circle cx="44" cy="14" r="5"/><circle cx="52" cy="34" r="5"/><circle cx="38" cy="44" r="5"/><path d="M46 19 50 29M48 37l-6 4"/><path d="M31 6v48" stroke-dasharray="3 4"/></svg>
+      Separar o grafo por organismo, ou um modelo por organismo
+    </div>
+    <div class="card f" data-f="2">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="9" cy="30" r="6"/><circle cx="51" cy="30" r="6"/><path d="M15 22 Q30 12 45 22M15 30h30M15 38 Q30 48 45 38"/></svg>
+      Manter separados os canais de evidência do STRING (arestas tipadas ou paralelas)
+    </div>
+    <div class="card f" data-f="3">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="14" cy="16" r="7"/><rect x="40" y="9" width="13" height="13" rx="1"/><path d="M30 40l9 15H21z"/><path d="M21 16h19M18 22l9 16M44 23 36 39"/></svg>
+      Grafos heterogêneos (proteínas, termos, evidências); comparar com o ProtHGT
+    </div>
+    <div class="card f" data-f="4">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="6"/><circle cx="8" cy="12" r="4"/><circle cx="52" cy="12" r="4"/><circle cx="8" cy="48" r="4"/><circle cx="52" cy="48" r="4"/><circle cx="30" cy="6" r="4"/><path d="M25 25 11 15M35 35l14 10"/><path d="M35 25l14-10M25 35 11 45M30 24V10" stroke-dasharray="2 4"/></svg>
+      Agregação por amostragem (GraphSAGE) para uma rota aprendida mais barata
+    </div>
+    <div class="card f" data-f="5">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="16" cy="30" r="9"/><path d="M34 46V36M42 46V22M50 46V30M30 46h24"/></svg>
+      Atributos de nó mais ricos: estrutura, domínios, expressão; o mais promissor para MF
+    </div>
+  </div>
+</div>
+<aside class="notes">
+<p>Os dois mais imediatos são o escopo taxonômico e os canais de evidência.</p>
+<p>MF é onde a rede contribuiu menos, então novos atributos de nó importam mais ali.</p>
+</aside>
+</section>
+
+<section class="slide s-title s45" id="s45" data-part="6 · Conclusões">
+<div data-component="INT-HERO" data-opts='{"calm":true}' style="height:200px; flex:none"></div>
+<h2 class="title">Obrigado</h2>
+<ul class="b s45-list">
+  <li>NEXUS-GO: propagação fixa do ProtT5 pelo STRING, fundida com uma GCN, a melhor em toda ontologia a uma fração do custo</li>
+  <li>Código: <span class="code">github.com/ymauhn/nexus-go</span></li>
+  <li>Publicações: VISAPP 2026; versão estendida aceita na CCIS (prevista para dezembro de 2026)</li>
+  <li>Financiamento: CAPES, BTG Pactual · Recursos computacionais: IC/Unicamp</li>
+</ul>
+<p class="s45-q">Perguntas</p>
+<aside class="notes">
+<p>Agradeça à banca, aos orientadores e aos financiadores.</p>
+<p>Abra para perguntas.</p>
+</aside>
+</section>
+
+<style>
+.s45 .title { font-size: 104px; margin-top: 28px; }
+.s45-list { margin-top: 30px; max-width: 1240px; font-size: 27px; }
+.s45-list > li { margin-bottom: 14px; }
+.s45-q { margin: auto 0 0; font: 650 40px/1 var(--font-display); color: var(--ink); }
+</style>

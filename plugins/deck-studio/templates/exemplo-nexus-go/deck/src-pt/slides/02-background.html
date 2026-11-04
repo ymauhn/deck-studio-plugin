@@ -1,0 +1,93 @@
+<section class="slide" id="s08" data-part="2 · Fundamentação e trabalhos correlatos">
+<h2 class="title">Grafos, adjacência e passagem de mensagens</h2>
+<div class="bd" style="grid-template-rows: 435px auto; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_2_3.webp" alt="Um grafo ponderado de proteínas e sua matriz de adjacência, em que cada entrada não nula é o peso de uma aresta" style="height:370px; object-fit:contain"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 2.3</span></figcaption>
+  </figure>
+  <div class="f" data-f="3" data-component="INT-MP" data-opts='{"at":[0,1,1,2,3,4]}' style="grid-column: 7 / 13; height:400px"></div>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns:1fr 1fr; column-gap:32px">
+    <li class="f" data-f="1"><span class="m">G = (V, E, w)</span>: proteínas, associações, confiança do STRING</li>
+    <li class="f" data-f="3"><b>Passagem de mensagens:</b> agregar os vizinhos, atualizar o nó</li>
+    <li class="f" data-f="2">Matriz de adjacência <span class="m">A</span>; armazenamento esparso em <span class="m">O(|E|)</span></li>
+    <li class="f" data-f="5"><span class="m">L</span> camadas alcançam <span class="m">L</span> saltos; camadas demais causam <i>oversmoothing</i></li>
+  </ul>
+</div>
+<aside class="notes">
+<p>A GCN agrega com uma adjacência de normalização simétrica; a GAT aprende pesos de atenção sobre os vizinhos.</p>
+<p>Cada camada amplia o campo receptivo em um salto, e camadas demais tornam as representações vizinhas indistinguíveis.</p>
+</aside>
+</section>
+
+<section class="slide" id="s09" data-part="2 · Fundamentação e trabalhos correlatos">
+<h2 class="title">Blocos de construção</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 18px">
+  <p class="small f" data-f="1" style="grid-column: 1 / 5; margin:0; color:var(--ink)"><b>MLP</b>: a cabeça de predição vetorial</p>
+  <p class="small f" data-f="2" style="grid-column: 5 / 9; margin:0; color:var(--ink)"><b>CNN</b>: o <i>backbone</i> da rota visual (ResNet-50, ConvNeXt-Tiny)</p>
+  <p class="small f" data-f="3" style="grid-column: 9 / 13; margin:0; color:var(--ink)"><b><i>Autoencoder</i></b>: a compressão dentro do deepNF, um dos <i>baselines</i></p>
+  <figure class="f" data-f="1" style="grid-column: 1 / 5; display:flex; flex-direction:column">
+    <div class="plate" style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px">
+      <div class="fig"><img src="svg/tikz_perceptron.svg" alt="Um perceptron: entradas ponderadas são somadas a um viés e passam por uma ativação"></div>
+      <div class="fig"><img src="svg/tikz_mlp.svg" alt="Um MLP com duas camadas ocultas, cada unidade ligada a todas as unidades da camada seguinte"></div>
+    </div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Figs. 2.4 e 2.5</span></figcaption>
+  </figure>
+  <figure class="f" data-f="2" style="grid-column: 5 / 9; display:flex; flex-direction:column">
+    <div class="plate center" style="flex:1"><div class="fig"><img src="img/fig_2_6.webp" alt="Uma rede convolucional transforma uma imagem em mapas de características e depois em escores de classe"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 2.6</span></figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 9 / 13; display:flex; flex-direction:column">
+    <div class="plate center" style="flex:1"><div class="fig"><img src="img/fig_2_7.webp" alt="Um autoencoder comprime a entrada num código pequeno e a reconstrói"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 2.7</span></figcaption>
+  </figure>
+</div>
+<aside class="notes">
+<p>Só o que o resto da apresentação precisa.</p>
+<p>O MLP é a cabeça vetorial, a CNN é a cabeça visual, e o autoencoder é como o deepNF comprime os estados de difusão.</p>
+</aside>
+</section>
+
+<section class="slide" id="s10" data-part="2 · Fundamentação e trabalhos correlatos">
+<h2 class="title">Modelos de linguagem de proteínas</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f seq" data-f="1">Pré-treinamento autossupervisionado em centenas de milhões de sequências</li>
+    <li class="f seq" data-f="2">Codificador <i>transformer</i>: cada resíduo é lido no contexto de todos os outros</li>
+    <li class="f seq" data-f="3"><b>ProtT5-XL-U50:</b> codificador T5, BFD e depois UniRef50, 15% dos resíduos mascarados</li>
+    <li class="f seq" data-f="4">Usado aqui como extrator congelado de características</li>
+  </ul>
+  <div class="col-b" data-component="INT-PLM" style="height:560px"></div>
+</div>
+<aside class="notes">
+<p>Os modelos de linguagem transformam a predição de função numa classificação multirrótulo comum sobre um vetor de tamanho fixo.</p>
+<p>Nenhum gradiente da nossa tarefa chega ao ProtT5; lemos três camadas do codificador e as mantemos fixas.</p>
+</aside>
+</section>
+
+<section class="slide" id="s11" data-part="2 · Fundamentação e trabalhos correlatos" data-steps="3">
+<h2 class="title">Da votação entre vizinhos aos <i>transformers</i> em grafos</h2>
+<div class="bd">
+  <div class="col-w" data-component="INT-RW" style="height:630px"
+    data-opts='{"statement":"Cada etapa acrescentou parâmetros, ajustes e custo","stripTitle":"Cinco métodos retreinados aqui: Mashup, deepNF, MELISSA, DeepGraphGO, SEGT-GO"}'></div>
+</div>
+<aside class="notes">
+<p>A área passou da difusão fixa à atenção aprendida, e cada etapa acrescentou parâmetros.</p>
+<p>Métodos desacoplados, como SGC e APPNP, vão na direção contrária, e a agregação de múltiplos saltos do SEGT-GO é ela própria um simples produto de matrizes.</p>
+</aside>
+</section>
+
+<section class="slide" id="s12" data-part="2 · Fundamentação e trabalhos correlatos">
+<h2 class="title">A questão em aberto</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 52px">
+  <p class="q col-w f" data-f="1">Um componente de grafo aprendido ainda é necessário quando o objeto propagado já é informativo?</p>
+  <ul class="b col-w" style="max-width:1180px">
+    <li class="f net" data-f="2"><b>Proposta:</b> propagar <i>embeddings</i> do ProtT5 com um operador fixo de passos finitos e usar uma cabeça comum</li>
+    <li class="f seq" data-f="3">Toda proteína tem uma representação de sequência, então a rede complementa em vez de ser a única fonte</li>
+    <li class="f" data-f="4">Nenhuma rota visual anterior parte de um <i>embedding</i> propagado de modelo de linguagem</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>A contribuição é um posicionamento arquitetural, não um mecanismo novo de propagação.</p>
+<p>Até onde sabemos, nenhum trabalho anterior propaga diretamente embeddings de modelos de linguagem de proteínas simplificando o que os consome.</p>
+</aside>
+</section>

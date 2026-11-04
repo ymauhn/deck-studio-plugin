@@ -1,0 +1,586 @@
+[
+ {
+  "id": "S01",
+  "part": "Opening",
+  "title": "NEXUS-GO",
+  "time": "0:45",
+  "points": [
+   "Good morning, and thank you for being here; this is my Master's defense at the Institute of Computing of Unicamp.",
+   "I was supervised by Professor Zanoni Dias, with Professor Hélio Pedrini and Doctor Gabriel Bianchin de Oliveira as co-advisors.",
+   "The question: how far can a protein interaction network go toward predicting function, alone and with a protein language model?",
+   "My answer is NEXUS-GO, which propagates ProtT5 embeddings over the STRING interaction network."
+  ],
+  "transition": "Let me show how the talk is organized."
+ },
+ {
+  "id": "S02",
+  "part": "Opening",
+  "title": "Roadmap",
+  "time": "0:45",
+  "points": [
+   "The talk has six parts: motivation, background, data and evaluation, method, results and conclusions.",
+   "The method is presented as two generations of models and four NEXUS-GO routes.",
+   "The results cover ablations, the literature comparison, cost and the role of connectivity.",
+   "Every model is described by three decisions: representation, propagation and prediction head."
+  ],
+  "transition": "Let me start with the motivation."
+ },
+ {
+  "id": "S03",
+  "part": "Motivation",
+  "title": "Millions of sequences, few known functions",
+  "time": "1:00",
+  "points": [
+   "Proteins take part in almost every process in a living cell.",
+   "Sequencing is fast, but characterizing a function in the laboratory is slow and expensive.",
+   "So databases fill with sequences much faster than with experimental annotations; the bars are not to scale.",
+   "CAFA, the Critical Assessment of Functional Annotation, scores predictors on proteins whose function was not yet public."
+  ],
+  "transition": "To predict a function, we first need a way to write it down."
+ },
+ {
+  "id": "S04",
+  "part": "Motivation",
+  "title": "Function as a hierarchy of terms",
+  "time": "1:15",
+  "points": [
+   "The Gene Ontology has three parts, always shown in this order: BP, CC and MF.",
+   "Each ontology is a directed acyclic graph of terms, linked by relations such as is_a and part_of.",
+   "The True Path Rule says a protein with a term also has every ancestor of that term, up to the root.",
+   "Every model's predictions are made consistent before any metric; the task is hierarchical multi-label classification."
+  ],
+  "transition": "The sequence, however, is not the whole story."
+ },
+ {
+  "id": "S05",
+  "part": "Motivation",
+  "title": "Function also depends on context",
+  "time": "1:00",
+  "points": [
+   "Proteins rarely act alone; they form complexes and take part in pathways.",
+   "We model these relations as a PPI network: proteins are nodes, associations are edges.",
+   "Guilt by association: connected proteins tend to share functions, a probabilistic guideline, not a rule.",
+   "STRING mixes evidence of uneven reliability, and about one third of our proteins have no edge at all."
+  ],
+  "transition": "This leads to seven research questions."
+ },
+ {
+  "id": "S06",
+  "part": "Motivation",
+  "title": "Seven research questions",
+  "time": "0:45",
+  "points": [
+   "The first three ask about representation and architecture: network representation, the gain from propagating ProtT5, fixed versus learned aggregation.",
+   "The next two ask whether early and late fusion help, and how deep propagation should go with how much retention.",
+   "The last two compare with the literature and test one global network pooling all species and evidence channels.",
+   "I will answer each question at the end."
+  ],
+  "transition": "Here is what the work contributes."
+ },
+ {
+  "id": "S07",
+  "part": "Motivation",
+  "title": "Contributions",
+  "time": "1:00",
+  "points": [
+   "First, NEXUS-GO: a non-parametric, multi-hop propagation of ProtT5 embeddings over STRING.",
+   "Second, fixed propagation against learned aggregation with GCN and GAT; third, a vector head against an image head.",
+   "Fourth, early and late fusion; fifth, a benchmark against five methods retrained on the same splits.",
+   "The work produced a VISAPP 2026 paper and an extended version accepted in CCIS, expected in December 2026."
+  ],
+  "transition": "Now the background, starting with graphs."
+ },
+ {
+  "id": "S08",
+  "part": "Background",
+  "title": "Graphs, adjacency and message passing",
+  "time": "1:00",
+  "points": [
+   "A graph is a set of nodes and edges, here proteins and associations weighted by STRING confidence.",
+   "Protein networks are very sparse, so memory grows with the number of edges, not proteins squared.",
+   "Graph neural networks pass messages: each node aggregates its neighbours and updates itself.",
+   "L layers see an L-hop neighbourhood, but too many layers cause oversmoothing."
+  ],
+  "transition": "Three more building blocks appear later in the talk."
+ },
+ {
+  "id": "S09",
+  "part": "Background",
+  "title": "Building blocks",
+  "time": "0:45",
+  "points": [
+   "The multilayer perceptron, or MLP, is the vector prediction head of my models.",
+   "The convolutional network slides small filters over an image; I use ResNet-50 and ConvNeXt-Tiny in the image route.",
+   "The autoencoder compresses its input and reconstructs it; deepNF uses it on its diffusion states."
+  ],
+  "transition": "The other ingredient is the protein language model."
+ },
+ {
+  "id": "S10",
+  "part": "Background",
+  "title": "Protein language models",
+  "time": "1:00",
+  "points": [
+   "Protein language models learn by self-supervision on hundreds of millions of sequences, with no labels.",
+   "A transformer encoder reads each residue in the context of the whole protein.",
+   "I use ProtT5-XL-U50, pretrained on BFD and UniRef50 with 15% masking, and read layers 22, 23 and 24.",
+   "Each layer is averaged over residues and joined; the model stays frozen, giving a fixed-length vector."
+  ],
+  "transition": "Let me place this work in the literature."
+ },
+ {
+  "id": "S11",
+  "part": "Background",
+  "title": "From neighbour voting to graph transformers",
+  "time": "1:15",
+  "points": [
+   "The field moved from neighbour voting to diffusion, node embeddings, graph neural networks and graph transformers.",
+   "Each step added parameters, tuning surface and cost.",
+   "I retrained five methods: Mashup, deepNF, MELISSA, DeepGraphGO and SEGT-GO.",
+   "My position: a frozen language model, a fixed multi-hop diffusion, and only an MLP head is trained."
+  ],
+  "transition": "This review leaves an open question."
+ },
+ {
+  "id": "S12",
+  "part": "Background",
+  "title": "The open question",
+  "time": "0:45",
+  "points": [
+   "Is a learned graph component still needed once the propagated object is already informative?",
+   "I propagate ProtT5 embeddings with a fixed operator for a finite number of steps, then use an ordinary head.",
+   "The contribution is an architectural placement, not a new propagation mechanism.",
+   "A sequence representation exists for every protein, so the network only adds to it."
+  ],
+  "transition": "Part three: the data and the evaluation."
+ },
+ {
+  "id": "S13",
+  "part": "Data and evaluation",
+  "title": "Data: a CAFA5-derived corpus",
+  "time": "1:15",
+  "points": [
+   "The corpus comes from the CAFA5 training data; in BP there are 73,768 training proteins and 9,221 each for validation and test.",
+   "Each ontology keeps its most frequent terms: 500 in BP, 498 in CC and 499 in MF.",
+   "The split is 80, 10 and 10 percent at the protein level, so every comparison is internal.",
+   "Labels are sparse: 25.91 terms on average in BP, and only 5.18% positive entries in BP."
+  ],
+  "transition": "The network is STRING, version 11.5."
+ },
+ {
+  "id": "S14",
+  "part": "Data and evaluation",
+  "title": "STRING v11.5: one aggregated network",
+  "time": "1:00",
+  "points": [
+   "The file has 2,422,234 records but only 791,011 distinct pairs over 86,423 proteins.",
+   "Combined scores range from 0.400 to 0.999 and express confidence, not binding strength.",
+   "Each pair appears 3.06 times on average with the same score, so repetitions add no information.",
+   "Degrees are heavy-tailed: the median protein has 5 to 7 neighbours, the largest hubs 763 to 805."
+  ],
+  "transition": "Now the most important property of this network."
+ },
+ {
+  "id": "S15",
+  "part": "Data and evaluation",
+  "title": "One third of the proteins have no edge",
+  "time": "1:00",
+  "points": [
+   "About one third of the proteins have no edge: 36.65% in BP, 34.95% in CC and 32.19% in MF.",
+   "The fraction is stable across training, validation and test, and isolated proteins stay as nodes.",
+   "A higher confidence threshold only makes it worse; at 0.90 more than half are isolated.",
+   "For a network-only model, a third of the corpus has no input, which the second generation removes."
+  ],
+  "transition": "How are the predictions scored?"
+ },
+ {
+  "id": "S16",
+  "part": "Data and evaluation",
+  "title": "Six protein-centric metrics",
+  "time": "1:00",
+  "points": [
+   "The primary criterion is wF_max, the F-measure weighted by information content, used to select every configuration.",
+   "I also report F_max, its variant without the root, S_min in bits, and two areas under the precision-recall curve.",
+   "Predictions are made hierarchy-consistent before scoring.",
+   "The threshold sweeps 101 values, and a protein with no prediction counts as zero recall."
+  ],
+  "transition": "The last part of the setup is the learning protocol."
+ },
+ {
+  "id": "S17",
+  "part": "Data and evaluation",
+  "title": "Learning regime and protocol",
+  "time": "0:45",
+  "points": [
+   "The setting is transductive: one graph, but the loss reads only training labels.",
+   "Every design decision is taken on validation; the test set is read once, at the end.",
+   "All runs use a single seed, so differences below 0.5 pp are ties, my interpretability floor."
+  ],
+  "transition": "Part four: the method."
+ },
+ {
+  "id": "S18",
+  "part": "Method",
+  "title": "Two generations, three decisions",
+  "time": "1:00",
+  "points": [
+   "Every model is defined by three decisions: representation, propagation and prediction head.",
+   "The first generation uses the network alone: a protein's row of the STRING matrix, with an MLP or CNN head.",
+   "About one third of proteins are isolated, so for them that representation is a null vector.",
+   "The second generation, NEXUS-GO, starts from ProtT5 and propagates it, fixed or with a GCN or GAT."
+  ],
+  "transition": "Let me first describe the first generation."
+ },
+ {
+  "id": "S19",
+  "part": "Method",
+  "title": "Generation 1: the network alone",
+  "time": "1:00",
+  "points": [
+   "The input is the protein's row of the weighted adjacency matrix, restricted to training proteins.",
+   "I keep the profile raw or reduce it with maximum or average pooling.",
+   "The vector route uses an MLP or a one-dimensional CNN.",
+   "The image route turns 224 pooled values into a 224 by 224 image for ResNet-50 or ConvNeXt-Tiny."
+  ],
+  "transition": "Here is the wall this generation hits."
+ },
+ {
+  "id": "S20",
+  "part": "Method",
+  "title": "An isolated protein has no input",
+  "time": "0:45",
+  "points": [
+   "For an isolated protein the profile is all zeros, so the image is uniform.",
+   "The head can only return the learned class prior, the same answer for every isolated protein.",
+   "No architecture can recover information absent from the input.",
+   "The next generation needs a representation for every protein, and the sequence gives one."
+  ],
+  "transition": "This is NEXUS-GO at a glance."
+ },
+ {
+  "id": "S21",
+  "part": "Method",
+  "title": "NEXUS-GO: four routes",
+  "time": "1:15",
+  "points": [
+   "The frozen ProtT5 encoder turns each sequence into H(0), a 3,072-dimensional vector that exists for every protein.",
+   "STRING records are deduplicated with the maximum rule into W, and column normalization gives P.",
+   "NEXUS-GO/Fixed propagates H(0) with P without parameters; NEXUS-GO/GNN learns the aggregation with a GCN or GAT.",
+   "NEXUS-GO/Early joins the two representations; NEXUS-GO/Late combines their probabilities with a linear rule."
+  ],
+  "transition": "Let me open each block, starting with the sequence representation."
+ },
+ {
+  "id": "S22",
+  "part": "Method",
+  "title": "ProtT5-XL-U50, three layers, frozen",
+  "time": "0:45",
+  "points": [
+   "ProtT5 reads at most 1,022 tokens, so long sequences are chunked and averaged.",
+   "Layers 24, 23 and 22 give 1,024 dimensions each, 3,072 when concatenated.",
+   "Three adjacent layers avoid betting on a single layer and add nothing to tune.",
+   "This representation exists for every protein; the pipeline is inherited from SUPERMAGOv2."
+  ],
+  "transition": "Next, the graph."
+ },
+ {
+  "id": "S23",
+  "part": "Method",
+  "title": "From records to an operator",
+  "time": "1:00",
+  "points": [
+   "W is symmetric, without self-loops, stored sparse with at most 1,133,132 entries instead of 25 to 35 GB dense.",
+   "Summation rewards how often a pair was written: A at 0.80 five times gets 4.00 against B at 0.95.",
+   "The maximum keeps the STRING score on its own scale, so B comes first; that is my rule.",
+   "Normalizing each column gives P, so a neighbour's weight is relative to the protein's other neighbours."
+  ],
+  "transition": "Now the core of the method: fixed propagation."
+ },
+ {
+  "id": "S24",
+  "part": "Method",
+  "title": "Fixed propagation: no parameters",
+  "time": "1:45",
+  "points": [
+   "Each step keeps a fraction α of the previous representation and takes one minus α from the weighted neighbours, repeated T times.",
+   "Nothing is trained, so the result is computed once, cached and reused at every epoch.",
+   "Many steps cause oversmoothing, and isolated nodes only shrink toward grey; a higher α changes much less.",
+   "T equal to 0 or α equal to 1 switches the graph off: that is the ProtT5 baseline."
+  ],
+  "transition": "What does this do to real proteins?"
+ },
+ {
+  "id": "S25",
+  "part": "Method",
+  "title": "Propagation on four real proteins",
+  "time": "0:45",
+  "points": [
+   "Four Cellular Component proteins, from a hub of degree 798 to an isolated protein, before and after six steps with α at 0.4.",
+   "The connected proteins keep their structure while absorbing their neighbourhood.",
+   "The isolated protein is only scaled by α to the power T, so its image fades to grey.",
+   "Changes on degree-zero proteins reflect this rescaling and head retraining, not neighbourhood information."
+  ],
+  "transition": "The alternative is to learn the aggregation."
+ },
+ {
+  "id": "S26",
+  "part": "Method",
+  "title": "Learned propagation: GCN and GAT",
+  "time": "1:00",
+  "points": [
+   "The GCN adds self-loops, normalizes symmetrically and takes the STRING confidence as given.",
+   "The GAT learns attention over neighbours with four heads, re-estimating how much each one counts.",
+   "Both have two layers of width 1,024 and output a 1,024-dimensional embedding, g.",
+   "A learned operator must re-propagate the whole graph, about 289 times per epoch, while the fixed route does it once."
+  ],
+  "transition": "Two prediction heads consume these representations."
+ },
+ {
+  "id": "S27",
+  "part": "Method",
+  "title": "Vector head and vision head",
+  "time": "1:00",
+  "points": [
+   "The vector head is an MLP with hidden layers of 1,024 and 512 units and a dropout of 0.4.",
+   "The vision head turns the 3,072 values into three 32 by 32 channels, one per ProtT5 layer.",
+   "The backbones are ResNet-50 and ConvNeXt-Tiny, pretrained on ImageNet and fully fine-tuned.",
+   "Caution: pixel adjacency here only reflects storage order, and the results show that this matters."
+  ],
+  "transition": "Every model is trained with the same objective."
+ },
+ {
+  "id": "S28",
+  "part": "Method",
+  "title": "Training objective: ProteinLoss",
+  "time": "0:45",
+  "points": [
+   "ProteinLoss is a product of three factors: ZLPR and two factors of one minus a weighted F1.",
+   "ZLPR separates a protein's positive terms from its negative ones around zero.",
+   "The two soft F1 factors are weighted by information content, one per term column and one per protein row.",
+   "In the first generation it beats binary cross-entropy by 5.47 pp on the mean, so every later run uses it."
+  ],
+  "transition": "The last piece of the method is fusion."
+ },
+ {
+  "id": "S29",
+  "part": "Method",
+  "title": "Combining the fixed and learned routes",
+  "time": "1:00",
+  "points": [
+   "The fixed and learned routes use the confidence differently, so I combine them instead of choosing.",
+   "Early fusion trains one head on joined representations, of 4,096 or 3,072 dimensions.",
+   "Late fusion trains each route alone and combines probabilities afterwards, with no further training.",
+   "I compare eleven late rules, choosing coefficients on validation over 71 configurations per ontology."
+  ],
+  "transition": "Part five: the results."
+ },
+ {
+  "id": "S30",
+  "part": "Results",
+  "title": "170 runs, one funnel",
+  "time": "0:45",
+  "points": [
+   "The campaign has 170 runs and about 136.3 GPU-hours, 147 of them on an RTX A5500.",
+   "Selection is a funnel: each stage passes only its validation winner to the next.",
+   "Two stations are not pure validation picks: the maximum rule, and ConvNeXt-Tiny on a 0.57 pp margin.",
+   "The test set is read once, at the end, for the frozen winner, NEXUS-GO/Late."
+  ],
+  "transition": "First, what the network alone can do."
+ },
+ {
+  "id": "S31",
+  "part": "Results",
+  "title": "Generation 1 settles three choices",
+  "time": "1:00",
+  "points": [
+   "A naive baseline that looks at nothing reaches a mean wF_max of 43.56.",
+   "ProteinLoss beats binary cross-entropy by 5.47 pp on the mean, and by 8.87 in MF.",
+   "The MLP on the raw profile wins at 44.51; the best one-dimensional CNN reaches only 41.16.",
+   "Vision backbones score 36.99 to 37.62, so topology alone clears the naive baseline by only 0.95 pp."
+  ],
+  "transition": "Now the second generation, starting with fixed propagation and the vector head."
+ },
+ {
+  "id": "S32",
+  "part": "Results",
+  "title": "One or two hops, high retention",
+  "time": "1:00",
+  "points": [
+   "The best depth is one step in BP, two in CC, and zero in MF.",
+   "Beyond the peak, performance falls by 12.80 to 17.60 pp by T equal to 10.",
+   "Retention peaks at 0.7 in BP and 0.8 in CC; low retention is clearly worse.",
+   "The graph works as a correction to the protein's own representation, not a replacement."
+  ],
+  "transition": "The vision head behaves differently."
+ },
+ {
+  "id": "S33",
+  "part": "Results",
+  "title": "The vision head wants deep propagation",
+  "time": "1:00",
+  "points": [
+   "The vision head peaks at seven steps in BP and six in CC, more a plateau than a peak.",
+   "It gains 5.84 pp in BP and 2.93 in CC from propagation, against 1.85 and 0.92 for the vector head.",
+   "It collapses at α of 0.2 or lower, because isolated nodes are scaled by α to the power T.",
+   "Its best BP value, 52.17, is still below the vector head without any graph, at 53.36."
+  ],
+  "transition": "Next, fixed against learned aggregation."
+ },
+ {
+  "id": "S34",
+  "part": "Results",
+  "title": "Learning the aggregation does not pay",
+  "time": "1:15",
+  "points": [
+   "The GCN beats the GAT in all six pairs, by 3.88 to 9.31 pp, and in all 30 fusion pairs.",
+   "The fixed operator averages 65.12, against 63.32 for the GCN.",
+   "The GCN leads in BP by 0.55, a tie, and trails by 0.59 in CC and 5.35 in MF.",
+   "Every deduplication difference beyond the noise favours the maximum rule, up to 3.83 pp for the GAT."
+  ],
+  "transition": "Then, fusion."
+ },
+ {
+  "id": "S35",
+  "part": "Results",
+  "title": "Fusion helps; combining predictions helps more",
+  "time": "1:15",
+  "points": [
+   "Early fusion's best configuration reaches 65.80, 0.68 above the fixed route alone.",
+   "Late fusion wins: a linear mix with γ at 0.50 in BP and 0.55 in CC and MF reaches 67.06.",
+   "It gains 2.18 pp in BP, 1.85 in CC and 1.26 in MF over its better component, with one extra fitted parameter.",
+   "Stacking models put almost all weight on the two probabilities, not on information content or degree."
+  ],
+  "transition": "Across all stages, which head is better?"
+ },
+ {
+  "id": "S36",
+  "part": "Results",
+  "title": "Vector head wins 12 of 12",
+  "time": "0:45",
+  "points": [
+   "The vector head beats the vision head in all twelve comparisons.",
+   "The mean margin is 6.62 pp in the first generation, 3.96 with fixed propagation, 2.69 with the GNN and 3.35 with early fusion.",
+   "It narrows, but shows no trend toward zero.",
+   "Neither image has the locality a convolution assumes."
+  ],
+  "transition": "This next chart summarizes the whole validation journey."
+ },
+ {
+  "id": "S37",
+  "part": "Results",
+  "title": "Where the gains come from",
+  "time": "1:00",
+  "points": [
+   "The naive baseline sits at 43.56 and the first generation at 44.51, less than one point apart.",
+   "ProtT5 alone, with the graph off, jumps to 63.92.",
+   "Fixed propagation reaches 65.12, early fusion 65.84 and late fusion 67.06.",
+   "Most of the jump comes from the language model; the graph adds a consistent remainder, mainly in BP and CC."
+  ],
+  "transition": "Now the test set, read once, against five methods from the literature."
+ },
+ {
+  "id": "S38",
+  "part": "Results",
+  "title": "Test set: NEXUS-GO vs five methods",
+  "time": "1:30",
+  "points": [
+   "NEXUS-GO/Late has the best value in every test column across six metrics, except AuPRC in MF.",
+   "Its margin over DeepGraphGO is 9.77 pp in BP, 8.67 in CC and 4.93 in MF.",
+   "S_min agrees: 17.12 against 20.11 bits in BP, 8.22 against 9.67 in CC, 5.14 against 5.67 in MF.",
+   "The ProtT5 baseline alone already beats every literature method on wF_max.",
+   "All baselines were retrained on the same corpus, so this ordering describes the adapted configurations."
+  ],
+  "transition": "Coverage puts these margins in perspective."
+ },
+ {
+  "id": "S39",
+  "part": "Results",
+  "title": "Every protein gets a prediction",
+  "time": "0:45",
+  "points": [
+   "Every NEXUS-GO route predicts 100% of the test partition.",
+   "DeepGraphGO and SEGT-GO reach 95.1 to 96.3% using a homology search.",
+   "Mashup, MELISSA and deepNF only see network members, covering 63.6 to 68.7%.",
+   "Part of the distance to network-only methods is reach, not ranking quality."
+  ],
+  "transition": "What does each route cost?"
+ },
+ {
+  "id": "S40",
+  "part": "Results",
+  "title": "A thirteenth of the time per epoch",
+  "time": "1:00",
+  "points": [
+   "Fixed propagation with the vector head trains at 5.24 seconds per epoch with 6.4 GiB of peak memory.",
+   "The GCN takes 68.76 seconds and 14.1 GiB, and the GAT 161.41 seconds and 20.7 GiB.",
+   "The fixed operator matches or beats the GCN at about a thirteenth of the time per epoch.",
+   "The reason is structural: the fixed operator runs once, the learned one at every step."
+  ],
+  "transition": "Finally, where does the graph help?"
+ },
+ {
+  "id": "S41",
+  "part": "Results",
+  "title": "The graph helps where there is graph",
+  "time": "1:15",
+  "points": [
+   "Every ProtT5 route scores worse on connected proteins than on isolated ones, and the graph-free control shows it too.",
+   "Hubs tend to be multifunctional and harder for a sequence model.",
+   "The gain over the control grows with degree, up to 9.05 pp in BP, 8.71 in CC and 4.64 in MF.",
+   "The graph helps where there is graph."
+  ],
+  "transition": "Part six: the conclusions, starting with the answers."
+ },
+ {
+  "id": "S42",
+  "part": "Conclusions",
+  "title": "Answers to the research questions",
+  "time": "1:30",
+  "points": [
+   "The best network representation is the unreduced profile with an MLP; imposing locality hurts.",
+   "Most of the gain comes from ProtT5; on test, propagation adds 1.87 pp in BP, 2.15 in CC and nothing in MF.",
+   "Late fusion leads at 67.06 on validation and helps by 1.26 to 2.18 pp; one or two hops with α of 0.7 to 0.8 work best.",
+   "NEXUS-GO/Late beats the literature by 9.77, 8.67 and 4.93 pp of wF_max, on one global aggregated network."
+  ],
+  "transition": "These results come with limitations."
+ },
+ {
+  "id": "S43",
+  "part": "Conclusions",
+  "title": "Limitations",
+  "time": "1:00",
+  "points": [
+   "All runs use a single seed, so the 0.5 pp floor is a reading convention, not a confidence interval.",
+   "The random protein-level split measures transductive interpolation, and some homology is possible.",
+   "STRING scores include curated databases and text mining, which may leak functional knowledge.",
+   "Fixed versus learned is not a single-factor ablation, and the baselines were adapted to our setting."
+  ],
+  "transition": "These limitations point to the next steps."
+ },
+ {
+  "id": "S44",
+  "part": "Conclusions",
+  "title": "Next steps",
+  "time": "0:45",
+  "points": [
+   "Separate the graph by organism, or train one model per organism.",
+   "Keep STRING evidence channels apart, so experimental evidence counts differently from text mining.",
+   "Try heterogeneous graphs, compared with methods such as ProtHGT, and sampled aggregation as in GraphSAGE.",
+   "Richer node features are most promising for MF, where the network contributed the least."
+  ],
+  "transition": "Let me conclude."
+ },
+ {
+  "id": "S45",
+  "part": "Conclusions",
+  "title": "Thank you",
+  "time": "0:45",
+  "points": [
+   "NEXUS-GO propagates ProtT5 over STRING with a fixed operator and matches a learned encoder at a fraction of its cost.",
+   "Its fusion with a GCN is the best evaluated method in every ontology.",
+   "The code is public on GitHub, with a VISAPP 2026 paper and an extended version accepted in CCIS.",
+   "I thank the committee, my advisors, CAPES, BTG Pactual and the Institute of Computing."
+  ],
+  "transition": "Thank you very much; I am happy to take your questions."
+ }
+]

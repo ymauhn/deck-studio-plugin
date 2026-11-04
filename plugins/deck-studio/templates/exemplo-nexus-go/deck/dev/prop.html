@@ -1,0 +1,56 @@
+<section class="slide" id="s24" data-part="4 · Method">
+<h2 class="title">Fixed propagation: no parameters</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 6" class="stack s24-left">
+    <div class="f" data-f="1">
+      <div class="m d">\mathbf{H}^{(h)} = \alpha\, \mathbf{H}^{(h-1)} + (1-\alpha)\, P^{\top} \mathbf{H}^{(h-1)}</div>
+      <p class="small" style="margin:8px 0 0"><span class="m">h = 1, \dots, T</span></p>
+    </div>
+    <ul class="b sm">
+      <li class="f net" data-f="3">Closed form: hop <span class="m">k</span> gets weight <span class="m">\binom{T}{k}\, \alpha^{T-k} (1-\alpha)^{k}</span></li>
+      <li class="f net" data-f="3">Computed once, cached, reused every epoch</li>
+      <li class="f" data-f="4"><span class="m">T = 0</span> or <span class="m">\alpha = 1</span>: the graph is switched off (internal control)</li>
+    </ul>
+  </div>
+  <div style="grid-column: 6 / 13; height:630px" class="f" data-f="2" data-component="INT-PROP"></div>
+</div>
+<aside class="notes">
+<p>α retains part of the previous step, not of the original, so it slows mixing instead of re-injecting the input.</p>
+<p>The weights over hop counts are binomial with mean T(1 − α). Unlike personalized PageRank, the initial state is never reintroduced.</p>
+</aside>
+</section>
+<style>
+.dd { display: flex; flex-direction: column; gap: 34px; }
+.dd-main { display: grid; grid-template-columns: 330px 1fr; gap: 44px; align-items: center; }
+.dd-graph { width: 330px; height: auto; overflow: visible; }
+.dd-graph line { stroke: var(--net); stroke-linecap: round; transition: all 400ms var(--ease); }
+.dd-graph .dd-n { fill: var(--slide); stroke: var(--net); stroke-width: 3; }
+.dd-graph .dd-i { fill: var(--ink); }
+.dd-graph .dd-nodes text { font: 700 24px var(--font-body); fill: var(--ink); }
+.dd-graph .dd-nodes text:first-of-type { fill: var(--slide); }
+.dd-graph .dd-lab { font: 400 19px var(--font-data); fill: var(--ink-2); }
+.dd-panels { display: flex; flex-direction: column; gap: 44px; }
+.dd-h { font: 400 20px/1.2 var(--font-data); color: var(--ink-2); margin-bottom: 14px; }
+.dd-row { display: grid; grid-template-columns: 34px 1fr 84px; align-items: center; gap: 14px; height: 48px; }
+.dd-k { font: 700 26px var(--font-body); }
+.dd-track { position: relative; height: 30px; border-left: 2px solid var(--ink-2); }
+.dd-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--net); border-radius: 0 4px 4px 0; transition: width 450ms var(--ease); }
+.dd-v { font-size: 26px; text-align: right; }
+.dd-instant .dd-bar, .dd-instant line { transition: none; }
+.s23-list > li { margin-bottom: 30px; }
+.pipe-fig { display: none; }
+.s24-left { gap: 34px; }
+.s24-left .eq { font-size: 30px; }
+.lbl-mono { font: 400 16px/1 var(--font-data); color: var(--ink-2); margin-bottom: 10px; }
+.s26-eq .eq { font-size: 28px; }
+.s26-eq .eq + .eq { margin-top: 12px; }
+.s28-eq .eq { font-size: 44px; }
+.s28-grid { width: 100%; height: auto; }
+.s28-grid text { font: 400 19px var(--font-body); fill: var(--ink); }
+.s28-grid text.sub { fill: var(--ink-2); font-size: 18px; }
+.s28-grid .col, .s28-grid .row { fill: none; stroke-width: 3.5; }
+.s28-grid .col { stroke: var(--ink); }
+.s28-grid .row { stroke: var(--ink-2); stroke-dasharray: 8 6; }
+.s28-grid .cells rect { fill: var(--hair); }
+.s28-grid .cells rect.on { fill: var(--ink-2); }
+</style>

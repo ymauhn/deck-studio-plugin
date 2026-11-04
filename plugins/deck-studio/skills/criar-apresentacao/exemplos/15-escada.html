@@ -1,0 +1,27 @@
+<!-- TIPO: gráfico em escada, animado (componente ESCADA)
+QUANDO USAR: um valor que muda em etapas que se somam: a ablação (cada componente que entra), as versões do método,
+o resultado ao longo das fases. Cada degrau se desenha num passo e mostra a diferença para o anterior.
+REGRAS: de 3 a 7 degraus; o primeiro é o ponto de partida (a referência); os valores absolutos vêm do FACTS.md, e o
+componente calcula as diferenças (não escreva a diferença à mão); "casas" igual à precisão da fonte; a cor do degrau
+segue o conceito que ele adiciona. Os nomes e números abaixo são de mentira: troque todos. -->
+<section class="slide" id="s32" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: o que cada etapa acrescenta]</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 9" data-component="ESCADA" data-opts='{
+    "degraus": [
+      {"rotulo": "[Referência]", "valor": 111.1, "cor": "c1"},
+      {"rotulo": "[+ parte 1]", "valor": 122.2, "cor": "c1"},
+      {"rotulo": "[+ parte 2]", "valor": 133.3, "cor": "c2"},
+      {"rotulo": "[Completo]", "valor": 144.4, "cor": "c3"}
+    ],
+    "casas": 1, "unidade": "[un]", "altura": 440
+  }'></div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">[A etapa que mais acrescenta]</li>
+    <li class="f" data-f="4">[O resultado do conjunto]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[Um degrau por passo: o que entra e quanto muda.] (p. [p], Tab. [n])</p>
+</aside>
+</section>

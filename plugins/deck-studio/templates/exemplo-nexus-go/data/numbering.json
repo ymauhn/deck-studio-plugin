@@ -1,0 +1,365 @@
+{
+ "table": {
+  "4.1": [
+   "tab:cafa5"
+  ],
+  "4.2": [
+   "tab:rotulos"
+  ],
+  "4.3": [
+   "tab:multiplicidade"
+  ],
+  "4.4": [
+   "tab:grafo"
+  ],
+  "6.1": [
+   "tab:naive"
+  ],
+  "6.2": [
+   "tab:abl_perda"
+  ],
+  "6.3": [
+   "tab:abl_arquitetura"
+  ],
+  "6.4": [
+   "tab:abl_backbone"
+  ],
+  "6.5": [
+   "tab:sweep_hops_vector"
+  ],
+  "6.6": [
+   "tab:sweep_alpha_vector"
+  ],
+  "6.7": [
+   "tab:sweep_hops_vision"
+  ],
+  "6.8": [
+   "tab:sweep_alpha_vision"
+  ],
+  "6.9": [
+   "tab:gnn_gcn_gat"
+  ],
+  "6.10": [
+   "tab:rede_ppi"
+  ],
+  "6.11": [
+   "tab:dedup"
+  ],
+  "6.12": [
+   "tab:early_fusion"
+  ],
+  "6.13": [
+   "tab:early_grid"
+  ],
+  "6.14": [
+   "tab:late_fusion"
+  ],
+  "6.15": [
+   "tab:vetor_visao_ontologia"
+  ],
+  "6.16": [
+   "tab:vetor_visao_avg"
+  ],
+  "6.17": [
+   "tab:confronto_bp"
+  ],
+  "6.18": [
+   "tab:confronto_cc"
+  ],
+  "6.19": [
+   "tab:confronto_mf"
+  ],
+  "6.20": [
+   "tab:custo"
+  ],
+  "6.21": [
+   "tab:rotas_conectividade"
+  ],
+  "6.22": [
+   "tab:degree_isolated_connected"
+  ],
+  "6.23": [
+   "tab:degree_f1_bp"
+  ],
+  "6.24": [
+   "tab:degree_f1_cc"
+  ],
+  "6.25": [
+   "tab:degree_f1_mf"
+  ],
+  "6.26": [
+   "tab:degree_graph_gain"
+  ],
+  "6.27": [
+   "tab:degree_correlation"
+  ],
+  "6.28": [
+   "tab:cobertura"
+  ],
+  "A.1": [
+   "tab:ape_maquinas"
+  ],
+  "A.2": [
+   "tab:ape_hp"
+  ],
+  "A.3": [
+   "tab:ape_fusao_grade"
+  ],
+  "A.4": [
+   "tab:ape_fusao_sel"
+  ],
+  "A.5": [
+   "tab:ape_fusao_meta"
+  ],
+  "A.6": [
+   "tab:ape_custo"
+  ],
+  "B.1": [
+   "tab:ape_baselines"
+  ],
+  "B.2": [
+   "tab:ape_custo_comp"
+  ],
+  "B.3": [
+   "tab:ape_cobertura"
+  ]
+ },
+ "figure": {
+  "2.1": [
+   "fig:ontology"
+  ],
+  "2.2": [
+   "fig:complexo"
+  ],
+  "2.3": [
+   "fig:generic_graph"
+  ],
+  "2.4": [
+   "fig:perceptron"
+  ],
+  "2.5": [
+   "fig:mlp"
+  ],
+  "2.6": [
+   "fig:conv_layer_fluxo"
+  ],
+  "2.7": [
+   "fig:autoencoder_diagrama"
+  ],
+  "4.1": [
+   "fig:score_degree"
+  ],
+  "4.2": [
+   "fig:iso_split"
+  ],
+  "4.3": [
+   "fig:iso_thr"
+  ],
+  "5.1": [
+   "fig:met_chapter_map"
+  ],
+  "5.2": [
+   "fig:met_regime"
+  ],
+  "5.3": [
+   "fig:met_gen1_pipeline"
+  ],
+  "5.4": [
+   "fig:met_outerdiff"
+  ],
+  "5.5": [
+   "fig:met_isolated"
+  ],
+  "5.6": [
+   "fig:met_hybrid_pipeline"
+  ],
+  "5.7": [
+   "fig:met_prott5"
+  ],
+  "5.8": [
+   "fig:met_fixa"
+  ],
+  "5.9": [
+   "fig:met_reshape"
+  ],
+  "5.10": [
+   "fig:met_fusao"
+  ],
+  "6.1": [
+   "fig:hops_vector"
+  ],
+  "6.2": [
+   "fig:alpha_vector"
+  ],
+  "6.3": [
+   "fig:hops_vision"
+  ],
+  "6.4": [
+   "fig:alpha_vision"
+  ],
+  "6.5": [
+   "fig:custo"
+  ],
+  "6.6": [
+   "fig:grau"
+  ]
+ },
+ "equation": {
+  "4.1": [
+   "eq:prop_pred"
+  ],
+  "4.2": [
+   "eq:limiares"
+  ],
+  "4.3": [
+   "eq:conjunto_predito"
+  ],
+  "4.4": [
+   "eq:m_tau"
+  ],
+  "4.5": [
+   "eq:ic"
+  ],
+  "4.6": [
+   "eq:pr_rc"
+  ],
+  "4.7": [
+   "eq:fmax"
+  ],
+  "4.8": [
+   "eq:wpr"
+  ],
+  "4.9": [
+   "eq:wrc"
+  ],
+  "4.10": [
+   "eq:wfmax"
+  ],
+  "4.11": [
+   "eq:ru"
+  ],
+  "4.12": [
+   "eq:mi"
+  ],
+  "4.13": [
+   "eq:smin"
+  ],
+  "4.14": [
+   "eq:auprc"
+  ],
+  "4.15": [
+   "eq:grade_recall"
+  ],
+  "4.16": [
+   "eq:iauprc"
+  ],
+  "4.17": [
+   "eq:iauprc_area"
+  ],
+  "5.1": [
+   "eq:met_universo"
+  ],
+  "5.2": [
+   "eq:met_mascara"
+  ],
+  "5.3": [
+   "eq:met_baseline"
+  ],
+  "5.4": [
+   "eq:met_perfil"
+  ],
+  "5.5": [
+   "eq:met_outerdiff"
+  ],
+  "5.6": [
+   "eq:met_imgnorm"
+  ],
+  "5.7": [
+   "eq:met_meanpool"
+  ],
+  "5.8": [
+   "eq:met_h0"
+  ],
+  "5.9": [
+   "eq:met_P"
+  ],
+  "5.10": [
+   "eq:met_dedup"
+  ],
+  "5.11": [
+   "eq:met_recorrencia"
+  ],
+  "5.12": [
+   "eq:met_binomial"
+  ],
+  "5.13": [
+   "eq:met_gcn_norm"
+  ],
+  "5.14": [
+   "eq:met_gcn"
+  ],
+  "5.15": [
+   "eq:met_gat"
+  ],
+  "5.16": [
+   "eq:met_gnn_emb"
+  ],
+  "5.17": [
+   "eq:met_reshape"
+  ],
+  "5.18": [
+   "eq:met_bce"
+  ],
+  "5.19": [
+   "eq:met_zlpr"
+  ],
+  "5.20": [
+   "eq:met_proteinloss"
+  ],
+  "5.21": [
+   "eq:met_softcounts"
+  ],
+  "5.22": [
+   "eq:met_softf1"
+  ],
+  "5.23": [
+   "eq:met_wf1_axes"
+  ],
+  "5.24": [
+   "eq:met_concat"
+  ],
+  "5.25": [
+   "eq:met_add"
+  ],
+  "5.26": [
+   "eq:met_ens_linear"
+  ],
+  "5.27": [
+   "eq:met_ens_minmax"
+  ],
+  "5.28": [
+   "eq:met_ens_gj"
+  ],
+  "5.29": [
+   "eq:met_ens_ic"
+  ],
+  "5.30": [
+   "eq:met_ens_beta"
+  ],
+  "5.31": [
+   "eq:met_ens_degree"
+  ],
+  "5.32": [
+   "eq:met_ens_w"
+  ],
+  "5.33": [
+   "eq:met_ens_master"
+  ],
+  "5.34": [
+   "eq:met_ens_stack"
+  ],
+  "B.1": [
+   "eq:ape_knn"
+  ]
+ }
+}

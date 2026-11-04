@@ -1,0 +1,27 @@
+<!-- TIPO: gráfico de pontos (halteres), animado (componente PONTOS)
+QUANDO USAR: o mesmo conjunto de itens medido em 2 ou 3 condições (antes e depois, método A e B, dois conjuntos de
+dados). A primeira série entra no passo 1; a seguinte desliza a partir dela, e a distância mostra quanto mudou.
+REGRAS: de 3 a 8 itens; "valores" na ordem das séries; a cor de conceito em cada série, a do trabalho por último;
+o eixo não precisa começar no zero (a diferença é o que importa), mas diga a unidade; os números vêm do FACTS.md.
+Os nomes e números abaixo são de mentira: troque todos. -->
+<section class="slide" id="s33" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: o que mudou de uma condição para a outra]</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 9" data-component="PONTOS" data-opts='{
+    "series": [{"nome": "[Antes]", "cor": "c1"}, {"nome": "[Depois]", "cor": "c3"}],
+    "itens": [
+      {"rotulo": "[Item 1]", "valores": [111.1, 133.3]},
+      {"rotulo": "[Item 2]", "valores": [122.2, 155.5]},
+      {"rotulo": "[Item 3]", "valores": [144.4, 166.6]}
+    ],
+    "casas": 1, "unidade": "[un]"
+  }'></div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">[O item que mais muda, com o número]</li>
+    <li class="f" data-f="3">[A leitura geral]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[Passo 1: a condição de partida. Passo 2: a outra, os pontos deslizam.] (p. [p], Tab. [n])</p>
+</aside>
+</section>

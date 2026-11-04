@@ -1,0 +1,70 @@
+<section class="slide backup" id="b1" data-part="Backup">
+<h2 class="title">Hyperparameters</h2>
+<div class="bd">
+  <div class="tbl sm wrap" data-table="hyperparams" data-rows="0-11" style="grid-column: 1 / 7"></div>
+  <div class="tbl sm wrap" data-table="hyperparams" data-rows="12-22" style="grid-column: 7 / 13"></div>
+</div>
+<aside class="notes"><p>Optimization settings of the final second-generation campaign (Table A.2). Values marked varies are part of the search space.</p></aside>
+</section>
+
+<section class="slide backup" id="b2" data-part="Backup">
+<h2 class="title">Late fusion: grid and selected coefficients</h2>
+<div class="bd">
+  <div class="tbl sm wrap" data-table="fusion_grid" style="grid-column: 1 / 8"></div>
+  <div class="tbl sm" data-table="fusion_selected" style="grid-column: 8 / 13"></div>
+</div>
+<aside class="notes"><p>71 configurations per ontology, chosen on validation. Both conditional rules converged on the flattest sigmoid the grid offers.</p></aside>
+</section>
+
+<section class="slide backup" id="b3" data-part="Backup">
+<h2 class="title">Early fusion: provenance × source</h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="early_grid" data-rank="4,5,6"></div>
+</div>
+<aside class="notes"><p>Provenance is the head with which the consumed GNN embedding was trained; source is the head whose depth and retention were used for the fixed branch. Validation set.</p></aside>
+</section>
+
+<section class="slide backup" id="b4" data-part="Backup">
+<h2 class="title">Isolated vs connected proteins</h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="isolated_vs_connected" data-head="2" data-rank="1,2,4,5,7,8"></div>
+</div>
+<aside class="notes"><p>wF<sub>max</sub> on the test set. Every ProtT5 route scores worse on connected proteins; the First Generation is the only route that improves with connectivity.</p></aside>
+</section>
+
+<section class="slide backup" id="b5" data-part="Backup">
+<h2 class="title">Degree and per-protein F<sub>1</sub></h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="degree_correlation" data-head="2" data-rank="3,6,9"></div>
+</div>
+<aside class="notes"><p>Rank correlation between degree and per-protein F<sub>1</sub>, test set. All sequence-aware routes have small negative correlations; the graph routes make them less negative.</p></aside>
+</section>
+
+<section class="slide backup" id="b6" data-part="Backup">
+<h2 class="title">Baselines: adaptations, cost and coverage</h2>
+<div class="bd" style="row-gap: 18px; grid-template-rows: auto auto">
+  <div class="tbl sm wrap col-w" data-table="baselines_adapt" data-cols="0,2"></div>
+  <div class="tbl sm wrap col-w" data-table="baselines_cost_coverage"></div>
+</div>
+<aside class="notes"><p>Hyperparameters were taken from each method's reference configuration; changes are hardware constraints, not a search. Coverage is the fraction of test proteins that receive a prediction.</p></aside>
+</section>
+
+<section class="slide backup" id="b7" data-part="Backup">
+<h2 class="title">Hierarchy closure uses <code>is_a</code> only</h2>
+<div class="bd">
+  <ul class="b col-w">
+    <li>Ancestors reachable only through <code>part_of</code> do not receive their descendants' scores</li>
+    <li>Affects 387 of 3,507 ancestor-descendant pairs in BP (11.0%), 2,056 of 4,405 in CC (46.7%), a single pair in MF</li>
+    <li>Applied identically to every method; the ground truth closes over <code>is_a</code> and <code>part_of</code></li>
+  </ul>
+</div>
+<aside class="notes"><p>This follows the DeepGO evaluation convention. The direction of its effect on the metrics is not guaranteed, and it matters most for Cellular Component.</p></aside>
+</section>
+
+<section class="slide backup" id="b8" data-part="Backup">
+<h2 class="title">Computational environments</h2>
+<div class="bd">
+  <div class="tbl sm wrap col-w" data-table="machines"></div>
+</div>
+<aside class="notes"><p>The two server accelerators belong to the same physical node. 23 vision runs on the GTX 1080 Ti are excluded from timing comparisons.</p></aside>
+</section>

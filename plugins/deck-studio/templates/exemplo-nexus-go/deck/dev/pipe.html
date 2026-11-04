@@ -1,0 +1,52 @@
+<section class="slide" id="s21" data-part="4 · Method" data-steps="6">
+<h2 class="title">NEXUS-GO: four routes</h2>
+<div class="bd" style="grid-template-rows: 1fr auto; row-gap: 18px">
+  <div class="col-w" data-component="INT-PIPE" style="height:540px">
+    <img class="pipe-fig" src="img/fig_5_6.webp" alt="Dissertation Figure 5.6, cropped above the late-fusion box: the sequence and network branches, the fixed and learned propagation routes and the early fusion head">
+  </div>
+  <div class="band3 col-w">
+    <div class="seq f" data-f="1">Sequence → ProtT5 → <span class="m">\mathbf{H}^{(0)} \in \mathbb{R}^{3072}</span></div>
+    <div class="net f" data-f="2">STRING → weighted graph <span class="m">W</span> → <span class="m">P = W D_c^{-1}</span></div>
+    <div class="fuse f" data-f="3">Routes: /Fixed · /GNN · /Early · /Late</div>
+  </div>
+</div>
+<aside class="notes">
+<p>Two inputs, two propagation routes and two ways of combining them.</p>
+<p>The first generation is reported as a topology-only control and carries no route name.</p>
+</aside>
+</section>
+<style>
+.dd { display: flex; flex-direction: column; gap: 34px; }
+.dd-main { display: grid; grid-template-columns: 330px 1fr; gap: 44px; align-items: center; }
+.dd-graph { width: 330px; height: auto; overflow: visible; }
+.dd-graph line { stroke: var(--net); stroke-linecap: round; transition: all 400ms var(--ease); }
+.dd-graph .dd-n { fill: var(--slide); stroke: var(--net); stroke-width: 3; }
+.dd-graph .dd-i { fill: var(--ink); }
+.dd-graph .dd-nodes text { font: 700 24px var(--font-body); fill: var(--ink); }
+.dd-graph .dd-nodes text:first-of-type { fill: var(--slide); }
+.dd-graph .dd-lab { font: 400 19px var(--font-data); fill: var(--ink-2); }
+.dd-panels { display: flex; flex-direction: column; gap: 44px; }
+.dd-h { font: 400 20px/1.2 var(--font-data); color: var(--ink-2); margin-bottom: 14px; }
+.dd-row { display: grid; grid-template-columns: 34px 1fr 84px; align-items: center; gap: 14px; height: 48px; }
+.dd-k { font: 700 26px var(--font-body); }
+.dd-track { position: relative; height: 30px; border-left: 2px solid var(--ink-2); }
+.dd-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--net); border-radius: 0 4px 4px 0; transition: width 450ms var(--ease); }
+.dd-v { font-size: 26px; text-align: right; }
+.dd-instant .dd-bar, .dd-instant line { transition: none; }
+.s23-list > li { margin-bottom: 30px; }
+.pipe-fig { display: none; }
+.s24-left { gap: 34px; }
+.s24-left .eq { font-size: 30px; }
+.lbl-mono { font: 400 16px/1 var(--font-data); color: var(--ink-2); margin-bottom: 10px; }
+.s26-eq .eq { font-size: 28px; }
+.s26-eq .eq + .eq { margin-top: 12px; }
+.s28-eq .eq { font-size: 44px; }
+.s28-grid { width: 100%; height: auto; }
+.s28-grid text { font: 400 19px var(--font-body); fill: var(--ink); }
+.s28-grid text.sub { fill: var(--ink-2); font-size: 18px; }
+.s28-grid .col, .s28-grid .row { fill: none; stroke-width: 3.5; }
+.s28-grid .col { stroke: var(--ink); }
+.s28-grid .row { stroke: var(--ink-2); stroke-dasharray: 8 6; }
+.s28-grid .cells rect { fill: var(--hair); }
+.s28-grid .cells rect.on { fill: var(--ink-2); }
+</style>

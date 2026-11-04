@@ -1,0 +1,110 @@
+{
+ "1": {
+  "check": "load",
+  "pass": true,
+  "fails": []
+ },
+ "2": {
+  "check": "slide count",
+  "pass": false,
+  "fails": [
+   "48 main, 8 backup"
+  ]
+ },
+ "3": {
+  "check": "fragments",
+  "pass": false,
+  "fails": [
+   "S03: 4 steps, storyline says 3",
+   "S05: 4 steps, storyline says 3",
+   "S06: 7 steps, storyline says 3",
+   "S07: 6 steps, storyline says 3",
+   "S08: 5 steps, storyline says 4",
+   "S13: 4 steps, storyline says 3",
+   "S14: 4 steps, storyline says 3",
+   "S15: 3 steps, storyline says 2",
+   "S16: 4 steps, storyline says 3",
+   "S19: 5 steps, storyline says 3",
+   "S20: 5 steps, storyline says 3",
+   "S24: 5 steps, storyline says 4",
+   "S25: 4 steps, storyline says 3",
+   "S27: 3 steps, storyline says 4",
+   "S32: 4 steps, storyline says 3",
+   "S33: 4 steps, storyline says 3",
+   "S36: 4 steps, storyline says 3",
+   "S39: 3 steps, storyline says 2",
+   "S40: 5 steps, storyline says 4",
+   "S41: 4 steps, storyline says 3",
+   "S42: 2 steps, storyline says 3",
+   "S43: 2 steps, storyline says 3",
+   "S45: 1 steps, storyline says 0"
+  ]
+ },
+ "4": {
+  "check": "overflow",
+  "pass": true,
+  "fails": []
+ },
+ "5": {
+  "check": "overlap",
+  "pass": true,
+  "fails": []
+ },
+ "6": {
+  "check": "figures",
+  "pass": true,
+  "fails": []
+ },
+ "7": {
+  "check": "keys",
+  "pass": false,
+  "fails": [
+   "End: {'slide': 48, 'fragment': 0, 'fragmentsOnSlide': 0, 'total': 48, 'backups': 8, 'label': '48'}"
+  ]
+ },
+ "8": {
+  "check": "contrast",
+  "pass": true,
+  "fails": []
+ },
+ "9": {
+  "check": "reduced motion",
+  "pass": true,
+  "fails": []
+ },
+ "10": {
+  "check": "INT-PROP",
+  "pass": true,
+  "fails": []
+ },
+ "11": {
+  "check": "INT-PIPE",
+  "pass": true,
+  "fails": []
+ },
+ "12": {
+  "check": "INT-TEST values",
+  "pass": true,
+  "fails": []
+ },
+ "13": {
+  "check": "INT-DEDUP",
+  "pass": true,
+  "fails": []
+ },
+ "14": {
+  "check": "charts: tooltip and table",
+  "pass": true,
+  "fails": []
+ },
+ "15": {
+  "check": "size 2.93 MB",
+  "pass": true,
+  "fails": []
+ },
+ "16": {
+  "check": "offline",
+  "pass": true,
+  "fails": []
+ }
+}

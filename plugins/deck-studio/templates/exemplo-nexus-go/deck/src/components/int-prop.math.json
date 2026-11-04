@@ -1,0 +1,8 @@
+{
+  "i:prop-alpha": "\\alpha",
+  "i:prop-aT": "\\alpha^{T}",
+  "i:prop-mean": "T(1-\\alpha)",
+  "i:prop-iso": "\\alpha^{T}\\,\\mathbf{H}^{(0)}",
+  "i:prop-T": "T",
+  "i:prop-k": "k"
+}

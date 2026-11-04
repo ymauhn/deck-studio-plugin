@@ -1,0 +1,29 @@
+<!-- TIPO: tabela
+QUANDO USAR: poucos números que se comparam em linha e coluna (no máximo 6 linhas e 5 colunas na tela). Uma tabela
+maior vai para um slide de reserva (class="slide backup") ou é cortada nas linhas que a fala usa.
+REGRAS: uma tabela HTML de verdade, table.t dentro de div.tbl (lg para poucas linhas, sm para muitas); números como a
+fonte os imprime, com a vírgula decimal em português; a linha do método do trabalho em <b>; a legenda da fonte em
+.cap (oculta); a leitura da tabela à direita, um item por passo. -->
+<section class="slide" id="s20" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: o que a tabela mostra]</h2>
+<div class="bd">
+  <div class="tbl lg f" data-f="1" style="grid-column: 1 / 8">
+    <table class="t">
+      <thead><tr><th>[Método]</th><th>[Métrica A]</th><th>[Métrica B]</th></tr></thead>
+      <tbody>
+        <tr><td>[Referência 1]</td><td>[0,00]</td><td>[0,00]</td></tr>
+        <tr><td>[Referência 2]</td><td>[0,00]</td><td>[0,00]</td></tr>
+        <tr><td><b>[Este trabalho]</b></td><td><b>[0,00]</b></td><td><b>[0,00]</b></td></tr>
+      </tbody>
+    </table>
+    <p class="cap">[Fonte], Tab. [n], p. [p]</p>
+  </div>
+  <ul class="b sm" style="grid-column: 8 / 13">
+    <li class="f" data-f="2">[A leitura principal da tabela]</li>
+    <li class="f" data-f="3">[A ressalva ou a segunda leitura]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[Qual linha olhar primeiro e o que ela diz.] (p. [p], Tab. [n])</p>
+</aside>
+</section>

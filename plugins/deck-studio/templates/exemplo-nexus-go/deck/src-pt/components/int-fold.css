@@ -1,0 +1,4 @@
+/* INT-FOLD */
+.fold { display: flex; flex-direction: column; overflow: hidden; }
+.fold .fold-c { display: block; flex: 1; min-height: 0; width: 100%; }
+.fold .cap { flex: none; margin: 8px 0 0; }

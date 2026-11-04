@@ -1,0 +1,27 @@
+/* INT-GBA: term colours are the dataviz categorical slots 7, 5 and 4 (violet, magenta,
+   yellow), kept apart from the semantic blue, orange and green */
+.gb { display: flex; flex-direction: column; overflow: hidden; --gb-a: #6250d6; --gb-b: #e87ba4; --gb-c: #eda100; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .gb { --gb-a: #9085e9; --gb-b: #d55181; --gb-c: #c98500; }
+}
+:root[data-theme="dark"] .gb { --gb-a: #9085e9; --gb-b: #d55181; --gb-c: #c98500; }
+.gb .gb-g { display: block; flex: 1; min-height: 0; width: 100%; }
+.gb .gb-edges line { stroke: var(--net); stroke-linecap: round; opacity: 0.6; transition: opacity 0.15s; }
+.gb .gb-edges line.on { opacity: 1; }
+.gb .gb-pill { fill: var(--slide); }
+.gb .gb-n { fill: var(--slide); stroke: var(--muted); stroke-width: 1.5; }
+.gb .gb-c { fill: var(--slide); stroke: var(--ink); stroke-width: 2.5; }
+.gb .gb-q { font: 650 34px var(--font-display); fill: var(--ink); }
+.gb .gb-lab { font: 400 18px var(--font-data); fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.gb .gb-tA, .gb .gb-bA { fill: var(--gb-a); background: var(--gb-a); }
+.gb .gb-tB, .gb .gb-bB { fill: var(--gb-b); background: var(--gb-b); }
+.gb .gb-tC, .gb .gb-bC { fill: var(--gb-c); background: var(--gb-c); }
+.gb .gb-bars { display: grid; gap: 10px; margin-top: 8px; }
+.gb .gb-row { display: grid; grid-template-columns: 96px 1fr 56px; align-items: center; gap: 12px; font: 400 20px/1.2 var(--font-body); color: var(--ink); }
+.gb .gb-name { display: inline-flex; align-items: center; gap: 8px; }
+.gb .gb-sw { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+.gb .gb-track { position: relative; height: 14px; border-radius: 7px; background: var(--hair); overflow: hidden; }
+.gb .gb-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 7px; }
+.gb .gb-pc { font: 500 20px/1 var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
+.gb .gb-foot { margin: 12px 0 0; font: 400 20px/1.3 var(--font-body); color: var(--ink-2); }
+.gb .cap { margin: 4px 0 0; }

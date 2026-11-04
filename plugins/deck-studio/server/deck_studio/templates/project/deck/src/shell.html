@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<div id="deck">
+<div id="stage">
+<!--__SLIDES__-->
+<div id="chrome" aria-hidden="true"><div id="num"></div><div id="bar"><i></i></div></div>
+</div>
+</div>
+<div id="notes" hidden><div class="notes-head"><span id="notes-title"></span><button class="btn" data-close="notes" aria-label="{{UI_CLOSE_NOTES}}">{{UI_CLOSE}}</button></div><div id="notes-body"></div></div>
+<div id="help" hidden role="dialog" aria-label="{{UI_SHORTCUTS}}">
+<h2>{{UI_KEYS}}</h2>
+<dl>
+<dt>→ {{UI_SPACE}} PageDown Enter</dt><dd>{{UI_NEXT_STEP}}</dd>
+<dt>← PageUp Backspace</dt><dd>{{UI_PREV_STEP}}</dd>
+<dt>Home / End</dt><dd>{{UI_FIRST_LAST}}</dd>
+<dt>{{UI_DIGITS}}</dt><dd>{{UI_GO}}</dd>
+<dt>O</dt><dd>{{UI_OVERVIEW}}</dd>
+<dt>N</dt><dd>{{UI_NOTES}}</dd>
+<dt>P</dt><dd>{{UI_PRESENTER}}</dd>
+<dt>T</dt><dd>{{UI_THEME}}</dd>
+<dt>F</dt><dd>{{UI_FULLSCREEN}}</dd>
+<dt>B</dt><dd>{{UI_BACKUP}}</dd>
+<dt>?</dt><dd>{{UI_HELP}}</dd>
+</dl>
+<button class="btn" data-close="help">{{UI_CLOSE}}</button>
+</div>
+<div id="presenter" hidden><div class="pv-top"><span id="pv-clock">00:00</span><span id="pv-pos"></span><button class="btn" data-close="presenter">{{UI_CLOSE}}</button></div><div class="pv-grid"><div id="pv-notes"></div><div class="pv-next"><div class="pv-label">{{UI_NEXT}}</div><div id="pv-thumb"></div></div></div></div>
+<script type="module">/*__JS__*/</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+/* INT-FUNNEL: the selection funnel (S30) */
+.fnl svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.fnl-line { fill: none; stroke: var(--ink-2); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.fnl-last { stroke: var(--fuse); stroke-width: 3; }
+.fnl-mark { fill: var(--slide); stroke: var(--ink); stroke-width: 2.5; }
+.fnl-test .fnl-mark { fill: var(--fuse); stroke: var(--slide); stroke-width: 3; }
+.fnl-tick { stroke: var(--hair); stroke-width: 2; }
+.fnl-lab { font: 400 18px var(--font-body); fill: var(--ink-2); }
+.fnl-win { font: 700 22px var(--font-body); fill: var(--ink); }
+.fnl-cnt { font: 400 18px var(--font-data); fill: var(--ink-2); }
+.fnl-st { opacity: 0; }
+
+/* step 2: the line draws and the stations follow it; step 3: the test station */
+.fnl.g2 .fnl-line:not(.fnl-last) { stroke-dashoffset: 0; transition: stroke-dashoffset 2200ms linear; }
+.fnl.g2 .fnl-st:not(.fnl-test) { opacity: 1; transition: opacity 300ms var(--ease) var(--d); }
+.fnl.g3 .fnl-last { stroke-dashoffset: 0; transition: stroke-dashoffset 400ms linear; }
+.fnl.g3 .fnl-test { opacity: 1; transition: opacity 300ms var(--ease) 300ms; }

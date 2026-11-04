@@ -1,0 +1,2 @@
+# Overleaf and latexmk: compile with pdfLaTeX (BibTeX runs automatically)
+$pdf_mode = 1;

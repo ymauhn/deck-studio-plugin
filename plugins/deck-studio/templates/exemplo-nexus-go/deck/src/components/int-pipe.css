@@ -1,0 +1,38 @@
+.pi { display: flex; flex-direction: column; gap: 18px; height: 100%; }
+.pi-controls .pi-figbtn { margin-left: auto; }
+.pi .btn:disabled { opacity: .45; cursor: default; }
+.pi-stage { position: relative; width: 1424px; height: 470px; }
+.pi-edges { position: absolute; inset: 0; width: 1424px; height: 470px; overflow: visible; }
+.pi-edge { transition: opacity 300ms var(--ease); }
+.pi-base { fill: none; stroke-width: 3; stroke-linecap: round; opacity: .55; }
+.pi-dash { fill: none; stroke-width: 3; stroke-dasharray: 2 14; stroke-linecap: round; opacity: 0; }
+.pi-edge.on .pi-dash { opacity: 1; animation: pi-flow 1.1s linear infinite; }
+.pi-edge.on .pi-base { opacity: .8; }
+@keyframes pi-flow { to { stroke-dashoffset: -32; } }
+.pi-base.seq, .pi-dash.seq { stroke: var(--seq); }
+.pi-base.net, .pi-dash.net { stroke: var(--net); }
+.pi-base.fuse, .pi-dash.fuse { stroke: var(--fuse); }
+.pi-dots circle { stroke: var(--slide); stroke-width: 1.5; }
+.pi-dots .seq { fill: var(--seq); } .pi-dots .net { fill: var(--net); } .pi-dots .fuse { fill: var(--fuse); }
+.pi-node {
+  position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  background: var(--slide); border: 2.5px solid var(--ink-2); border-radius: 8px; padding: 0 8px;
+  font: 400 19px/1.15 var(--font-body); color: var(--ink); text-align: center; white-space: nowrap;
+  transition: opacity 300ms var(--ease); cursor: default;
+}
+.pi-node .l1 { font-weight: 700; }
+.pi-node .l2 { font-size: 18px; color: var(--ink-2); margin-top: 3px; }
+.pi-node.seq { border-color: var(--seq); }
+.pi-node.net { border-color: var(--net); }
+.pi-node.fuse { border-color: var(--fuse); }
+.pi-node.head { border-style: dashed; }
+.pi-node:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.pi-tip { white-space: normal; max-width: 520px; }
+.pi-figwrap { display: none; }
+.pi-figmode .pi-stage { display: none; }
+.pi-figmode .pi-figwrap { display: flex; align-items: flex-end; gap: 28px; height: 470px; }
+.pi-figwrap .plate { height: 470px; padding: 14px; }
+.pi-figmode .pipe-fig { display: block; height: 440px; width: auto; }
+.pi-figwrap .cap { max-width: 420px; }
+.pi-instant .pi-edge, .pi-instant .pi-node { transition: none; }
+.pi-instant .pi-dash { animation: none !important; }

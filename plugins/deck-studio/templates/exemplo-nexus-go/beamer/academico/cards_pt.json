@@ -1,0 +1,496 @@
+[
+ {
+  "id": "S01",
+  "part": "Abertura",
+  "points": [
+   "Bom dia, e obrigado pela presença; esta é a minha defesa de mestrado no Instituto de Computação da Unicamp.",
+   "Fui orientado pelo Professor Zanoni Dias, com o Professor Hélio Pedrini e o Doutor Gabriel Bianchin de Oliveira como coorientadores.",
+   "A pergunta é: até onde uma rede de interação de proteínas consegue prever função, sozinha e junto com um modelo de linguagem de proteínas?",
+   "A minha resposta é o NEXUS-GO, que propaga embeddings do ProtT5 pela rede de interação do STRING."
+  ],
+  "transition": "Vou mostrar como a apresentação está organizada."
+ },
+ {
+  "id": "S02",
+  "part": "Abertura",
+  "points": [
+   "A apresentação tem seis partes: motivação, fundamentação, dados e avaliação, método, resultados e conclusões.",
+   "Apresento o método como duas gerações de modelos e quatro rotas do NEXUS-GO.",
+   "Os resultados cobrem as ablações, a comparação com a literatura, o custo e o papel da conectividade.",
+   "Cada modelo é descrito por três decisões: representação, propagação e head de predição."
+  ],
+  "transition": "Começo pela motivação."
+ },
+ {
+  "id": "S03",
+  "part": "Motivação",
+  "points": [
+   "As proteínas participam de quase todos os processos de uma célula viva.",
+   "Sequenciar é rápido, mas caracterizar uma função em laboratório é lento e caro.",
+   "Por isso as bases enchem de sequências muito mais rápido do que de anotações experimentais; as barras não estão em escala.",
+   "O CAFA, o Critical Assessment of Functional Annotation, avalia preditores em proteínas cuja função ainda não era pública."
+  ],
+  "transition": "Para prever uma função, primeiro precisamos de um jeito de escrevê-la."
+ },
+ {
+  "id": "S04",
+  "part": "Motivação",
+  "points": [
+   "A Gene Ontology tem três partes, que eu mostro sempre nesta ordem: BP, CC e MF.",
+   "Cada ontologia é um grafo acíclico dirigido de termos, ligados por relações como is_a e part_of.",
+   "A True Path Rule diz que uma proteína com um termo também tem todos os ancestrais desse termo, até a raiz.",
+   "As predições de todo modelo são tornadas consistentes antes de qualquer métrica; a tarefa é classificação hierárquica multirrótulo."
+  ],
+  "transition": "Só que a sequência não conta a história toda."
+ },
+ {
+  "id": "S05",
+  "part": "Motivação",
+  "points": [
+   "Proteínas raramente agem sozinhas; elas formam complexos e participam de vias.",
+   "Modelamos essas relações como uma rede PPI: as proteínas são nós e as associações são arestas.",
+   "Culpa por associação: proteínas conectadas tendem a compartilhar funções; é uma tendência probabilística, não uma regra.",
+   "O STRING mistura evidências de confiabilidade desigual, e cerca de um terço das nossas proteínas não tem nenhuma aresta."
+  ],
+  "transition": "Isso leva a sete perguntas de pesquisa."
+ },
+ {
+  "id": "S06",
+  "part": "Motivação",
+  "points": [
+   "As três primeiras tratam de representação e arquitetura: a representação da rede, o ganho de propagar o ProtT5, e agregação fixa contra aprendida.",
+   "As duas seguintes perguntam se early fusion e late fusion ajudam, e quão fundo a propagação deve ir, com quanta retenção.",
+   "As duas últimas comparam com a literatura e testam uma rede global única, que junta todas as espécies e canais de evidência.",
+   "Vou responder cada pergunta no final."
+  ],
+  "transition": "Agora, o que este trabalho contribui."
+ },
+ {
+  "id": "S07",
+  "part": "Motivação",
+  "points": [
+   "Primeiro, o NEXUS-GO: uma propagação não paramétrica, de múltiplos saltos, de embeddings do ProtT5 sobre o STRING.",
+   "Segundo, propagação fixa contra agregação aprendida com GCN e GAT; terceiro, um head vetorial contra um head de imagem.",
+   "Quarto, early fusion e late fusion; quinto, um benchmark contra cinco métodos retreinados nas mesmas partições.",
+   "O trabalho gerou um artigo no VISAPP 2026 e uma versão estendida aceita no CCIS, prevista para dezembro de 2026."
+  ],
+  "transition": "Agora a fundamentação, começando pelos grafos."
+ },
+ {
+  "id": "S08",
+  "part": "Fundamentação",
+  "points": [
+   "Um grafo é um conjunto de nós e arestas; aqui, proteínas e associações ponderadas pela confiança do STRING.",
+   "Redes de proteínas são muito esparsas, então a memória cresce com o número de arestas, e não com o quadrado do número de proteínas.",
+   "Redes neurais em grafos trocam mensagens: cada nó agrega seus vizinhos e se atualiza.",
+   "L camadas enxergam uma vizinhança de L saltos, mas camadas demais causam oversmoothing."
+  ],
+  "transition": "Mais três blocos básicos aparecem adiante na apresentação."
+ },
+ {
+  "id": "S09",
+  "part": "Fundamentação",
+  "points": [
+   "O perceptron multicamadas, ou MLP, é o head vetorial de predição dos meus modelos.",
+   "A rede convolucional desliza filtros pequenos sobre uma imagem; na rota de imagem eu uso ResNet-50 e ConvNeXt-Tiny.",
+   "O autoencoder comprime a entrada e a reconstrói; o deepNF usa um sobre seus estados de difusão."
+  ],
+  "transition": "O outro ingrediente é o modelo de linguagem de proteínas."
+ },
+ {
+  "id": "S10",
+  "part": "Fundamentação",
+  "points": [
+   "Modelos de linguagem de proteínas aprendem por autossupervisão em centenas de milhões de sequências, sem rótulos.",
+   "Um encoder transformer lê cada resíduo no contexto da proteína inteira.",
+   "Eu uso o ProtT5-XL-U50, pré-treinado no BFD e no UniRef50 com 15% de mascaramento, e leio as camadas 22, 23 e 24.",
+   "Cada camada é tirada a média sobre os resíduos e concatenada; o modelo fica congelado, o que dá um vetor de tamanho fixo."
+  ],
+  "transition": "Vou situar este trabalho na literatura."
+ },
+ {
+  "id": "S11",
+  "part": "Fundamentação",
+  "points": [
+   "A área passou da votação entre vizinhos para difusão, node embeddings, redes neurais em grafos e graph transformers.",
+   "Cada passo acrescentou parâmetros, superfície de ajuste e custo.",
+   "Eu retreinei cinco métodos: Mashup, deepNF, MELISSA, DeepGraphGO e SEGT-GO.",
+   "A minha posição: um modelo de linguagem congelado, uma difusão fixa de múltiplos saltos, e só um head MLP é treinado."
+  ],
+  "transition": "Essa revisão deixa uma pergunta em aberto."
+ },
+ {
+  "id": "S12",
+  "part": "Fundamentação",
+  "points": [
+   "Um componente de grafo aprendido ainda é necessário quando o objeto propagado já é informativo?",
+   "Eu propago embeddings do ProtT5 com um operador fixo por um número finito de passos, e depois uso um head comum.",
+   "A contribuição é uma escolha de onde colocar o grafo na arquitetura, não um novo mecanismo de propagação.",
+   "Existe uma representação de sequência para toda proteína, então a rede só acrescenta a ela."
+  ],
+  "transition": "Parte três: os dados e a avaliação."
+ },
+ {
+  "id": "S13",
+  "part": "Dados e avaliação",
+  "points": [
+   "O corpus vem dos dados de treino do CAFA5; em BP são 73,768 proteínas de treino e 9,221 em cada um, validação e teste.",
+   "Cada ontologia mantém seus termos mais frequentes: 500 em BP, 498 em CC e 499 em MF.",
+   "A partição é 80, 10 e 10 por cento no nível da proteína, então toda comparação é interna.",
+   "Os rótulos são esparsos: em média 25.91 termos em BP, e só 5.18% de entradas positivas em BP."
+  ],
+  "transition": "A rede é o STRING, versão 11.5."
+ },
+ {
+  "id": "S14",
+  "part": "Dados e avaliação",
+  "points": [
+   "O arquivo tem 2,422,234 registros, mas só 791,011 pares distintos sobre 86,423 proteínas.",
+   "Os combined scores vão de 0.400 a 0.999 e expressam confiança, não força de ligação.",
+   "Cada par aparece em média 3.06 vezes com o mesmo score, então as repetições não trazem informação.",
+   "Os graus têm cauda pesada: a proteína mediana tem de 5 a 7 vizinhos, e os maiores hubs, de 763 a 805."
+  ],
+  "transition": "Agora a propriedade mais importante desta rede."
+ },
+ {
+  "id": "S15",
+  "part": "Dados e avaliação",
+  "points": [
+   "Cerca de um terço das proteínas não tem nenhuma aresta: 36.65% em BP, 34.95% em CC e 32.19% em MF.",
+   "A fração é estável entre treino, validação e teste, e as proteínas isoladas continuam como nós.",
+   "Um limiar de confiança mais alto só piora; em 0.90, mais da metade fica isolada.",
+   "Para um modelo só de rede, um terço do corpus fica sem entrada, e a segunda geração elimina isso."
+  ],
+  "transition": "Como as predições são avaliadas?"
+ },
+ {
+  "id": "S16",
+  "part": "Dados e avaliação",
+  "points": [
+   "O critério principal é o wF_max, a medida F ponderada pelo conteúdo de informação, usada para selecionar toda configuração.",
+   "Eu também reporto o F_max, a variante dele sem a raiz, o S_min em bits e duas áreas sob a curva de precisão e revocação.",
+   "As predições são tornadas consistentes com a hierarquia antes da avaliação.",
+   "O limiar varre 101 valores, e uma proteína sem predição conta como revocação zero."
+  ],
+  "transition": "A última parte do setup é o protocolo de aprendizado."
+ },
+ {
+  "id": "S17",
+  "part": "Dados e avaliação",
+  "points": [
+   "O cenário é transdutivo: um único grafo, mas a loss só lê os rótulos de treino.",
+   "Toda decisão de projeto é tomada na validação; o teste é lido uma única vez, no final.",
+   "Todas as execuções usam uma única seed, então diferenças abaixo de 0.5 pp são empates; esse é o meu piso de interpretação."
+  ],
+  "transition": "Parte quatro: o método."
+ },
+ {
+  "id": "S18",
+  "part": "Método",
+  "points": [
+   "Cada modelo é definido por três decisões: representação, propagação e head de predição.",
+   "A primeira geração usa só a rede: a linha da proteína na matriz do STRING, com um head MLP ou CNN.",
+   "Cerca de um terço das proteínas é isolado, então para elas essa representação é um vetor nulo.",
+   "A segunda geração, o NEXUS-GO, parte do ProtT5 e o propaga, de forma fixa ou com uma GCN ou GAT."
+  ],
+  "transition": "Vou descrever primeiro a primeira geração."
+ },
+ {
+  "id": "S19",
+  "part": "Método",
+  "points": [
+   "A entrada é a linha da proteína na matriz de adjacência ponderada, restrita às proteínas de treino.",
+   "Eu mantenho o perfil bruto ou o reduzo com max pooling ou average pooling.",
+   "A rota vetorial usa um MLP ou uma CNN unidimensional.",
+   "A rota de imagem transforma 224 valores agregados numa imagem de 224 por 224 para a ResNet-50 ou a ConvNeXt-Tiny."
+  ],
+  "transition": "Aqui está a parede em que essa geração bate."
+ },
+ {
+  "id": "S20",
+  "part": "Método",
+  "points": [
+   "Para uma proteína isolada, o perfil é todo zero, então a imagem é uniforme.",
+   "O head só consegue devolver a prior de classes aprendida, a mesma resposta para toda proteína isolada.",
+   "Nenhuma arquitetura recupera informação que não está na entrada.",
+   "A próxima geração precisa de uma representação para toda proteína, e a sequência fornece uma."
+  ],
+  "transition": "Este é o NEXUS-GO numa visão geral."
+ },
+ {
+  "id": "S21",
+  "part": "Método",
+  "points": [
+   "O encoder ProtT5 congelado transforma cada sequência em H(0), um vetor de 3,072 dimensões que existe para toda proteína.",
+   "Os registros do STRING são deduplicados pela regra do máximo em W, e a normalização por coluna dá P.",
+   "O NEXUS-GO/Fixed propaga H(0) com P sem parâmetros; o NEXUS-GO/GNN aprende a agregação com uma GCN ou GAT.",
+   "O NEXUS-GO/Early junta as duas representações; o NEXUS-GO/Late combina as probabilidades delas com uma regra linear."
+  ],
+  "transition": "Vou abrir cada bloco, começando pela representação da sequência."
+ },
+ {
+  "id": "S22",
+  "part": "Método",
+  "points": [
+   "O ProtT5 lê no máximo 1,022 tokens, então sequências longas são divididas em pedaços e tiramos a média.",
+   "As camadas 24, 23 e 22 dão 1,024 dimensões cada, 3,072 quando concatenadas.",
+   "Três camadas adjacentes evitam apostar numa camada só e não acrescentam nada para ajustar.",
+   "Essa representação existe para toda proteína; o pipeline é herdado do SUPERMAGOv2."
+  ],
+  "transition": "Em seguida, o grafo."
+ },
+ {
+  "id": "S23",
+  "part": "Método",
+  "points": [
+   "W é simétrica, sem self-loops, armazenada de forma esparsa com no máximo 1,133,132 entradas, em vez de 25 a 35 GB densa.",
+   "A soma premia quantas vezes um par foi escrito: A com 0.80 cinco vezes vira 4.00, contra B com 0.95.",
+   "O máximo mantém o score do STRING na própria escala, então B fica em primeiro; essa é a minha regra.",
+   "Normalizar cada coluna dá P, então o peso de um vizinho é relativo aos outros vizinhos da proteína."
+  ],
+  "transition": "Agora o núcleo do método: a propagação fixa."
+ },
+ {
+  "id": "S24",
+  "part": "Método",
+  "points": [
+   "Cada passo mantém uma fração α da representação anterior e pega um menos α dos vizinhos ponderados, repetido T vezes.",
+   "Nada é treinado, então o resultado é calculado uma vez, guardado em cache e reutilizado em toda época.",
+   "Muitos passos causam oversmoothing, e os nós isolados só encolhem em direção ao cinza; um α mais alto muda bem menos.",
+   "T igual a 0 ou α igual a 1 desliga o grafo: esse é o baseline ProtT5."
+  ],
+  "transition": "O que isso faz com proteínas reais?"
+ },
+ {
+  "id": "S25",
+  "part": "Método",
+  "points": [
+   "Quatro proteínas de Cellular Component, de um hub de grau 798 até uma proteína isolada, antes e depois de seis passos com α em 0.4.",
+   "As proteínas conectadas mantêm sua estrutura enquanto absorvem a vizinhança.",
+   "A proteína isolada só é escalada por α elevado a T, então a imagem dela vai desbotando para o cinza.",
+   "Mudanças nas proteínas de grau zero refletem esse reescalonamento e o retreino do head, não informação da vizinhança."
+  ],
+  "transition": "A alternativa é aprender a agregação."
+ },
+ {
+  "id": "S26",
+  "part": "Método",
+  "points": [
+   "A GCN adiciona self-loops, normaliza de forma simétrica e toma a confiança do STRING como dada.",
+   "A GAT aprende atenção sobre os vizinhos com quatro cabeças, reestimando quanto cada um conta.",
+   "As duas têm duas camadas de largura 1,024 e produzem um embedding de 1,024 dimensões, g.",
+   "Um operador aprendido precisa repropagar o grafo inteiro, cerca de 289 vezes por época, enquanto a rota fixa faz isso uma vez."
+  ],
+  "transition": "Dois heads de predição consomem essas representações."
+ },
+ {
+  "id": "S27",
+  "part": "Método",
+  "points": [
+   "O head vetorial é um MLP com camadas ocultas de 1,024 e 512 unidades e dropout de 0.4.",
+   "O head de visão transforma os 3,072 valores em três canais de 32 por 32, um por camada do ProtT5.",
+   "Os backbones são a ResNet-50 e a ConvNeXt-Tiny, pré-treinadas na ImageNet e com fine-tuning completo.",
+   "Atenção: aqui a adjacência entre pixels só reflete a ordem de armazenamento, e os resultados mostram que isso importa."
+  ],
+  "transition": "Todo modelo é treinado com o mesmo objetivo."
+ },
+ {
+  "id": "S28",
+  "part": "Método",
+  "points": [
+   "A ProteinLoss é um produto de três fatores: a ZLPR e dois fatores de um menos um F1 ponderado.",
+   "A ZLPR separa os termos positivos de uma proteína dos negativos em torno de zero.",
+   "Os dois fatores de F1 suave são ponderados pelo conteúdo de informação, um por coluna de termo e um por linha de proteína.",
+   "Na primeira geração ela supera a entropia cruzada binária por 5.47 pp na média, então toda execução seguinte usa ela."
+  ],
+  "transition": "A última peça do método é a fusão."
+ },
+ {
+  "id": "S29",
+  "part": "Método",
+  "points": [
+   "As rotas fixa e aprendida usam a confiança de jeitos diferentes, então eu as combino em vez de escolher uma.",
+   "A early fusion treina um head sobre as representações concatenadas, de 4,096 ou 3,072 dimensões.",
+   "A late fusion treina cada rota sozinha e combina as probabilidades depois, sem nenhum treino adicional.",
+   "Eu comparo onze regras de late fusion, escolhendo os coeficientes na validação entre 71 configurações por ontologia."
+  ],
+  "transition": "Parte cinco: os resultados."
+ },
+ {
+  "id": "S30",
+  "part": "Resultados",
+  "points": [
+   "A campanha tem 170 execuções e cerca de 136.3 horas de GPU, 147 delas numa RTX A5500.",
+   "A seleção é um funil: cada etapa só passa para a seguinte o vencedor da validação.",
+   "Duas estações não são escolhas puras de validação: a regra do máximo, e a ConvNeXt-Tiny com margem de 0.57 pp.",
+   "O teste é lido uma única vez, no final, para o vencedor congelado, o NEXUS-GO/Late."
+  ],
+  "transition": "Primeiro, o que a rede sozinha consegue fazer."
+ },
+ {
+  "id": "S31",
+  "part": "Resultados",
+  "points": [
+   "Um baseline ingênuo, que não olha para nada, chega a um wF_max médio de 43.56.",
+   "A ProteinLoss supera a entropia cruzada binária por 5.47 pp na média, e por 8.87 em MF.",
+   "O MLP sobre o perfil bruto vence com 44.51; a melhor CNN unidimensional chega só a 41.16.",
+   "Os backbones de visão ficam entre 36.99 e 37.62, então a topologia sozinha supera o baseline ingênuo por só 0.95 pp."
+  ],
+  "transition": "Agora a segunda geração, começando pela propagação fixa com o head vetorial."
+ },
+ {
+  "id": "S32",
+  "part": "Resultados",
+  "points": [
+   "A melhor profundidade é um passo em BP, dois em CC e zero em MF.",
+   "Depois do pico, o desempenho cai de 12.80 a 17.60 pp até T igual a 10.",
+   "A retenção tem pico em 0.7 em BP e 0.8 em CC; retenção baixa é claramente pior.",
+   "O grafo funciona como uma correção da representação da própria proteína, não como substituto."
+  ],
+  "transition": "O head de visão se comporta de outro jeito."
+ },
+ {
+  "id": "S33",
+  "part": "Resultados",
+  "points": [
+   "O head de visão tem pico em sete passos em BP e seis em CC, mais um platô do que um pico.",
+   "Ele ganha 5.84 pp em BP e 2.93 em CC com a propagação, contra 1.85 e 0.92 do head vetorial.",
+   "Ele desaba com α de 0.2 ou menos, porque os nós isolados são escalados por α elevado a T.",
+   "O melhor valor dele em BP, 52.17, ainda fica abaixo do head vetorial sem grafo nenhum, com 53.36."
+  ],
+  "transition": "Em seguida, agregação fixa contra aprendida."
+ },
+ {
+  "id": "S34",
+  "part": "Resultados",
+  "points": [
+   "A GCN vence a GAT nos seis pares, por 3.88 a 9.31 pp, e em todos os 30 pares de fusão.",
+   "O operador fixo tem média de 65.12, contra 63.32 da GCN.",
+   "A GCN fica à frente em BP por 0.55, um empate, e fica atrás por 0.59 em CC e 5.35 em MF.",
+   "Toda diferença de deduplicação acima do ruído favorece a regra do máximo, até 3.83 pp para a GAT."
+  ],
+  "transition": "Depois, a fusão."
+ },
+ {
+  "id": "S35",
+  "part": "Resultados",
+  "points": [
+   "A melhor configuração de early fusion chega a 65.80, 0.68 acima da rota fixa sozinha.",
+   "A late fusion vence: uma mistura linear com γ em 0.50 em BP e 0.55 em CC e MF chega a 67.06.",
+   "Ela ganha 2.18 pp em BP, 1.85 em CC e 1.26 em MF sobre o melhor dos seus componentes, com um único parâmetro ajustado a mais.",
+   "Os modelos de stacking põem quase todo o peso nas duas probabilidades, e não no conteúdo de informação ou no grau."
+  ],
+  "transition": "Somando todas as etapas, qual head é melhor?"
+ },
+ {
+  "id": "S36",
+  "part": "Resultados",
+  "points": [
+   "O head vetorial vence o head de visão nas doze comparações.",
+   "A margem média é de 6.62 pp na primeira geração, 3.96 com propagação fixa, 2.69 com a GNN e 3.35 com early fusion.",
+   "Ela diminui, mas não mostra tendência de chegar a zero.",
+   "Nenhuma das duas imagens tem a localidade que uma convolução pressupõe."
+  ],
+  "transition": "O próximo gráfico resume toda a trajetória na validação."
+ },
+ {
+  "id": "S37",
+  "part": "Resultados",
+  "points": [
+   "O baseline ingênuo fica em 43.56 e a primeira geração em 44.51, a menos de um ponto de distância.",
+   "O ProtT5 sozinho, com o grafo desligado, salta para 63.92.",
+   "A propagação fixa chega a 65.12, a early fusion a 65.84 e a late fusion a 67.06.",
+   "A maior parte do salto vem do modelo de linguagem; o grafo acrescenta um restante consistente, principalmente em BP e CC."
+  ],
+  "transition": "Agora o conjunto de teste, lido uma única vez, contra cinco métodos da literatura."
+ },
+ {
+  "id": "S38",
+  "part": "Resultados",
+  "points": [
+   "O NEXUS-GO/Late tem o melhor valor em todas as colunas de teste, nas seis métricas, exceto AuPRC em MF.",
+   "A margem dele sobre o DeepGraphGO é de 9.77 pp em BP, 8.67 em CC e 4.93 em MF.",
+   "O S_min concorda: 17.12 contra 20.11 bits em BP, 8.22 contra 9.67 em CC, 5.14 contra 5.67 em MF.",
+   "O baseline ProtT5 sozinho já supera todos os métodos da literatura em wF_max.",
+   "Todos os baselines foram retreinados no mesmo corpus, então essa ordem descreve as configurações adaptadas."
+  ],
+  "transition": "A cobertura coloca essas margens em perspectiva."
+ },
+ {
+  "id": "S39",
+  "part": "Resultados",
+  "points": [
+   "Todas as rotas do NEXUS-GO preveem 100% da partição de teste.",
+   "O DeepGraphGO e o SEGT-GO chegam a 95.1 a 96.3% usando uma busca por homologia.",
+   "O Mashup, o MELISSA e o deepNF só enxergam membros da rede e cobrem de 63.6 a 68.7%.",
+   "Parte da distância para os métodos só de rede é alcance, não qualidade de ranqueamento."
+  ],
+  "transition": "Quanto custa cada rota?"
+ },
+ {
+  "id": "S40",
+  "part": "Resultados",
+  "points": [
+   "A propagação fixa com o head vetorial treina a 5.24 segundos por época, com 6.4 GiB de pico de memória.",
+   "A GCN leva 68.76 segundos e 14.1 GiB, e a GAT, 161.41 segundos e 20.7 GiB.",
+   "O operador fixo empata com a GCN ou a supera, com cerca de um treze avos do tempo por época.",
+   "O motivo é estrutural: o operador fixo roda uma vez, e o aprendido, a cada passo."
+  ],
+  "transition": "Por fim, onde o grafo ajuda?"
+ },
+ {
+  "id": "S41",
+  "part": "Resultados",
+  "points": [
+   "Toda rota com ProtT5 vai pior nas proteínas conectadas do que nas isoladas, e o controle sem grafo mostra isso também.",
+   "Os hubs tendem a ser multifuncionais e mais difíceis para um modelo de sequência.",
+   "O ganho sobre o controle cresce com o grau, até 9.05 pp em BP, 8.71 em CC e 4.64 em MF.",
+   "O grafo ajuda onde existe grafo."
+  ],
+  "transition": "Parte seis: as conclusões, começando pelas respostas."
+ },
+ {
+  "id": "S42",
+  "part": "Conclusões",
+  "points": [
+   "A melhor representação da rede é o perfil sem redução com um MLP; impor localidade atrapalha.",
+   "A maior parte do ganho vem do ProtT5; no teste, a propagação acrescenta 1.87 pp em BP, 2.15 em CC e nada em MF.",
+   "A late fusion lidera com 67.06 na validação e ajuda de 1.26 a 2.18 pp; um ou dois saltos com α de 0.7 a 0.8 funcionam melhor.",
+   "O NEXUS-GO/Late supera a literatura por 9.77, 8.67 e 4.93 pp de wF_max, numa única rede global agregada."
+  ],
+  "transition": "Esses resultados vêm com limitações."
+ },
+ {
+  "id": "S43",
+  "part": "Conclusões",
+  "points": [
+   "Todas as execuções usam uma única seed, então o piso de 0.5 pp é uma convenção de leitura, não um intervalo de confiança.",
+   "A partição aleatória no nível da proteína mede interpolação transdutiva, e pode haver alguma homologia.",
+   "Os scores do STRING incluem bases curadas e mineração de texto, o que pode vazar conhecimento funcional.",
+   "Fixo contra aprendido não é uma ablação de fator único, e os baselines foram adaptados ao nosso cenário."
+  ],
+  "transition": "Essas limitações apontam os próximos passos."
+ },
+ {
+  "id": "S44",
+  "part": "Conclusões",
+  "points": [
+   "Separar o grafo por organismo, ou treinar um modelo por organismo.",
+   "Manter separados os canais de evidência do STRING, para que evidência experimental conte diferente de mineração de texto.",
+   "Testar grafos heterogêneos, comparando com métodos como o ProtHGT, e agregação amostrada como no GraphSAGE.",
+   "Features de nó mais ricas são mais promissoras para MF, onde a rede contribuiu menos."
+  ],
+  "transition": "Vou concluir."
+ },
+ {
+  "id": "S45",
+  "part": "Conclusões",
+  "points": [
+   "O NEXUS-GO propaga o ProtT5 sobre o STRING com um operador fixo e se iguala a um encoder aprendido por uma fração do custo.",
+   "A fusão dele com uma GCN é o melhor método avaliado em todas as ontologias.",
+   "O código é público no GitHub, com um artigo no VISAPP 2026 e uma versão estendida aceita no CCIS.",
+   "Agradeço à banca, aos meus orientadores, à CAPES, ao BTG Pactual e ao Instituto de Computação."
+  ],
+  "transition": "Muito obrigado; fico à disposição para as perguntas."
+ }
+]

@@ -1,0 +1,28 @@
+<!-- TIPO: gráfico de barras em escala, animado (componente BARRAS)
+QUANDO USAR: comparar de 2 a 8 valores da mesma métrica (métodos, conjuntos, condições). É o gráfico padrão do deck:
+use-o em vez do SVG estático do 07 sempre que a fonte dá os números. Os valores vêm do FACTS.md (o número exato, com
+as casas da fonte), e a página vai nas notas.
+REGRAS: "casas" igual à precisão da fonte; "unidade" curta (%, ms, cm/s); a cor de conceito só na barra do trabalho
+(ou do conceito dela), as outras sem cor; uma barra por passo, na ordem da fala ("juntas": true quando a comparação
+é uma só); o eixo começa no zero (o componente faz isso). O botão Tabela mostra os mesmos números. Validação e teste
+nunca no mesmo gráfico. Os nomes e números abaixo são de mentira: troque todos. -->
+<section class="slide" id="s31" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: a comparação em uma frase, com o número que importa]</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 9" data-component="BARRAS" data-opts='{
+    "itens": [
+      {"rotulo": "[Método A]", "valor": 111.1},
+      {"rotulo": "[Método B]", "valor": 222.2},
+      {"rotulo": "[Este trabalho]", "valor": 333.3, "cor": "c3"}
+    ],
+    "casas": 1, "unidade": "[un]", "coluna": "[Método]"
+  }'></div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">[A leitura do gráfico]</li>
+    <li class="f c3" data-f="3">[O ganho do trabalho, com o número]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[O que o gráfico compara e o que concluir.] (p. [p], Tab. [n])</p>
+</aside>
+</section>

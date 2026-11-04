@@ -1,0 +1,143 @@
+<section class="slide" id="s13" data-part="3 · Data and evaluation">
+<h2 class="title">Data: a CAFA5-derived corpus</h2>
+<div class="bd">
+  <div class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="tbl lg" data-table="corpus"></div>
+  </div>
+  <ul class="b" style="grid-column: 8 / 13">
+    <li class="f" data-f="2">80 / 10 / 10 split, disjoint at protein level, no temporal or homology constraint</li>
+    <li class="f" data-f="3"><b>Labels per protein (mean):</b> 25.91 BP, 12.48 CC, 7.55 MF</li>
+    <li class="f" data-f="4"><b>Label matrix density:</b>
+      <span class="dens"><span class="num">BP</span><i class="dbar" style="--v:5.18"></i><span class="num">5.18%</span></span>
+      <span class="dens"><span class="num">CC</span><i class="dbar" style="--v:2.51"></i><span class="num">2.51%</span></span>
+      <span class="dens"><span class="num">MF</span><i class="dbar" style="--v:1.51"></i><span class="num">1.51%</span></span>
+    </li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The official CAFA5 test labels were not available, so the splits come from the training corpus.</p>
+<p>Only about five hundred most frequent terms per ontology are kept, which makes absolute values not comparable with CAFA numbers.</p>
+</aside>
+</section>
+
+<section class="slide" id="s14" data-part="3 · Data and evaluation">
+<h2 class="title">STRING v11.5: one aggregated network</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="plate"><div class="fig">
+      <img src="img/fig_4_1.webp" alt="Left: combined scores spread from 0.400 to 0.999; right: node degree is heavy-tailed, most proteins have a few neighbours and a few hubs have hundreds">
+      <div class="mask fo" data-f="4" style="left:50%; top:0; right:0; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 4.1 · left combined score, right degree</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 8 / 13">
+    <li class="f net" data-f="1">2,422,234 records, 791,011 distinct pairs, 86,423 proteins</li>
+    <li class="f net" data-f="2">Combined score in [0.400, 0.999]; confidence, not binding strength</li>
+    <li class="f net" data-f="3">Each pair repeated 3.06 times on average (up to 170), always with the same score</li>
+    <li class="f net" data-f="4"><b>Degree is heavy-tailed:</b> median 5 to 7, maximum 763 to 805</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The medium-confidence floor of 400 comes with the inherited file.</p>
+<p>Repeated records carry no extra score information, which later decides the deduplication rule. Some knowledge circularity with the annotations cannot be excluded.</p>
+</aside>
+</section>
+
+<section class="slide" id="s15" data-part="3 · Data and evaluation">
+<h2 class="title">One third of the proteins have no edge</h2>
+<div class="bd s15">
+  <div class="stack" style="grid-column: 1 / 7">
+    <figure class="f" data-f="1">
+      <div class="plate"><div class="fig"><img src="img/fig_4_2.webp" alt="In every ontology and split, between 31 and 37 percent of the proteins have no retained interaction"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 4.2</span></figcaption>
+    </figure>
+    <ul class="b">
+      <li class="f" data-f="1"><b>Isolated:</b> 36.65% BP, 34.95% CC, 32.19% MF</li>
+      <li class="f" data-f="2">Stable across training, validation and test</li>
+    </ul>
+  </div>
+  <div class="stack" style="grid-column: 7 / 13">
+    <figure class="f" data-f="3">
+      <div class="plate"><div class="fig"><img src="img/fig_4_3.webp" alt="The isolated fraction stays flat up to a threshold of 0.40 and rises above half of the proteins at 0.90"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 4.3</span></figcaption>
+    </figure>
+    <ul class="b f" data-f="3">
+      <li>Thresholds up to 0.40 are inert; at 0.90 more than half the proteins are isolated</li>
+    </ul>
+  </div>
+</div>
+<aside class="notes">
+<p>Isolated proteins were kept as nodes so that every protein is scored. For a model that sees only the network, these proteins have no input at all.</p>
+<p>This is the limitation the second generation is built to remove.</p>
+</aside>
+</section>
+
+<section class="slide" id="s16" data-part="3 · Data and evaluation">
+<h2 class="title">Six protein-centric metrics</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1"><b>Primary criterion:</b> wF<sub>max</sub>, information-content weighted</li>
+    <li class="f" data-f="2">Also F<sub>max</sub>, F*<sub>max</sub>, S<sub>min</sub>, AuPRC, IAuPRC</li>
+    <li class="f" data-f="3">Predictions made hierarchy-consistent before scoring</li>
+    <li class="f" data-f="4">101 thresholds; full evaluation mode (unpredicted proteins count as zero recall)</li>
+  </ul>
+  <div class="col-b stack" style="gap:30px">
+    <div class="f" data-f="1">
+      <div class="m d">wF_{\max} = \max_{\tau}\, \frac{2 \cdot wpr(\tau) \cdot wrc(\tau)}{wpr(\tau) + wrc(\tau)}</div>
+      <p class="small" style="margin:14px 0 0">each term weighted by its information content, <span class="m">\mathrm{IC}(v) = -\log_2 \widehat{P}\bigl(v \mid \mathrm{pa}(v)\bigr)</span></p>
+    </div>
+    <div class="f s16-tpr" data-f="3">
+      <div class="m d">\tilde{s}_{iv} = \max_{u \in \mathcal{D}(v)} s_{iu}</div>
+      <svg viewBox="0 0 640 170" role="img" aria-label="A parent term scored below its child is raised to the child's score">
+        <g class="s16-tree">
+          <text x="0" y="22">before</text>
+          <line x1="110" y1="60" x2="70" y2="130"/><line x1="110" y1="60" x2="150" y2="130"/>
+          <circle cx="110" cy="52" r="16"/><circle cx="70" cy="138" r="16"/><circle cx="150" cy="138" r="16"/>
+          <rect x="132" y="50" width="12" height="18" class="lo"/><rect x="92" y="104" width="12" height="50" class="hi"/><rect x="172" y="140" width="12" height="14" class="lo"/>
+          <text x="330" y="22">after</text>
+          <line x1="440" y1="60" x2="400" y2="130"/><line x1="440" y1="60" x2="480" y2="130"/>
+          <circle cx="440" cy="52" r="16"/><circle cx="400" cy="138" r="16"/><circle cx="480" cy="138" r="16"/>
+          <rect x="462" y="18" width="12" height="50" class="hi"/><rect x="422" y="104" width="12" height="50" class="hi"/><rect x="502" y="140" width="12" height="14" class="lo"/>
+          <path d="M226 95 h64" class="arr"/><path d="M280 87 l11 8 l-11 8" class="arr"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+<aside class="notes">
+<p>wF<sub>max</sub> weights each term by information content, so frequent terms near the root count little. It is the selection criterion everywhere.</p>
+<p>The ancestor closure of predictions uses <code>is_a</code> only, which matters most for CC.</p>
+</aside>
+</section>
+
+<section class="slide" id="s17" data-part="3 · Data and evaluation">
+<h2 class="title">Learning regime and protocol</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 8">
+    <div class="plate"><div class="fig"><img src="img/fig_5_2.webp" alt="One graph over training, validation and test proteins; only training proteins contribute labels to the loss"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.2</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 8 / 13">
+    <li class="f" data-f="1">One graph over train ∪ validation ∪ test; labels read only for training proteins</li>
+    <li class="f" data-f="2">Every design decision on validation; test read once</li>
+    <li class="f warn" data-f="3"><b>Single seed:</b> differences below 0.5 pp are ties (interpretability floor)</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Validation and test proteins contribute features and edges but never labels. The first generation uses a stricter train-basis construction.</p>
+<p>With a single seed, the talk treats sub-0.5 pp gaps as ties.</p>
+</aside>
+</section>
+
+<style>
+.s15 .fig img { height: 384px; object-fit: contain; }
+.dens { display: flex; align-items: center; margin-top: 10px; font-size: 22px; }
+.dens .num:first-child { width: 40px; color: var(--ink-2); }
+.s16-tree text { font: 400 18px var(--font-data); fill: var(--ink-2); }
+.s16-tree line { stroke: var(--ink-2); stroke-width: 2; }
+.s16-tree circle { fill: var(--slide); stroke: var(--ink); stroke-width: 2.5; }
+.s16-tree .lo { fill: var(--muted); }
+.s16-tree .hi { fill: var(--fuse); }
+.s16-tree .arr { fill: none; stroke: var(--ink-2); stroke-width: 2.5; }
+.s16-tpr > svg { width: 640px; height: 170px; margin-top: 14px; }
+</style>

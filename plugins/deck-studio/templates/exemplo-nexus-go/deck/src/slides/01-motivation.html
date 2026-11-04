@@ -1,0 +1,106 @@
+<section class="slide" id="s03" data-part="1 · Motivation">
+<h2 class="title">Millions of sequences, few known functions</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1">Proteins take part in almost every cellular process</li>
+    <li class="f" data-f="2">Sequencing is fast; experimental characterization is slow and expensive</li>
+    <li class="f" data-f="3">Few records carry experimentally supported annotations</li>
+    <li class="f" data-f="4">Automated prediction tries to close the gap (CAFA benchmark)</li>
+  </ul>
+  <div class="col-b stack" style="gap:24px">
+    <div class="f" data-f="1" data-component="INT-FOLD" style="width:520px; height:440px"></div>
+    <div class="f" data-f="2" data-component="INT-GAP" style="width:817px; height:130px"></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Proteins catalyze reactions, signal, transport and give structure.</p>
+<p>Sequence databases grow far faster than experimental annotation, so most proteins have no experimentally supported function.</p>
+<p>CAFA measures automated predictors on proteins whose function was not yet public.</p>
+</aside>
+</section>
+
+<section class="slide" id="s04" data-part="1 · Motivation">
+<h2 class="title">Function as a hierarchy of terms</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1"><b>Three ontologies:</b> Biological Process (BP), Cellular Component (CC), Molecular Function (MF)</li>
+    <li class="f" data-f="2">Each is a directed acyclic graph of terms (<code>is_a</code>, <code>part_of</code>)</li>
+    <li class="f" data-f="3"><b>True Path Rule:</b> a term implies all its ancestors</li>
+    <li class="f" data-f="4"><b>Task:</b> hierarchical multi-label classification</li>
+  </ul>
+  <figure class="col-b f" data-f="2">
+    <div class="plate"><div class="fig">
+      <img src="img/fig_2_1.webp" alt="Left: an annotation set that breaks the True Path Rule; right: the same set completed with every ancestor, which is consistent">
+      <div class="mask fo" data-f="3" style="left:50%; top:0; right:0; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 2.1 · left inconsistent, right consistent</span></figcaption>
+  </figure>
+</div>
+<aside class="notes">
+<p>A protein carries many terms at different levels of specificity. If a specific term is annotated, every ancestor must be too.</p>
+<p>Predictions are made hierarchy-consistent before any metric is computed.</p>
+</aside>
+</section>
+
+<section class="slide" id="s05" data-part="1 · Motivation">
+<h2 class="title">Function also depends on context</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1">Proteins act in complexes and pathways</li>
+    <li class="f net" data-f="2"><b>PPI networks:</b> nodes are proteins, edges are associations</li>
+    <li class="f net" data-f="3"><b>Guilt by association:</b> connected proteins tend to share functions</li>
+    <li class="f warn" data-f="4">But STRING mixes evidence of uneven reliability, and about one third of proteins have no edge</li>
+  </ul>
+  <div class="col-b" style="display:flex; gap:32px; align-items:flex-start">
+    <figure class="f" data-f="1" style="width:265px; flex:none">
+      <div class="plate"><div class="fig"><img src="img/fig_2_2.webp" alt="Two proteins, A and B, bind into a complex that performs the function neither does alone"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 2.2</span></figcaption>
+    </figure>
+    <div class="f" data-f="3" data-component="INT-GBA" data-opts='{"at":[0,0,0,2]}' style="width:520px; height:460px; flex:none"></div>
+  </div>
+</div>
+<aside class="notes">
+<p>Sequence-derived features are strong, but part of a protein's function is set by its cellular context.</p>
+<p>STRING aggregates experiments, curated databases, co-expression, genomic context and text mining into one confidence score.</p>
+<p>Coverage is uneven, which becomes the central limitation of a network-only model.</p>
+</aside>
+</section>
+
+<section class="slide" id="s06" data-part="1 · Motivation">
+<h2 class="title">Seven research questions</h2>
+<div class="bd">
+  <div class="rq-list rq-full col-w">
+    <div class="rq f" data-f="1"><span class="rq-id">RQ1</span><span>How do different representations of the STRING PPI network data impact the quality of functional prediction across the three GO domains?</span></div>
+    <div class="rq f" data-f="2"><span class="rq-id">RQ2</span><span>To what extent does fixed propagation of ProtT5 embeddings over the STRING network improve upon the network-only representation, and how does this effect vary across BP, MF, and CC?</span></div>
+    <div class="rq f" data-f="3"><span class="rq-id">RQ3</span><span>How do different strategies, ranging from simple graph embeddings to fixed non-parametric propagation and GNN approaches, compare under a common experimental protocol and across vector- and image-based classification architectures?</span></div>
+    <div class="rq f" data-f="4"><span class="rq-id">RQ4</span><span>Do early- and late-fusion ensembles improve the primary evaluation metric over their individual fixed-propagation and GNN components?</span></div>
+    <div class="rq f" data-f="5"><span class="rq-id">RQ5</span><span>How do the propagation depth and the retention coefficient affect predictive performance, and at what point does additional propagation begin to dilute the protein-specific signal?</span></div>
+    <div class="rq f" data-f="6"><span class="rq-id">RQ6</span><span>How does the proposed approach compare against established state-of-the-art network-driven algorithms when all methods are evaluated using the same data splits and transductive graph setting?</span></div>
+    <div class="rq f" data-f="7"><span class="rq-id">RQ7</span><span>Can the proposed methodology generalize effectively when applied directly to global, aggregated-evidence networks, without the need to partition the graph by specific species or evidence channels?</span></div>
+  </div>
+</div>
+<aside class="notes">
+<p>The questions as worded in Section 1.3. RQ7's parenthesis: aggregated-evidence networks combine multiple interaction sources and cross-species data into a single unified topology. Each question is answered on the conclusions slide.</p>
+</aside>
+</section>
+
+<section class="slide" id="s07" data-part="1 · Motivation">
+<h2 class="title">Contributions</h2>
+<div class="bd" style="grid-template-rows: auto 1fr">
+  <ol class="contrib col-w">
+    <li class="f" data-f="1"><b>NEXUS-GO:</b> non-parametric multi-hop propagation of ProtT5 embeddings over STRING</li>
+    <li class="f" data-f="2">Controlled comparison of fixed vs learned (GCN, GAT) aggregation</li>
+    <li class="f" data-f="3">Vector vs image classification heads over the same embeddings</li>
+    <li class="f" data-f="4">Early and late fusion of fixed and learned routes</li>
+    <li class="f" data-f="5">Benchmark against five reimplemented methods, same splits and setting</li>
+  </ol>
+  <div class="pubs col-w f" data-f="6" style="align-self:end">
+    <div class="pub"><span class="v">VISAPP 2026 · published, pp. 157–166</span><i>From Graphs to Images: Non-Parametric PPI Context Integration for Vision-Based Protein Function Prediction</i></div>
+    <div class="pub"><span class="v">CCIS · accepted, expected December 2026</span><i>Beyond Learnable Graphs: Fixed Multi-Hop PPI Diffusion of Sequence Embeddings for Robust Protein Function Prediction</i> · extended version</div>
+  </div>
+</div>
+<aside class="notes">
+<p>Five contributions, each answered with a result at the end.</p>
+<p>The first paper reported the first, sum-deduplicated campaign; the extended version continues the fixed route and adds a vector head next to the vision head. It was accepted in Communications in Computer and Information Science.</p>
+</aside>
+</section>

@@ -1,0 +1,26 @@
+/* INT-MP: message passing (S08) */
+.mp { position: relative; }
+.mp svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.mp-e { stroke: color-mix(in oklab, var(--ink-2) 40%, var(--slide)); stroke-width: 2; stroke-linecap: round; }
+.mp-n { fill: var(--own); stroke: var(--ink-2); stroke-width: 1.5; }
+.mp-halo { fill: none; stroke: var(--ink); stroke-width: 3.5; }
+.mp-lab { font: 700 18px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--slide); stroke-width: 6px; stroke-linejoin: round; }
+.mp-msg { fill: var(--net); stroke: var(--slide); stroke-width: 2; }
+.mp-h1, .mp-h2 { display: none; }
+.mp[data-hops="1"] .mp-h1, .mp[data-hops="2"] .mp-h2 { display: inline; }
+
+.mp-ring { opacity: 0; }
+.mp-ring ellipse { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 6 6; }
+.mp-ring text { font: 700 19px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--slide); stroke-width: 8px; stroke-linejoin: round; }
+.mp-conv { font: 400 20px var(--font-body); fill: var(--ink); opacity: 0; }
+
+/* receptive field: dim what lies outside it */
+.mp.g2 .mp-n { opacity: .25; }
+.mp.g2 .mp-e { opacity: .45; }
+.mp.g2 .mp-r0, .mp.g2 .mp-r1, .mp.g3 .mp-r2, .mp.g4 .mp-n { opacity: 1; transition: opacity 300ms var(--ease); }
+.mp.g2 .mp-e1, .mp.g3 .mp-e2 { opacity: 1; stroke: var(--ink-2); stroke-width: 2.5; transition: opacity 300ms var(--ease); }
+.mp.g4 .mp-e { opacity: 1; }
+.mp.g2 .mp-ring1, .mp.g3 .mp-ring2, .mp.g4 .mp-conv { opacity: 1; transition: opacity 400ms var(--ease); }
+/* oversmoothing: every node drifts to the mean colour */
+.mp.g4 .mp-n { fill: var(--mp-mean); transition: fill 1800ms var(--ease) 200ms, opacity 300ms var(--ease); }
+.mp.mp-still, .mp.mp-still * { transition: none !important; }

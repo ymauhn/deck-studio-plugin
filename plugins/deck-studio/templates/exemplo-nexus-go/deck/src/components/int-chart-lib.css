@@ -1,0 +1,66 @@
+/* Shared chart frame and marks (deck/src/lib/chart.js). Every selector starts with .ch */
+.ch { position: relative; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.ch > .controls { flex: none; }
+.ch .controls select.btn { padding: 8px 12px; }
+.ch .controls :disabled { opacity: .45; cursor: default; }
+.ch-top { flex: none; height: 40px; display: flex; align-items: center; gap: 16px; }
+.ch-sub { margin: 0; font: 400 18px/1.2 var(--font-body); color: var(--ink-2); white-space: nowrap; }
+.ch-sub sub { font-size: .7em; }
+.ch .ch-tb { margin-left: auto; flex: none; font-size: 16px; padding: 8px 14px; }
+.ch-leg { flex: none; height: 26px; display: flex; align-items: center; gap: 22px; font: 400 18px/1 var(--font-body); color: var(--ink-2); white-space: nowrap; }
+.ch-top .ch-leg { margin-left: auto; height: auto; }
+.ch-top .ch-leg + .ch-tb { margin-left: 0; }
+.ch-leg .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
+.ch-leg .sw.dot { border-radius: 50%; width: 15px; height: 15px; }
+.ch-leg .sw.ring { border-radius: 50%; width: 15px; height: 15px; border: 2.5px solid; background: transparent; }
+.ch-leg .sw.dash { width: 22px; height: 0; border-radius: 0; border-top: 2px dashed var(--ink-2); vertical-align: 4px; }
+.ch-main { position: relative; flex: 1; min-height: 0; }
+.ch-main > svg { display: block; width: 100%; height: 100%; }
+.ch-tbl { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 18px 40px; }
+.ch-tbl[hidden] { display: none; }
+.ch.ch-t .ch-main > svg { display: none; }
+.ch table.t { font-size: 20px; }
+.ch table.t th, .ch table.t td { padding: 5px 14px; }
+.ch table.t thead th { font-size: 17px; }
+.ch table.t td.txt { font-family: var(--font-body); }
+
+/* SVG text: data face; category labels in the body face */
+.ch svg text { font: 400 18px var(--font-data); fill: var(--ink); font-variant-numeric: tabular-nums; }
+.ch svg .lab { font: 400 20px var(--font-body); fill: var(--ink); }
+.ch svg .lab.sm { font-size: 18px; }
+.ch svg .lab.b, .ch svg .val.b { font-weight: 700; }
+.ch svg .sml { font: 400 18px var(--font-body); fill: var(--ink-2); }
+.ch svg .cap { font: 400 15px var(--font-data); fill: var(--ink-2); }
+.ch svg .tick { font: 400 16px var(--font-data); fill: var(--muted); }
+/* a surface halo keeps labels legible where they cross gridlines and reference lines */
+.ch svg :is(.val, .cap, .lab, .sml) { paint-order: stroke; stroke: var(--slide); stroke-width: 5px; stroke-linejoin: round; }
+.ch svg .val { stroke-width: 13px; } /* wide halo: also fills the gaps between glyphs where a reference line passes */
+.ch-gain svg :is(.val, .cap) { stroke: none; }
+.ch svg .grid { stroke: var(--hair); stroke-width: 1; }
+.ch svg .base { stroke: var(--ink-2); stroke-width: 1.5; }
+.ch svg .ref { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 7 5; }
+.ch svg .guide { stroke: var(--ink-2); stroke-width: 1.5; }
+.ch svg .ring { stroke: var(--slide); stroke-width: 2; }
+
+/* hover and focus targets */
+.ch svg * { pointer-events: none; }
+.ch svg .mk, .ch svg .mk * { pointer-events: auto; }
+.ch .mk { outline: none; cursor: default; }
+.ch .hit { fill: transparent; }
+.ch .mk:hover .hit, .ch .mk:focus .hit { fill: var(--ink); fill-opacity: .06; }
+.ch .mk:focus-visible .hit { stroke: var(--focus); stroke-width: 2; }
+.ch .tip b { font: 500 20px/1.2 var(--font-data); margin-right: 10px; }
+
+/* reveal by step, emphasis */
+.ch .o { opacity: 0; visibility: hidden; transition: opacity 260ms var(--ease), visibility 0s linear 260ms; }
+.ch .o.on { opacity: 1; visibility: visible; transition: opacity 260ms var(--ease); }
+.ch .dim, .ch .o.on.dim { opacity: .42; }
+.ch .mk:not(.o) { transition: opacity 260ms var(--ease); }
+.ch.ch-hide, .ch.ch-hide * { visibility: hidden !important; }
+.ch.ch-instant, .ch.ch-instant * { transition: none !important; }
+.ch-late table.t { font-size: 17px; }
+.ch-late table.t th, .ch-late table.t td { padding: 4px 12px; }
+.ch-gain { gap: 4px; }
+.ch-gain .ch-top { height: 34px; }
+.ch-gain table.t { font-size: 17px; }
+.ch-gain table.t th, .ch-gain table.t td { padding: 3px 10px; }

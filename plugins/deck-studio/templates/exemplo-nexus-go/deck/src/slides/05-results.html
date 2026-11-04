@@ -1,0 +1,237 @@
+<section class="slide" id="s30" data-part="5 · Results">
+<h2 class="title">170 runs, one funnel</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 40px">
+  <ul class="b col-w" style="display:grid; grid-template-columns: repeat(3, 1fr); column-gap: 40px">
+    <li class="f" data-f="1">170 runs, about 136.3 GPU-hours (147 on an RTX A5500)</li>
+    <li class="f" data-f="2">Each stage picks its winner on validation and hands it on</li>
+    <li class="f fuse" data-f="3">Test read once, at the end</li>
+  </ul>
+  <div class="col-w" data-component="INT-FUNNEL" style="height:360px"></div>
+</div>
+<aside class="notes">
+<p>The selection never touches the test partition. Every reported test number is a single evaluation of a frozen configuration.</p>
+<p>Two stations are not pure validation picks: max deduplication rests on an analytic argument (all 170 runs use it; the sum figures come from the earlier campaign), and ConvNeXt-Tiny is carried forward on a 0.57 pp margin plus the VISAPP campaign.</p>
+</aside>
+</section>
+
+<section class="slide" id="s31" data-part="5 · Results">
+<h2 class="title">Generation 1 settles three choices</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f" data-f="1">Naive term-frequency baseline: 43.56 mean wF<sub>max</sub></li>
+    <li class="f" data-f="2">ProteinLoss beats binary cross-entropy: +5.47 pp mean (+8.87 in MF)</li>
+    <li class="f" data-f="3">MLP on the raw profile wins: 44.51; best 1-D CNN 41.16</li>
+    <li class="f" data-f="4"><b>Vision backbones:</b> 36.99 to 37.62</li>
+  </ul>
+  <div class="col-b" data-component="INT-G1" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>Topology alone barely clears a predictor that looks at nothing: 0.95 pp on the mean, and below it in BP.</p>
+<p>The vector route wins, and ConvNeXt-Tiny is carried forward on a 0.57 pp margin plus the earlier VISAPP campaign.</p>
+</aside>
+</section>
+
+<section class="slide" id="s32" data-part="5 · Results">
+<h2 class="title">One or two hops, high retention</h2>
+<div class="bd s32" style="grid-template-rows: auto 1fr; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_1.webp" alt="Vector head: validation wFmax peaks at one hop in BP and two in CC, and is highest without propagation in MF"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 6.1 · </span>Vector head, depth, validation</figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 7 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_6_2.webp" alt="Vector head: retention between 0.5 and 0.8 is near the optimum; low retention loses several points"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 6.2 · </span>Vector head, retention, validation</figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: 1fr 1fr; column-gap: 32px">
+    <li class="f" data-f="1"><b>Peak depth:</b> <span class="m">T = 1</span> BP, <span class="m">T = 2</span> CC, <span class="m">T = 0</span> MF</li>
+    <li class="f" data-f="3"><b>Best retention:</b> <span class="m">\alpha = 0.7</span> BP, <span class="m">\alpha = 0.8</span> CC</li>
+    <li class="f" data-f="2">Beyond the peak, performance falls 12.80 to 17.60 pp by <span class="m">T = 10</span></li>
+    <li class="f net" data-f="4">The graph corrects the protein's own representation; it does not replace it</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>In MF no amount of propagation helps; the best configuration switches the graph off.</p>
+<p>In CC everything below α = 0.4 is worse than everything above it; in BP the single exception is α = 0.9.</p>
+</aside>
+</section>
+
+<section class="slide" id="s33" data-part="5 · Results">
+<h2 class="title">The vision head wants deep propagation</h2>
+<div class="bd s32" style="grid-template-rows: auto 1fr; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_3.webp" alt="Vision head: validation wFmax rises to a plateau around six or seven hops in BP and CC"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 6.3 · </span>Vision head, depth, validation</figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 7 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_6_4.webp" alt="Vision head: performance collapses when retention is 0.2 or lower"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 6.4 · </span>Vision head, retention, validation</figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: 1fr 1fr; column-gap: 32px">
+    <li class="f" data-f="1"><b>Peak depth:</b> <span class="m">T = 7</span> BP, <span class="m">T = 6</span> CC, <span class="m">T = 0</span> MF; a plateau, not a peak</li>
+    <li class="f" data-f="3">Collapse at <span class="m">\alpha \le 0.2</span>: isolated nodes shrink as <span class="m">\alpha^{T}</span> (<span class="m">10^{-7}</span> at <span class="m">T = 7</span>)</li>
+    <li class="f" data-f="2">Gains over <span class="m">T = 0</span>: +5.84 BP, +2.93 CC (vector head: +1.85, +0.92)</li>
+    <li class="f" data-f="4">Its best BP value, 52.17, is still below the vector head's graph-free 53.36</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The vision head extracts less from the node itself, so dilution costs it less and the neighbourhood average helps more.</p>
+<p>MF peaks at T = 0 in both heads, the strongest form of that observation.</p>
+</aside>
+</section>
+
+<section class="slide" id="s34" data-part="5 · Results">
+<h2 class="title">Learning the aggregation does not pay</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f net" data-f="1">GCN beats GAT in all 6 pairs (3.88 to 9.31 pp), and in 30 of 30 fusion pairs</li>
+    <li class="f net" data-f="2">Fixed 65.12 vs GCN 63.32 mean wF<sub>max</sub></li>
+    <li class="f net" data-f="3">GCN ahead in BP by 0.55 (a tie); behind in CC by 0.59 and MF by 5.35</li>
+    <li class="f" data-f="4"><b>Deduplication:</b> max never loses beyond noise; GAT gains most (+3.83 vision)</li>
+  </ul>
+  <div class="col-b" data-component="INT-FL" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>Attention does not recover a better weighting than the STRING score it was handed.</p>
+<p>A plausible reason: the loss is masked to training nodes, so attention parameters see gradient only through a two-hop receptive field.</p>
+</aside>
+</section>
+
+<section class="slide" id="s35" data-part="5 · Results">
+<h2 class="title">Fusion helps; combining predictions helps more</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f fuse" data-f="1">Early, one configuration (add, GCN, vector): 65.80, +0.68 over fixed alone</li>
+    <li class="f fuse" data-f="2">Late, linear <span class="m">\gamma</span> (0.50 BP, 0.55 CC and MF): 67.06, best in every ontology</li>
+    <li class="f fuse" data-f="3"><b>Gains over the better component:</b> +2.18 BP, +1.85 CC, +1.26 MF</li>
+    <li class="f" data-f="4"><b>Stacking importances:</b> the two probabilities carry almost all the weight</li>
+  </ul>
+  <div class="col-b" data-component="INT-LATE" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>A single scalar beats every elaborate rule, including gradient boosting. The auxiliary features do not predict which route is right, and the conditional rules converged to the flattest sigmoid in the grid.</p>
+<p>The ensemble fits one extra parameter on validation.</p>
+</aside>
+</section>
+
+<section class="slide" id="s36" data-part="5 · Results">
+<h2 class="title">Vector head wins 12 of 12</h2>
+<div class="bd">
+  <div data-component="INT-VV" data-opts='{"at":[0,1,2,2,3]}' style="grid-column: 1 / 9; height:600px"></div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2"><b>Margin on the mean:</b> +6.62, +3.96, +2.69, +3.35 pp across the four stages</li>
+    <li class="f" data-f="3">No trend toward zero</li>
+    <li class="f warn" data-f="4">Neither image has the locality a convolution assumes</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Generation 1 images index arbitrary training proteins; generation 2 images reshape embedding coordinates.</p>
+<p>Three independent pieces of evidence agree: pooling order, the 1-D CNN failure and this table.</p>
+</aside>
+</section>
+
+<section class="slide" id="s37" data-part="5 · Results" data-steps="4">
+<h2 class="title">Where the gains come from</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 26px">
+  <div class="col-w" data-component="INT-JOURNEY" style="height:430px"></div>
+  <div class="col-w s37-tbl">
+  <div class="tbl sm f" data-f="3"><table class="t">
+    <thead><tr><th></th><th>Naive baseline</th><th>Generation 1</th><th>ProtT5 only</th><th>NEXUS-GO/GNN</th><th>NEXUS-GO/Fixed</th><th>NEXUS-GO/Early</th><th>NEXUS-GO/Late</th></tr></thead>
+    <tbody><tr><td class="txt">Mean wF<sub>max</sub>, validation</td><td>43.56</td><td>44.51</td><td>63.92</td><td>63.32</td><td>65.12</td><td class="second">65.84</td><td class="best">67.06</td></tr></tbody>
+  </table></div>
+  <ul class="b sm">
+    <li class="f seq" data-f="4">Most of the jump is the language model; the graph adds the rest</li>
+  </ul>
+  </div>
+</div>
+<aside class="notes">
+<p>This is the whole dissertation on one axis. The protein language model explains most of the distance, and the graph contributes a consistent remainder in BP and CC.</p>
+<p>Each value is a mean of per-ontology champions on validation. The table includes the learned GNN alone, 63.32: it sits below the ProtT5 control because of MF, so it is not a step of the staircase in the chart.</p>
+</aside>
+</section>
+
+<section class="slide" id="s38" data-part="5 · Results">
+<h2 class="title">Test set: NEXUS-GO vs five methods</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f fuse" data-f="1">NEXUS-GO/Late best in every column of the three tables, except AuPRC in MF</li>
+    <li class="f fuse" data-f="2">wF<sub>max</sub> margin over the strongest baseline: +9.77 BP, +8.67 CC, +4.93 MF</li>
+    <li class="f fuse" data-f="3">S<sub>min</sub>: 17.12 vs 20.11 (BP), 8.22 vs 9.67 (CC), 5.14 vs 5.67 (MF)</li>
+    <li class="f seq" data-f="4">The ProtT5 baseline alone already beats every literature method on wF<sub>max</sub></li>
+  </ul>
+  <div class="col-b" data-component="INT-TEST" style="height:630px"></div>
+</div>
+<aside class="notes">
+<p>Every baseline was retrained on the same corpus and scored with the same code.</p>
+<p>Three of them lose their multi-network mechanism on a single aggregated graph, so the ordering describes these adapted configurations, not the original papers.</p>
+</aside>
+</section>
+
+<section class="slide" id="s39" data-part="5 · Results">
+<h2 class="title">Every protein gets a prediction</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f fuse" data-f="1"><b>NEXUS-GO:</b> 100% of the test partition in BP, CC, MF</li>
+    <li class="f" data-f="2"><b>DeepGraphGO and SEGT-GO:</b> 95.1–96.3% (homology search)</li>
+    <li class="f" data-f="3"><b>Mashup, MELISSA, deepNF:</b> 63.6–68.7% (network members only)</li>
+  </ul>
+  <div class="col-b" data-component="INT-COV" data-opts='{"at":[0,1,2,2]}' style="height:520px"></div>
+</div>
+<aside class="notes">
+<p>Missing proteins count as misses in the comparison, so part of the distance to the network-only methods is reach, not ranking quality.</p>
+<p>The proteins they cannot reach are exactly the band where sequence-aware routes score highest.</p>
+</aside>
+</section>
+
+<section class="slide" id="s40" data-part="5 · Results">
+<h2 class="title">A thirteenth of the time per epoch</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_5.webp" alt="Seconds per epoch and peak memory by family: fixed propagation is an order of magnitude faster than the learned encoders and uses less than half the memory"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 6.5</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 7 / 13">
+    <li class="f net" data-f="2"><b>Fixed + vector:</b> 5.24 s/epoch, 6.4 GiB peak</li>
+    <li class="f" data-f="3"><b>GCN alone:</b> 68.76 s/epoch, 14.1 GiB; GAT 161.41 s, 20.7 GiB</li>
+    <li class="f" data-f="4">Matches or beats the GCN at about 1/13 of the time and under half the memory</li>
+    <li class="f fuse" data-f="5">Early fusion costs the same as fixed propagation once <span class="m">\mathbf{g}</span> is stored</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The fixed operator runs once per experiment; the learned ones recompute a full-graph propagation at every optimization step.</p>
+<p>Early-fusion cost excludes training the GCN checkpoint it consumes.</p>
+</aside>
+</section>
+
+<section class="slide" id="s41" data-part="5 · Results">
+<h2 class="title">The graph helps where there is graph</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 9" class="stack s41-left">
+    <figure class="f fitw" data-f="1">
+      <div class="plate"><div class="fig"><img src="img/fig_6_6.webp" alt="Per-protein F1 by degree band on the test set: sequence-aware routes score higher on isolated proteins, and the gap between graph routes and the control widens with degree" style="height:350px"></div></div>
+      <figcaption class="cap"><span class="src">Dissertation, Fig. 6.6 · </span>Test</figcaption>
+    </figure>
+    <div class="f" data-f="4" data-component="INT-GAIN" data-opts='{"at":[0,1,2,2,3]}' style="height:170px; width:938px"></div>
+  </div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">Every ProtT5 route scores worse on connected than on isolated proteins</li>
+    <li class="f" data-f="3">The graph-free control already shows it, so the graph does not cause it</li>
+    <li class="f net" data-f="4">The graph's gain grows with degree: up to +9.05 BP, +8.71 CC, +4.64 MF at degree ≥ 50</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Hubs tend to be multifunctional and harder for a sequence model. In BP the hardest proteins have degree 3 to 5, not zero.</p>
+<p>Degree-zero differences come from rescaling and refitting, so read topological gains from degree one upward.</p>
+</aside>
+</section>
+
+<style>
+.s32 .fig img { height: 330px; width: auto; max-width: 100%; margin: 0 auto; }
+.s41-left { gap: 16px; }
+</style>
+
+<style>
+.s37-tbl { display: flex; flex-direction: column; gap: 18px; }
+.s37-tbl .t { width: 100%; }
+.s37-tbl .t th, .s37-tbl .t td { text-align: center; white-space: normal; }
+.s37-tbl .t td.txt { text-align: left; }
+</style>

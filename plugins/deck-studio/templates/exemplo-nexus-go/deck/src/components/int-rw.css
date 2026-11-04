@@ -1,0 +1,25 @@
+/* INT-RW: related work and where the parameters live (S11) */
+.rw svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.rw-axis { stroke: var(--ink-2); stroke-width: 2; }
+.rw-head { fill: var(--ink-2); }
+.rw-mark { fill: var(--ink); stroke: var(--slide); stroke-width: 3; }
+.rw-era-t { font: 700 22px var(--font-body); fill: var(--ink); }
+.rw-ex { font: 400 18px var(--font-body); fill: var(--ink); }
+.rw-yr { font-family: var(--font-data); fill: var(--ink-2); }
+.rw-stmt { font: 400 30px var(--font-body); fill: var(--ink); }
+.rw-h { font: 700 22px var(--font-body); fill: var(--ink); }
+.rw-lt { font: 400 18px var(--font-body); fill: var(--ink-2); }
+.rw-name { font: 700 20px var(--font-body); fill: var(--ink); }
+.rw-band { fill: color-mix(in oklab, var(--ink) 6%, var(--slide)); }
+.rw-box rect { fill: var(--slide); }
+.rw-box text { font: 400 18px var(--font-body); fill: var(--ink); }
+.rw-sup { font-size: 13px; }
+.rw-fixed rect { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.rw-learned rect { stroke: var(--ink); stroke-width: 2; }
+.rw-w circle { fill: var(--ink); }
+.rw-seq rect { stroke: var(--seq); stroke-width: 2.5; }
+.rw-net rect { stroke: var(--net); stroke-width: 2.5; }
+.rw-arrow { fill: var(--ink-2); stroke: var(--ink-2); stroke-width: 2; }
+
+.rw-r1, .rw-r2, .rw-r3 { opacity: 0; transform: translateY(8px); }
+.rw.g1 .rw-r1, .rw.g2 .rw-r2, .rw.g3 .rw-r3 { opacity: 1; transform: none; transition: opacity 300ms var(--ease), transform 300ms var(--ease); }

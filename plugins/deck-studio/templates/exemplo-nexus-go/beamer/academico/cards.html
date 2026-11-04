@@ -1,0 +1,537 @@
+<title>NEXUS-GO Speaker Cards</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* layout: a single reading column of cue cards, slide number in the margin, running clock at right */
+:root {
+  --bg: #f5f6f8; --card: #ffffff; --ink: #1b2a41; --muted: #4c5768; --rule: #dde1e8; --accent: #9b1b30;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171f; --card: #1a212c; --ink: #e6e9ef; --muted: #9aa4b3; --rule: #2c3543; --accent: #e0707f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12171f; --card: #1a212c; --ink: #e6e9ef; --muted: #9aa4b3; --rule: #2c3543; --accent: #e0707f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+.top h1 { font: 600 2.2rem/1.1 var(--display); margin: 0; text-wrap: balance; }
+.top p { margin: 6px 0 0; color: var(--muted); }
+.top .stats { font: 500 0.85rem var(--mono); color: var(--muted); margin-top: 10px; letter-spacing: .02em; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); padding-block: 10px; z-index: 2; }
+.chip { font: 600 0.8rem var(--body); border: 1px solid var(--rule); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px; display: grid; gap: 10px; min-width: 0; }
+.card header { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; }
+.num { font: 500 1.1rem var(--mono); color: var(--accent); padding-top: 4px; font-variant-numeric: tabular-nums; }
+.part { font: 600 0.72rem var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.card h2 { font: 600 1.35rem/1.2 var(--display); margin: 2px 0 0; text-wrap: balance; }
+.time { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.time b { display: block; font-weight: 500; font-size: 1.05rem; }
+.time span { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.card ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 68ch; }
+.next { margin: 0; padding-top: 10px; border-top: 1px dashed var(--rule); color: var(--muted); font-style: italic; }
+.next .lbl { font: 600 0.72rem var(--body); font-style: normal; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-right: 8px; }
+@media (max-width: 480px) { .card header { grid-template-columns: auto 1fr; } .time { grid-column: 2; text-align: left; } .time b, .time span { display: inline; margin-right: 8px; } }
+[data-lang="pt"] .en, [data-lang="en"] .pt { display: none; }
+.titlebar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.lang { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.lbtn { font: 500 0.85rem var(--mono); background: var(--card); color: var(--ink); border: 0; padding: 6px 12px; cursor: pointer; }
+.lbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.lbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+</style>
+
+<div class="wrap" id="root" data-lang="pt">
+  <div class="top">
+    <div class="titlebar">
+      <h1><span class="pt">Roteiro da defesa NEXUS-GO</span><span class="en">NEXUS-GO speaker cards</span></h1>
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" id="lang-pt" class="lbtn" aria-pressed="true">PT</button><button type="button" id="lang-en" class="lbtn" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <p><span class="pt">Um card por slide do Beamer acadêmico: o que falar, quanto tempo e como passar para o próximo slide. Os títulos ficam em inglês, como nos slides.</span><span class="en">One card per slide of the academic Beamer deck: what to say, how long, and how to hand over to the next slide.</span></p>
+    <div class="stats"><span class="pt">45 slides · 44:45 no total · tempos do ensaio narrado, arredondados a 15 s · "aos" é o relógio acumulado</span><span class="en">45 slides · 44:45 total · times from the narrated rehearsal, rounded to 15 s · "at" is the running clock</span></div>
+  </div>
+  <nav class="filters" aria-label="Partes / Parts">
+    <button type="button" class="chip" data-f="" aria-pressed="true"><span class="pt">Todas</span><span class="en">All</span></button><button type="button" class="chip" data-f="Opening"><span class="pt">Abertura</span><span class="en">Opening</span></button><button type="button" class="chip" data-f="Motivation"><span class="pt">Motivação</span><span class="en">Motivation</span></button><button type="button" class="chip" data-f="Background"><span class="pt">Fundamentação</span><span class="en">Background</span></button><button type="button" class="chip" data-f="Data and evaluation"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></button><button type="button" class="chip" data-f="Method"><span class="pt">Método</span><span class="en">Method</span></button><button type="button" class="chip" data-f="Results"><span class="pt">Resultados</span><span class="en">Results</span></button><button type="button" class="chip" data-f="Conclusions"><span class="pt">Conclusões</span><span class="en">Conclusions</span></button>
+  </nav>
+  
+<article class="card" id="s01" data-part="Opening">
+  <header>
+    <span class="num">01</span>
+    <div class="meta"><span class="part"><span class="pt">Abertura</span><span class="en">Opening</span></span>
+      <h2>NEXUS-GO</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 0:00</span></div>
+  </header>
+  <ul><li class="pt">Bom dia, e obrigado pela presença; esta é a minha defesa de mestrado no Instituto de Computação da Unicamp.</li><li class="pt">Fui orientado pelo Professor Zanoni Dias, com o Professor Hélio Pedrini e o Doutor Gabriel Bianchin de Oliveira como coorientadores.</li><li class="pt">A pergunta é: até onde uma rede de interação de proteínas consegue prever função, sozinha e junto com um modelo de linguagem de proteínas?</li><li class="pt">A minha resposta é o NEXUS-GO, que propaga embeddings do ProtT5 pela rede de interação do STRING.</li><li class="en">Good morning, and thank you for being here; this is my Master&#x27;s defense at the Institute of Computing of Unicamp.</li><li class="en">I was supervised by Professor Zanoni Dias, with Professor Hélio Pedrini and Doctor Gabriel Bianchin de Oliveira as co-advisors.</li><li class="en">The question: how far can a protein interaction network go toward predicting function, alone and with a protein language model?</li><li class="en">My answer is NEXUS-GO, which propagates ProtT5 embeddings over the STRING interaction network.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Vou mostrar como a apresentação está organizada.</span><span class="en">Let me show how the talk is organized.</span></p>
+</article>
+<article class="card" id="s02" data-part="Opening">
+  <header>
+    <span class="num">02</span>
+    <div class="meta"><span class="part"><span class="pt">Abertura</span><span class="en">Opening</span></span>
+      <h2>Roadmap</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 0:45</span></div>
+  </header>
+  <ul><li class="pt">A apresentação tem seis partes: motivação, fundamentação, dados e avaliação, método, resultados e conclusões.</li><li class="pt">Apresento o método como duas gerações de modelos e quatro rotas do NEXUS-GO.</li><li class="pt">Os resultados cobrem as ablações, a comparação com a literatura, o custo e o papel da conectividade.</li><li class="pt">Cada modelo é descrito por três decisões: representação, propagação e head de predição.</li><li class="en">The talk has six parts: motivation, background, data and evaluation, method, results and conclusions.</li><li class="en">The method is presented as two generations of models and four NEXUS-GO routes.</li><li class="en">The results cover ablations, the literature comparison, cost and the role of connectivity.</li><li class="en">Every model is described by three decisions: representation, propagation and prediction head.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Começo pela motivação.</span><span class="en">Let me start with the motivation.</span></p>
+</article>
+<article class="card" id="s03" data-part="Motivation">
+  <header>
+    <span class="num">03</span>
+    <div class="meta"><span class="part"><span class="pt">Motivação</span><span class="en">Motivation</span></span>
+      <h2>Millions of sequences, few known functions</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 1:30</span></div>
+  </header>
+  <ul><li class="pt">As proteínas participam de quase todos os processos de uma célula viva.</li><li class="pt">Sequenciar é rápido, mas caracterizar uma função em laboratório é lento e caro.</li><li class="pt">Por isso as bases enchem de sequências muito mais rápido do que de anotações experimentais; as barras não estão em escala.</li><li class="pt">O CAFA, o Critical Assessment of Functional Annotation, avalia preditores em proteínas cuja função ainda não era pública.</li><li class="en">Proteins take part in almost every process in a living cell.</li><li class="en">Sequencing is fast, but characterizing a function in the laboratory is slow and expensive.</li><li class="en">So databases fill with sequences much faster than with experimental annotations; the bars are not to scale.</li><li class="en">CAFA, the Critical Assessment of Functional Annotation, scores predictors on proteins whose function was not yet public.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Para prever uma função, primeiro precisamos de um jeito de escrevê-la.</span><span class="en">To predict a function, we first need a way to write it down.</span></p>
+</article>
+<article class="card" id="s04" data-part="Motivation">
+  <header>
+    <span class="num">04</span>
+    <div class="meta"><span class="part"><span class="pt">Motivação</span><span class="en">Motivation</span></span>
+      <h2>Function as a hierarchy of terms</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 2:30</span></div>
+  </header>
+  <ul><li class="pt">A Gene Ontology tem três partes, que eu mostro sempre nesta ordem: BP, CC e MF.</li><li class="pt">Cada ontologia é um grafo acíclico dirigido de termos, ligados por relações como is_a e part_of.</li><li class="pt">A True Path Rule diz que uma proteína com um termo também tem todos os ancestrais desse termo, até a raiz.</li><li class="pt">As predições de todo modelo são tornadas consistentes antes de qualquer métrica; a tarefa é classificação hierárquica multirrótulo.</li><li class="en">The Gene Ontology has three parts, always shown in this order: BP, CC and MF.</li><li class="en">Each ontology is a directed acyclic graph of terms, linked by relations such as is_a and part_of.</li><li class="en">The True Path Rule says a protein with a term also has every ancestor of that term, up to the root.</li><li class="en">Every model&#x27;s predictions are made consistent before any metric; the task is hierarchical multi-label classification.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Só que a sequência não conta a história toda.</span><span class="en">The sequence, however, is not the whole story.</span></p>
+</article>
+<article class="card" id="s05" data-part="Motivation">
+  <header>
+    <span class="num">05</span>
+    <div class="meta"><span class="part"><span class="pt">Motivação</span><span class="en">Motivation</span></span>
+      <h2>Function also depends on context</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 3:45</span></div>
+  </header>
+  <ul><li class="pt">Proteínas raramente agem sozinhas; elas formam complexos e participam de vias.</li><li class="pt">Modelamos essas relações como uma rede PPI: as proteínas são nós e as associações são arestas.</li><li class="pt">Culpa por associação: proteínas conectadas tendem a compartilhar funções; é uma tendência probabilística, não uma regra.</li><li class="pt">O STRING mistura evidências de confiabilidade desigual, e cerca de um terço das nossas proteínas não tem nenhuma aresta.</li><li class="en">Proteins rarely act alone; they form complexes and take part in pathways.</li><li class="en">We model these relations as a PPI network: proteins are nodes, associations are edges.</li><li class="en">Guilt by association: connected proteins tend to share functions, a probabilistic guideline, not a rule.</li><li class="en">STRING mixes evidence of uneven reliability, and about one third of our proteins have no edge at all.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Isso leva a sete perguntas de pesquisa.</span><span class="en">This leads to seven research questions.</span></p>
+</article>
+<article class="card" id="s06" data-part="Motivation">
+  <header>
+    <span class="num">06</span>
+    <div class="meta"><span class="part"><span class="pt">Motivação</span><span class="en">Motivation</span></span>
+      <h2>Seven research questions</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 4:45</span></div>
+  </header>
+  <ul><li class="pt">As três primeiras tratam de representação e arquitetura: a representação da rede, o ganho de propagar o ProtT5, e agregação fixa contra aprendida.</li><li class="pt">As duas seguintes perguntam se early fusion e late fusion ajudam, e quão fundo a propagação deve ir, com quanta retenção.</li><li class="pt">As duas últimas comparam com a literatura e testam uma rede global única, que junta todas as espécies e canais de evidência.</li><li class="pt">Vou responder cada pergunta no final.</li><li class="en">The first three ask about representation and architecture: network representation, the gain from propagating ProtT5, fixed versus learned aggregation.</li><li class="en">The next two ask whether early and late fusion help, and how deep propagation should go with how much retention.</li><li class="en">The last two compare with the literature and test one global network pooling all species and evidence channels.</li><li class="en">I will answer each question at the end.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora, o que este trabalho contribui.</span><span class="en">Here is what the work contributes.</span></p>
+</article>
+<article class="card" id="s07" data-part="Motivation">
+  <header>
+    <span class="num">07</span>
+    <div class="meta"><span class="part"><span class="pt">Motivação</span><span class="en">Motivation</span></span>
+      <h2>Contributions</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 5:30</span></div>
+  </header>
+  <ul><li class="pt">Primeiro, o NEXUS-GO: uma propagação não paramétrica, de múltiplos saltos, de embeddings do ProtT5 sobre o STRING.</li><li class="pt">Segundo, propagação fixa contra agregação aprendida com GCN e GAT; terceiro, um head vetorial contra um head de imagem.</li><li class="pt">Quarto, early fusion e late fusion; quinto, um benchmark contra cinco métodos retreinados nas mesmas partições.</li><li class="pt">O trabalho gerou um artigo no VISAPP 2026 e uma versão estendida aceita no CCIS, prevista para dezembro de 2026.</li><li class="en">First, NEXUS-GO: a non-parametric, multi-hop propagation of ProtT5 embeddings over STRING.</li><li class="en">Second, fixed propagation against learned aggregation with GCN and GAT; third, a vector head against an image head.</li><li class="en">Fourth, early and late fusion; fifth, a benchmark against five methods retrained on the same splits.</li><li class="en">The work produced a VISAPP 2026 paper and an extended version accepted in CCIS, expected in December 2026.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora a fundamentação, começando pelos grafos.</span><span class="en">Now the background, starting with graphs.</span></p>
+</article>
+<article class="card" id="s08" data-part="Background">
+  <header>
+    <span class="num">08</span>
+    <div class="meta"><span class="part"><span class="pt">Fundamentação</span><span class="en">Background</span></span>
+      <h2>Graphs, adjacency and message passing</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 6:30</span></div>
+  </header>
+  <ul><li class="pt">Um grafo é um conjunto de nós e arestas; aqui, proteínas e associações ponderadas pela confiança do STRING.</li><li class="pt">Redes de proteínas são muito esparsas, então a memória cresce com o número de arestas, e não com o quadrado do número de proteínas.</li><li class="pt">Redes neurais em grafos trocam mensagens: cada nó agrega seus vizinhos e se atualiza.</li><li class="pt">L camadas enxergam uma vizinhança de L saltos, mas camadas demais causam oversmoothing.</li><li class="en">A graph is a set of nodes and edges, here proteins and associations weighted by STRING confidence.</li><li class="en">Protein networks are very sparse, so memory grows with the number of edges, not proteins squared.</li><li class="en">Graph neural networks pass messages: each node aggregates its neighbours and updates itself.</li><li class="en">L layers see an L-hop neighbourhood, but too many layers cause oversmoothing.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Mais três blocos básicos aparecem adiante na apresentação.</span><span class="en">Three more building blocks appear later in the talk.</span></p>
+</article>
+<article class="card" id="s09" data-part="Background">
+  <header>
+    <span class="num">09</span>
+    <div class="meta"><span class="part"><span class="pt">Fundamentação</span><span class="en">Background</span></span>
+      <h2>Building blocks</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 7:30</span></div>
+  </header>
+  <ul><li class="pt">O perceptron multicamadas, ou MLP, é o head vetorial de predição dos meus modelos.</li><li class="pt">A rede convolucional desliza filtros pequenos sobre uma imagem; na rota de imagem eu uso ResNet-50 e ConvNeXt-Tiny.</li><li class="pt">O autoencoder comprime a entrada e a reconstrói; o deepNF usa um sobre seus estados de difusão.</li><li class="en">The multilayer perceptron, or MLP, is the vector prediction head of my models.</li><li class="en">The convolutional network slides small filters over an image; I use ResNet-50 and ConvNeXt-Tiny in the image route.</li><li class="en">The autoencoder compresses its input and reconstructs it; deepNF uses it on its diffusion states.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">O outro ingrediente é o modelo de linguagem de proteínas.</span><span class="en">The other ingredient is the protein language model.</span></p>
+</article>
+<article class="card" id="s10" data-part="Background">
+  <header>
+    <span class="num">10</span>
+    <div class="meta"><span class="part"><span class="pt">Fundamentação</span><span class="en">Background</span></span>
+      <h2>Protein language models</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 8:15</span></div>
+  </header>
+  <ul><li class="pt">Modelos de linguagem de proteínas aprendem por autossupervisão em centenas de milhões de sequências, sem rótulos.</li><li class="pt">Um encoder transformer lê cada resíduo no contexto da proteína inteira.</li><li class="pt">Eu uso o ProtT5-XL-U50, pré-treinado no BFD e no UniRef50 com 15% de mascaramento, e leio as camadas 22, 23 e 24.</li><li class="pt">Cada camada é tirada a média sobre os resíduos e concatenada; o modelo fica congelado, o que dá um vetor de tamanho fixo.</li><li class="en">Protein language models learn by self-supervision on hundreds of millions of sequences, with no labels.</li><li class="en">A transformer encoder reads each residue in the context of the whole protein.</li><li class="en">I use ProtT5-XL-U50, pretrained on BFD and UniRef50 with 15% masking, and read layers 22, 23 and 24.</li><li class="en">Each layer is averaged over residues and joined; the model stays frozen, giving a fixed-length vector.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Vou situar este trabalho na literatura.</span><span class="en">Let me place this work in the literature.</span></p>
+</article>
+<article class="card" id="s11" data-part="Background">
+  <header>
+    <span class="num">11</span>
+    <div class="meta"><span class="part"><span class="pt">Fundamentação</span><span class="en">Background</span></span>
+      <h2>From neighbour voting to graph transformers</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 9:15</span></div>
+  </header>
+  <ul><li class="pt">A área passou da votação entre vizinhos para difusão, node embeddings, redes neurais em grafos e graph transformers.</li><li class="pt">Cada passo acrescentou parâmetros, superfície de ajuste e custo.</li><li class="pt">Eu retreinei cinco métodos: Mashup, deepNF, MELISSA, DeepGraphGO e SEGT-GO.</li><li class="pt">A minha posição: um modelo de linguagem congelado, uma difusão fixa de múltiplos saltos, e só um head MLP é treinado.</li><li class="en">The field moved from neighbour voting to diffusion, node embeddings, graph neural networks and graph transformers.</li><li class="en">Each step added parameters, tuning surface and cost.</li><li class="en">I retrained five methods: Mashup, deepNF, MELISSA, DeepGraphGO and SEGT-GO.</li><li class="en">My position: a frozen language model, a fixed multi-hop diffusion, and only an MLP head is trained.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Essa revisão deixa uma pergunta em aberto.</span><span class="en">This review leaves an open question.</span></p>
+</article>
+<article class="card" id="s12" data-part="Background">
+  <header>
+    <span class="num">12</span>
+    <div class="meta"><span class="part"><span class="pt">Fundamentação</span><span class="en">Background</span></span>
+      <h2>The open question</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 10:30</span></div>
+  </header>
+  <ul><li class="pt">Um componente de grafo aprendido ainda é necessário quando o objeto propagado já é informativo?</li><li class="pt">Eu propago embeddings do ProtT5 com um operador fixo por um número finito de passos, e depois uso um head comum.</li><li class="pt">A contribuição é uma escolha de onde colocar o grafo na arquitetura, não um novo mecanismo de propagação.</li><li class="pt">Existe uma representação de sequência para toda proteína, então a rede só acrescenta a ela.</li><li class="en">Is a learned graph component still needed once the propagated object is already informative?</li><li class="en">I propagate ProtT5 embeddings with a fixed operator for a finite number of steps, then use an ordinary head.</li><li class="en">The contribution is an architectural placement, not a new propagation mechanism.</li><li class="en">A sequence representation exists for every protein, so the network only adds to it.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Parte três: os dados e a avaliação.</span><span class="en">Part three: the data and the evaluation.</span></p>
+</article>
+<article class="card" id="s13" data-part="Data and evaluation">
+  <header>
+    <span class="num">13</span>
+    <div class="meta"><span class="part"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></span>
+      <h2>Data: a CAFA5-derived corpus</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 11:15</span></div>
+  </header>
+  <ul><li class="pt">O corpus vem dos dados de treino do CAFA5; em BP são 73,768 proteínas de treino e 9,221 em cada um, validação e teste.</li><li class="pt">Cada ontologia mantém seus termos mais frequentes: 500 em BP, 498 em CC e 499 em MF.</li><li class="pt">A partição é 80, 10 e 10 por cento no nível da proteína, então toda comparação é interna.</li><li class="pt">Os rótulos são esparsos: em média 25.91 termos em BP, e só 5.18% de entradas positivas em BP.</li><li class="en">The corpus comes from the CAFA5 training data; in BP there are 73,768 training proteins and 9,221 each for validation and test.</li><li class="en">Each ontology keeps its most frequent terms: 500 in BP, 498 in CC and 499 in MF.</li><li class="en">The split is 80, 10 and 10 percent at the protein level, so every comparison is internal.</li><li class="en">Labels are sparse: 25.91 terms on average in BP, and only 5.18% positive entries in BP.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">A rede é o STRING, versão 11.5.</span><span class="en">The network is STRING, version 11.5.</span></p>
+</article>
+<article class="card" id="s14" data-part="Data and evaluation">
+  <header>
+    <span class="num">14</span>
+    <div class="meta"><span class="part"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></span>
+      <h2>STRING v11.5: one aggregated network</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 12:30</span></div>
+  </header>
+  <ul><li class="pt">O arquivo tem 2,422,234 registros, mas só 791,011 pares distintos sobre 86,423 proteínas.</li><li class="pt">Os combined scores vão de 0.400 a 0.999 e expressam confiança, não força de ligação.</li><li class="pt">Cada par aparece em média 3.06 vezes com o mesmo score, então as repetições não trazem informação.</li><li class="pt">Os graus têm cauda pesada: a proteína mediana tem de 5 a 7 vizinhos, e os maiores hubs, de 763 a 805.</li><li class="en">The file has 2,422,234 records but only 791,011 distinct pairs over 86,423 proteins.</li><li class="en">Combined scores range from 0.400 to 0.999 and express confidence, not binding strength.</li><li class="en">Each pair appears 3.06 times on average with the same score, so repetitions add no information.</li><li class="en">Degrees are heavy-tailed: the median protein has 5 to 7 neighbours, the largest hubs 763 to 805.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora a propriedade mais importante desta rede.</span><span class="en">Now the most important property of this network.</span></p>
+</article>
+<article class="card" id="s15" data-part="Data and evaluation">
+  <header>
+    <span class="num">15</span>
+    <div class="meta"><span class="part"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></span>
+      <h2>One third of the proteins have no edge</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 13:30</span></div>
+  </header>
+  <ul><li class="pt">Cerca de um terço das proteínas não tem nenhuma aresta: 36.65% em BP, 34.95% em CC e 32.19% em MF.</li><li class="pt">A fração é estável entre treino, validação e teste, e as proteínas isoladas continuam como nós.</li><li class="pt">Um limiar de confiança mais alto só piora; em 0.90, mais da metade fica isolada.</li><li class="pt">Para um modelo só de rede, um terço do corpus fica sem entrada, e a segunda geração elimina isso.</li><li class="en">About one third of the proteins have no edge: 36.65% in BP, 34.95% in CC and 32.19% in MF.</li><li class="en">The fraction is stable across training, validation and test, and isolated proteins stay as nodes.</li><li class="en">A higher confidence threshold only makes it worse; at 0.90 more than half are isolated.</li><li class="en">For a network-only model, a third of the corpus has no input, which the second generation removes.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Como as predições são avaliadas?</span><span class="en">How are the predictions scored?</span></p>
+</article>
+<article class="card" id="s16" data-part="Data and evaluation">
+  <header>
+    <span class="num">16</span>
+    <div class="meta"><span class="part"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></span>
+      <h2>Six protein-centric metrics</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 14:30</span></div>
+  </header>
+  <ul><li class="pt">O critério principal é o wF<sub>max</sub>, a medida F ponderada pelo conteúdo de informação, usada para selecionar toda configuração.</li><li class="pt">Eu também reporto o F<sub>max</sub>, a variante dele sem a raiz, o S<sub>min</sub> em bits e duas áreas sob a curva de precisão e revocação.</li><li class="pt">As predições são tornadas consistentes com a hierarquia antes da avaliação.</li><li class="pt">O limiar varre 101 valores, e uma proteína sem predição conta como revocação zero.</li><li class="en">The primary criterion is wF<sub>max</sub>, the F-measure weighted by information content, used to select every configuration.</li><li class="en">I also report F<sub>max</sub>, its variant without the root, S<sub>min</sub> in bits, and two areas under the precision-recall curve.</li><li class="en">Predictions are made hierarchy-consistent before scoring.</li><li class="en">The threshold sweeps 101 values, and a protein with no prediction counts as zero recall.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">A última parte do setup é o protocolo de aprendizado.</span><span class="en">The last part of the setup is the learning protocol.</span></p>
+</article>
+<article class="card" id="s17" data-part="Data and evaluation">
+  <header>
+    <span class="num">17</span>
+    <div class="meta"><span class="part"><span class="pt">Dados e avaliação</span><span class="en">Data and evaluation</span></span>
+      <h2>Learning regime and protocol</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 15:30</span></div>
+  </header>
+  <ul><li class="pt">O cenário é transdutivo: um único grafo, mas a loss só lê os rótulos de treino.</li><li class="pt">Toda decisão de projeto é tomada na validação; o teste é lido uma única vez, no final.</li><li class="pt">Todas as execuções usam uma única seed, então diferenças abaixo de 0.5 pp são empates; esse é o meu piso de interpretação.</li><li class="en">The setting is transductive: one graph, but the loss reads only training labels.</li><li class="en">Every design decision is taken on validation; the test set is read once, at the end.</li><li class="en">All runs use a single seed, so differences below 0.5 pp are ties, my interpretability floor.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Parte quatro: o método.</span><span class="en">Part four: the method.</span></p>
+</article>
+<article class="card" id="s18" data-part="Method">
+  <header>
+    <span class="num">18</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Two generations, three decisions</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 16:15</span></div>
+  </header>
+  <ul><li class="pt">Cada modelo é definido por três decisões: representação, propagação e head de predição.</li><li class="pt">A primeira geração usa só a rede: a linha da proteína na matriz do STRING, com um head MLP ou CNN.</li><li class="pt">Cerca de um terço das proteínas é isolado, então para elas essa representação é um vetor nulo.</li><li class="pt">A segunda geração, o NEXUS-GO, parte do ProtT5 e o propaga, de forma fixa ou com uma GCN ou GAT.</li><li class="en">Every model is defined by three decisions: representation, propagation and prediction head.</li><li class="en">The first generation uses the network alone: a protein&#x27;s row of the STRING matrix, with an MLP or CNN head.</li><li class="en">About one third of proteins are isolated, so for them that representation is a null vector.</li><li class="en">The second generation, NEXUS-GO, starts from ProtT5 and propagates it, fixed or with a GCN or GAT.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Vou descrever primeiro a primeira geração.</span><span class="en">Let me first describe the first generation.</span></p>
+</article>
+<article class="card" id="s19" data-part="Method">
+  <header>
+    <span class="num">19</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Generation 1: the network alone</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 17:15</span></div>
+  </header>
+  <ul><li class="pt">A entrada é a linha da proteína na matriz de adjacência ponderada, restrita às proteínas de treino.</li><li class="pt">Eu mantenho o perfil bruto ou o reduzo com max pooling ou average pooling.</li><li class="pt">A rota vetorial usa um MLP ou uma CNN unidimensional.</li><li class="pt">A rota de imagem transforma 224 valores agregados numa imagem de 224 por 224 para a ResNet-50 ou a ConvNeXt-Tiny.</li><li class="en">The input is the protein&#x27;s row of the weighted adjacency matrix, restricted to training proteins.</li><li class="en">I keep the profile raw or reduce it with maximum or average pooling.</li><li class="en">The vector route uses an MLP or a one-dimensional CNN.</li><li class="en">The image route turns 224 pooled values into a 224 by 224 image for ResNet-50 or ConvNeXt-Tiny.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Aqui está a parede em que essa geração bate.</span><span class="en">Here is the wall this generation hits.</span></p>
+</article>
+<article class="card" id="s20" data-part="Method">
+  <header>
+    <span class="num">20</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>An isolated protein has no input</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 18:15</span></div>
+  </header>
+  <ul><li class="pt">Para uma proteína isolada, o perfil é todo zero, então a imagem é uniforme.</li><li class="pt">O head só consegue devolver a prior de classes aprendida, a mesma resposta para toda proteína isolada.</li><li class="pt">Nenhuma arquitetura recupera informação que não está na entrada.</li><li class="pt">A próxima geração precisa de uma representação para toda proteína, e a sequência fornece uma.</li><li class="en">For an isolated protein the profile is all zeros, so the image is uniform.</li><li class="en">The head can only return the learned class prior, the same answer for every isolated protein.</li><li class="en">No architecture can recover information absent from the input.</li><li class="en">The next generation needs a representation for every protein, and the sequence gives one.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Este é o NEXUS-GO numa visão geral.</span><span class="en">This is NEXUS-GO at a glance.</span></p>
+</article>
+<article class="card" id="s21" data-part="Method">
+  <header>
+    <span class="num">21</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>NEXUS-GO: four routes</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 19:00</span></div>
+  </header>
+  <ul><li class="pt">O encoder ProtT5 congelado transforma cada sequência em H(0), um vetor de 3,072 dimensões que existe para toda proteína.</li><li class="pt">Os registros do STRING são deduplicados pela regra do máximo em W, e a normalização por coluna dá P.</li><li class="pt">O NEXUS-GO/Fixed propaga H(0) com P sem parâmetros; o NEXUS-GO/GNN aprende a agregação com uma GCN ou GAT.</li><li class="pt">O NEXUS-GO/Early junta as duas representações; o NEXUS-GO/Late combina as probabilidades delas com uma regra linear.</li><li class="en">The frozen ProtT5 encoder turns each sequence into H(0), a 3,072-dimensional vector that exists for every protein.</li><li class="en">STRING records are deduplicated with the maximum rule into W, and column normalization gives P.</li><li class="en">NEXUS-GO/Fixed propagates H(0) with P without parameters; NEXUS-GO/GNN learns the aggregation with a GCN or GAT.</li><li class="en">NEXUS-GO/Early joins the two representations; NEXUS-GO/Late combines their probabilities with a linear rule.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Vou abrir cada bloco, começando pela representação da sequência.</span><span class="en">Let me open each block, starting with the sequence representation.</span></p>
+</article>
+<article class="card" id="s22" data-part="Method">
+  <header>
+    <span class="num">22</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>ProtT5-XL-U50, three layers, frozen</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 20:15</span></div>
+  </header>
+  <ul><li class="pt">O ProtT5 lê no máximo 1,022 tokens, então sequências longas são divididas em pedaços e tiramos a média.</li><li class="pt">As camadas 24, 23 e 22 dão 1,024 dimensões cada, 3,072 quando concatenadas.</li><li class="pt">Três camadas adjacentes evitam apostar numa camada só e não acrescentam nada para ajustar.</li><li class="pt">Essa representação existe para toda proteína; o pipeline é herdado do SUPERMAGOv2.</li><li class="en">ProtT5 reads at most 1,022 tokens, so long sequences are chunked and averaged.</li><li class="en">Layers 24, 23 and 22 give 1,024 dimensions each, 3,072 when concatenated.</li><li class="en">Three adjacent layers avoid betting on a single layer and add nothing to tune.</li><li class="en">This representation exists for every protein; the pipeline is inherited from SUPERMAGOv2.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Em seguida, o grafo.</span><span class="en">Next, the graph.</span></p>
+</article>
+<article class="card" id="s23" data-part="Method">
+  <header>
+    <span class="num">23</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>From records to an operator</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 21:00</span></div>
+  </header>
+  <ul><li class="pt">W é simétrica, sem self-loops, armazenada de forma esparsa com no máximo 1,133,132 entradas, em vez de 25 a 35 GB densa.</li><li class="pt">A soma premia quantas vezes um par foi escrito: A com 0.80 cinco vezes vira 4.00, contra B com 0.95.</li><li class="pt">O máximo mantém o score do STRING na própria escala, então B fica em primeiro; essa é a minha regra.</li><li class="pt">Normalizar cada coluna dá P, então o peso de um vizinho é relativo aos outros vizinhos da proteína.</li><li class="en">W is symmetric, without self-loops, stored sparse with at most 1,133,132 entries instead of 25 to 35 GB dense.</li><li class="en">Summation rewards how often a pair was written: A at 0.80 five times gets 4.00 against B at 0.95.</li><li class="en">The maximum keeps the STRING score on its own scale, so B comes first; that is my rule.</li><li class="en">Normalizing each column gives P, so a neighbour&#x27;s weight is relative to the protein&#x27;s other neighbours.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora o núcleo do método: a propagação fixa.</span><span class="en">Now the core of the method: fixed propagation.</span></p>
+</article>
+<article class="card" id="s24" data-part="Method">
+  <header>
+    <span class="num">24</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Fixed propagation: no parameters</h2></div>
+    <div class="time"><b>1:45</b><span><span class="pt">aos</span><span class="en">at</span> 22:00</span></div>
+  </header>
+  <ul><li class="pt">Cada passo mantém uma fração α da representação anterior e pega um menos α dos vizinhos ponderados, repetido T vezes.</li><li class="pt">Nada é treinado, então o resultado é calculado uma vez, guardado em cache e reutilizado em toda época.</li><li class="pt">Muitos passos causam oversmoothing, e os nós isolados só encolhem em direção ao cinza; um α mais alto muda bem menos.</li><li class="pt">T igual a 0 ou α igual a 1 desliga o grafo: esse é o baseline ProtT5.</li><li class="en">Each step keeps a fraction α of the previous representation and takes one minus α from the weighted neighbours, repeated T times.</li><li class="en">Nothing is trained, so the result is computed once, cached and reused at every epoch.</li><li class="en">Many steps cause oversmoothing, and isolated nodes only shrink toward grey; a higher α changes much less.</li><li class="en">T equal to 0 or α equal to 1 switches the graph off: that is the ProtT5 baseline.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">O que isso faz com proteínas reais?</span><span class="en">What does this do to real proteins?</span></p>
+</article>
+<article class="card" id="s25" data-part="Method">
+  <header>
+    <span class="num">25</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Propagation on four real proteins</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 23:45</span></div>
+  </header>
+  <ul><li class="pt">Quatro proteínas de Cellular Component, de um hub de grau 798 até uma proteína isolada, antes e depois de seis passos com α em 0.4.</li><li class="pt">As proteínas conectadas mantêm sua estrutura enquanto absorvem a vizinhança.</li><li class="pt">A proteína isolada só é escalada por α elevado a T, então a imagem dela vai desbotando para o cinza.</li><li class="pt">Mudanças nas proteínas de grau zero refletem esse reescalonamento e o retreino do head, não informação da vizinhança.</li><li class="en">Four Cellular Component proteins, from a hub of degree 798 to an isolated protein, before and after six steps with α at 0.4.</li><li class="en">The connected proteins keep their structure while absorbing their neighbourhood.</li><li class="en">The isolated protein is only scaled by α to the power T, so its image fades to grey.</li><li class="en">Changes on degree-zero proteins reflect this rescaling and head retraining, not neighbourhood information.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">A alternativa é aprender a agregação.</span><span class="en">The alternative is to learn the aggregation.</span></p>
+</article>
+<article class="card" id="s26" data-part="Method">
+  <header>
+    <span class="num">26</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Learned propagation: GCN and GAT</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 24:30</span></div>
+  </header>
+  <ul><li class="pt">A GCN adiciona self-loops, normaliza de forma simétrica e toma a confiança do STRING como dada.</li><li class="pt">A GAT aprende atenção sobre os vizinhos com quatro cabeças, reestimando quanto cada um conta.</li><li class="pt">As duas têm duas camadas de largura 1,024 e produzem um embedding de 1,024 dimensões, g.</li><li class="pt">Um operador aprendido precisa repropagar o grafo inteiro, cerca de 289 vezes por época, enquanto a rota fixa faz isso uma vez.</li><li class="en">The GCN adds self-loops, normalizes symmetrically and takes the STRING confidence as given.</li><li class="en">The GAT learns attention over neighbours with four heads, re-estimating how much each one counts.</li><li class="en">Both have two layers of width 1,024 and output a 1,024-dimensional embedding, g.</li><li class="en">A learned operator must re-propagate the whole graph, about 289 times per epoch, while the fixed route does it once.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Dois heads de predição consomem essas representações.</span><span class="en">Two prediction heads consume these representations.</span></p>
+</article>
+<article class="card" id="s27" data-part="Method">
+  <header>
+    <span class="num">27</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Vector head and vision head</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 25:30</span></div>
+  </header>
+  <ul><li class="pt">O head vetorial é um MLP com camadas ocultas de 1,024 e 512 unidades e dropout de 0.4.</li><li class="pt">O head de visão transforma os 3,072 valores em três canais de 32 por 32, um por camada do ProtT5.</li><li class="pt">Os backbones são a ResNet-50 e a ConvNeXt-Tiny, pré-treinadas na ImageNet e com fine-tuning completo.</li><li class="pt">Atenção: aqui a adjacência entre pixels só reflete a ordem de armazenamento, e os resultados mostram que isso importa.</li><li class="en">The vector head is an MLP with hidden layers of 1,024 and 512 units and a dropout of 0.4.</li><li class="en">The vision head turns the 3,072 values into three 32 by 32 channels, one per ProtT5 layer.</li><li class="en">The backbones are ResNet-50 and ConvNeXt-Tiny, pretrained on ImageNet and fully fine-tuned.</li><li class="en">Caution: pixel adjacency here only reflects storage order, and the results show that this matters.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Todo modelo é treinado com o mesmo objetivo.</span><span class="en">Every model is trained with the same objective.</span></p>
+</article>
+<article class="card" id="s28" data-part="Method">
+  <header>
+    <span class="num">28</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Training objective: ProteinLoss</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 26:30</span></div>
+  </header>
+  <ul><li class="pt">A ProteinLoss é um produto de três fatores: a ZLPR e dois fatores de um menos um F1 ponderado.</li><li class="pt">A ZLPR separa os termos positivos de uma proteína dos negativos em torno de zero.</li><li class="pt">Os dois fatores de F1 suave são ponderados pelo conteúdo de informação, um por coluna de termo e um por linha de proteína.</li><li class="pt">Na primeira geração ela supera a entropia cruzada binária por 5.47 pp na média, então toda execução seguinte usa ela.</li><li class="en">ProteinLoss is a product of three factors: ZLPR and two factors of one minus a weighted F1.</li><li class="en">ZLPR separates a protein&#x27;s positive terms from its negative ones around zero.</li><li class="en">The two soft F1 factors are weighted by information content, one per term column and one per protein row.</li><li class="en">In the first generation it beats binary cross-entropy by 5.47 pp on the mean, so every later run uses it.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">A última peça do método é a fusão.</span><span class="en">The last piece of the method is fusion.</span></p>
+</article>
+<article class="card" id="s29" data-part="Method">
+  <header>
+    <span class="num">29</span>
+    <div class="meta"><span class="part"><span class="pt">Método</span><span class="en">Method</span></span>
+      <h2>Combining the fixed and learned routes</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 27:15</span></div>
+  </header>
+  <ul><li class="pt">As rotas fixa e aprendida usam a confiança de jeitos diferentes, então eu as combino em vez de escolher uma.</li><li class="pt">A early fusion treina um head sobre as representações concatenadas, de 4,096 ou 3,072 dimensões.</li><li class="pt">A late fusion treina cada rota sozinha e combina as probabilidades depois, sem nenhum treino adicional.</li><li class="pt">Eu comparo onze regras de late fusion, escolhendo os coeficientes na validação entre 71 configurações por ontologia.</li><li class="en">The fixed and learned routes use the confidence differently, so I combine them instead of choosing.</li><li class="en">Early fusion trains one head on joined representations, of 4,096 or 3,072 dimensions.</li><li class="en">Late fusion trains each route alone and combines probabilities afterwards, with no further training.</li><li class="en">I compare eleven late rules, choosing coefficients on validation over 71 configurations per ontology.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Parte cinco: os resultados.</span><span class="en">Part five: the results.</span></p>
+</article>
+<article class="card" id="s30" data-part="Results">
+  <header>
+    <span class="num">30</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>170 runs, one funnel</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 28:15</span></div>
+  </header>
+  <ul><li class="pt">A campanha tem 170 execuções e cerca de 136.3 horas de GPU, 147 delas numa RTX A5500.</li><li class="pt">A seleção é um funil: cada etapa só passa para a seguinte o vencedor da validação.</li><li class="pt">Duas estações não são escolhas puras de validação: a regra do máximo, e a ConvNeXt-Tiny com margem de 0.57 pp.</li><li class="pt">O teste é lido uma única vez, no final, para o vencedor congelado, o NEXUS-GO/Late.</li><li class="en">The campaign has 170 runs and about 136.3 GPU-hours, 147 of them on an RTX A5500.</li><li class="en">Selection is a funnel: each stage passes only its validation winner to the next.</li><li class="en">Two stations are not pure validation picks: the maximum rule, and ConvNeXt-Tiny on a 0.57 pp margin.</li><li class="en">The test set is read once, at the end, for the frozen winner, NEXUS-GO/Late.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Primeiro, o que a rede sozinha consegue fazer.</span><span class="en">First, what the network alone can do.</span></p>
+</article>
+<article class="card" id="s31" data-part="Results">
+  <header>
+    <span class="num">31</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Generation 1 settles three choices</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 29:00</span></div>
+  </header>
+  <ul><li class="pt">Um baseline ingênuo, que não olha para nada, chega a um wF<sub>max</sub> médio de 43.56.</li><li class="pt">A ProteinLoss supera a entropia cruzada binária por 5.47 pp na média, e por 8.87 em MF.</li><li class="pt">O MLP sobre o perfil bruto vence com 44.51; a melhor CNN unidimensional chega só a 41.16.</li><li class="pt">Os backbones de visão ficam entre 36.99 e 37.62, então a topologia sozinha supera o baseline ingênuo por só 0.95 pp.</li><li class="en">A naive baseline that looks at nothing reaches a mean wF<sub>max</sub> of 43.56.</li><li class="en">ProteinLoss beats binary cross-entropy by 5.47 pp on the mean, and by 8.87 in MF.</li><li class="en">The MLP on the raw profile wins at 44.51; the best one-dimensional CNN reaches only 41.16.</li><li class="en">Vision backbones score 36.99 to 37.62, so topology alone clears the naive baseline by only 0.95 pp.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora a segunda geração, começando pela propagação fixa com o head vetorial.</span><span class="en">Now the second generation, starting with fixed propagation and the vector head.</span></p>
+</article>
+<article class="card" id="s32" data-part="Results">
+  <header>
+    <span class="num">32</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>One or two hops, high retention</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 30:00</span></div>
+  </header>
+  <ul><li class="pt">A melhor profundidade é um passo em BP, dois em CC e zero em MF.</li><li class="pt">Depois do pico, o desempenho cai de 12.80 a 17.60 pp até T igual a 10.</li><li class="pt">A retenção tem pico em 0.7 em BP e 0.8 em CC; retenção baixa é claramente pior.</li><li class="pt">O grafo funciona como uma correção da representação da própria proteína, não como substituto.</li><li class="en">The best depth is one step in BP, two in CC, and zero in MF.</li><li class="en">Beyond the peak, performance falls by 12.80 to 17.60 pp by T equal to 10.</li><li class="en">Retention peaks at 0.7 in BP and 0.8 in CC; low retention is clearly worse.</li><li class="en">The graph works as a correction to the protein&#x27;s own representation, not a replacement.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">O head de visão se comporta de outro jeito.</span><span class="en">The vision head behaves differently.</span></p>
+</article>
+<article class="card" id="s33" data-part="Results">
+  <header>
+    <span class="num">33</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>The vision head wants deep propagation</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 31:00</span></div>
+  </header>
+  <ul><li class="pt">O head de visão tem pico em sete passos em BP e seis em CC, mais um platô do que um pico.</li><li class="pt">Ele ganha 5.84 pp em BP e 2.93 em CC com a propagação, contra 1.85 e 0.92 do head vetorial.</li><li class="pt">Ele desaba com α de 0.2 ou menos, porque os nós isolados são escalados por α elevado a T.</li><li class="pt">O melhor valor dele em BP, 52.17, ainda fica abaixo do head vetorial sem grafo nenhum, com 53.36.</li><li class="en">The vision head peaks at seven steps in BP and six in CC, more a plateau than a peak.</li><li class="en">It gains 5.84 pp in BP and 2.93 in CC from propagation, against 1.85 and 0.92 for the vector head.</li><li class="en">It collapses at α of 0.2 or lower, because isolated nodes are scaled by α to the power T.</li><li class="en">Its best BP value, 52.17, is still below the vector head without any graph, at 53.36.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Em seguida, agregação fixa contra aprendida.</span><span class="en">Next, fixed against learned aggregation.</span></p>
+</article>
+<article class="card" id="s34" data-part="Results">
+  <header>
+    <span class="num">34</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Learning the aggregation does not pay</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 32:00</span></div>
+  </header>
+  <ul><li class="pt">A GCN vence a GAT nos seis pares, por 3.88 a 9.31 pp, e em todos os 30 pares de fusão.</li><li class="pt">O operador fixo tem média de 65.12, contra 63.32 da GCN.</li><li class="pt">A GCN fica à frente em BP por 0.55, um empate, e fica atrás por 0.59 em CC e 5.35 em MF.</li><li class="pt">Toda diferença de deduplicação acima do ruído favorece a regra do máximo, até 3.83 pp para a GAT.</li><li class="en">The GCN beats the GAT in all six pairs, by 3.88 to 9.31 pp, and in all 30 fusion pairs.</li><li class="en">The fixed operator averages 65.12, against 63.32 for the GCN.</li><li class="en">The GCN leads in BP by 0.55, a tie, and trails by 0.59 in CC and 5.35 in MF.</li><li class="en">Every deduplication difference beyond the noise favours the maximum rule, up to 3.83 pp for the GAT.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Depois, a fusão.</span><span class="en">Then, fusion.</span></p>
+</article>
+<article class="card" id="s35" data-part="Results">
+  <header>
+    <span class="num">35</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Fusion helps; combining predictions helps more</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 33:15</span></div>
+  </header>
+  <ul><li class="pt">A melhor configuração de early fusion chega a 65.80, 0.68 acima da rota fixa sozinha.</li><li class="pt">A late fusion vence: uma mistura linear com γ em 0.50 em BP e 0.55 em CC e MF chega a 67.06.</li><li class="pt">Ela ganha 2.18 pp em BP, 1.85 em CC e 1.26 em MF sobre o melhor dos seus componentes, com um único parâmetro ajustado a mais.</li><li class="pt">Os modelos de stacking põem quase todo o peso nas duas probabilidades, e não no conteúdo de informação ou no grau.</li><li class="en">Early fusion&#x27;s best configuration reaches 65.80, 0.68 above the fixed route alone.</li><li class="en">Late fusion wins: a linear mix with γ at 0.50 in BP and 0.55 in CC and MF reaches 67.06.</li><li class="en">It gains 2.18 pp in BP, 1.85 in CC and 1.26 in MF over its better component, with one extra fitted parameter.</li><li class="en">Stacking models put almost all weight on the two probabilities, not on information content or degree.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Somando todas as etapas, qual head é melhor?</span><span class="en">Across all stages, which head is better?</span></p>
+</article>
+<article class="card" id="s36" data-part="Results">
+  <header>
+    <span class="num">36</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Vector head wins 12 of 12</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 34:30</span></div>
+  </header>
+  <ul><li class="pt">O head vetorial vence o head de visão nas doze comparações.</li><li class="pt">A margem média é de 6.62 pp na primeira geração, 3.96 com propagação fixa, 2.69 com a GNN e 3.35 com early fusion.</li><li class="pt">Ela diminui, mas não mostra tendência de chegar a zero.</li><li class="pt">Nenhuma das duas imagens tem a localidade que uma convolução pressupõe.</li><li class="en">The vector head beats the vision head in all twelve comparisons.</li><li class="en">The mean margin is 6.62 pp in the first generation, 3.96 with fixed propagation, 2.69 with the GNN and 3.35 with early fusion.</li><li class="en">It narrows, but shows no trend toward zero.</li><li class="en">Neither image has the locality a convolution assumes.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">O próximo gráfico resume toda a trajetória na validação.</span><span class="en">This next chart summarizes the whole validation journey.</span></p>
+</article>
+<article class="card" id="s37" data-part="Results">
+  <header>
+    <span class="num">37</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Where the gains come from</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 35:15</span></div>
+  </header>
+  <ul><li class="pt">O baseline ingênuo fica em 43.56 e a primeira geração em 44.51, a menos de um ponto de distância.</li><li class="pt">O ProtT5 sozinho, com o grafo desligado, salta para 63.92.</li><li class="pt">A propagação fixa chega a 65.12, a early fusion a 65.84 e a late fusion a 67.06.</li><li class="pt">A maior parte do salto vem do modelo de linguagem; o grafo acrescenta um restante consistente, principalmente em BP e CC.</li><li class="en">The naive baseline sits at 43.56 and the first generation at 44.51, less than one point apart.</li><li class="en">ProtT5 alone, with the graph off, jumps to 63.92.</li><li class="en">Fixed propagation reaches 65.12, early fusion 65.84 and late fusion 67.06.</li><li class="en">Most of the jump comes from the language model; the graph adds a consistent remainder, mainly in BP and CC.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Agora o conjunto de teste, lido uma única vez, contra cinco métodos da literatura.</span><span class="en">Now the test set, read once, against five methods from the literature.</span></p>
+</article>
+<article class="card" id="s38" data-part="Results">
+  <header>
+    <span class="num">38</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Test set: NEXUS-GO vs five methods</h2></div>
+    <div class="time"><b>1:30</b><span><span class="pt">aos</span><span class="en">at</span> 36:15</span></div>
+  </header>
+  <ul><li class="pt">O NEXUS-GO/Late tem o melhor valor em todas as colunas de teste, nas seis métricas, exceto AuPRC em MF.</li><li class="pt">A margem dele sobre o DeepGraphGO é de 9.77 pp em BP, 8.67 em CC e 4.93 em MF.</li><li class="pt">O S<sub>min</sub> concorda: 17.12 contra 20.11 bits em BP, 8.22 contra 9.67 em CC, 5.14 contra 5.67 em MF.</li><li class="pt">O baseline ProtT5 sozinho já supera todos os métodos da literatura em wF<sub>max</sub>.</li><li class="pt">Todos os baselines foram retreinados no mesmo corpus, então essa ordem descreve as configurações adaptadas.</li><li class="en">NEXUS-GO/Late has the best value in every test column across six metrics, except AuPRC in MF.</li><li class="en">Its margin over DeepGraphGO is 9.77 pp in BP, 8.67 in CC and 4.93 in MF.</li><li class="en">S<sub>min</sub> agrees: 17.12 against 20.11 bits in BP, 8.22 against 9.67 in CC, 5.14 against 5.67 in MF.</li><li class="en">The ProtT5 baseline alone already beats every literature method on wF<sub>max</sub>.</li><li class="en">All baselines were retrained on the same corpus, so this ordering describes the adapted configurations.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">A cobertura coloca essas margens em perspectiva.</span><span class="en">Coverage puts these margins in perspective.</span></p>
+</article>
+<article class="card" id="s39" data-part="Results">
+  <header>
+    <span class="num">39</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>Every protein gets a prediction</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 37:45</span></div>
+  </header>
+  <ul><li class="pt">Todas as rotas do NEXUS-GO preveem 100% da partição de teste.</li><li class="pt">O DeepGraphGO e o SEGT-GO chegam a 95.1 a 96.3% usando uma busca por homologia.</li><li class="pt">O Mashup, o MELISSA e o deepNF só enxergam membros da rede e cobrem de 63.6 a 68.7%.</li><li class="pt">Parte da distância para os métodos só de rede é alcance, não qualidade de ranqueamento.</li><li class="en">Every NEXUS-GO route predicts 100% of the test partition.</li><li class="en">DeepGraphGO and SEGT-GO reach 95.1 to 96.3% using a homology search.</li><li class="en">Mashup, MELISSA and deepNF only see network members, covering 63.6 to 68.7%.</li><li class="en">Part of the distance to network-only methods is reach, not ranking quality.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Quanto custa cada rota?</span><span class="en">What does each route cost?</span></p>
+</article>
+<article class="card" id="s40" data-part="Results">
+  <header>
+    <span class="num">40</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>A thirteenth of the time per epoch</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 38:30</span></div>
+  </header>
+  <ul><li class="pt">A propagação fixa com o head vetorial treina a 5.24 segundos por época, com 6.4 GiB de pico de memória.</li><li class="pt">A GCN leva 68.76 segundos e 14.1 GiB, e a GAT, 161.41 segundos e 20.7 GiB.</li><li class="pt">O operador fixo empata com a GCN ou a supera, com cerca de um treze avos do tempo por época.</li><li class="pt">O motivo é estrutural: o operador fixo roda uma vez, e o aprendido, a cada passo.</li><li class="en">Fixed propagation with the vector head trains at 5.24 seconds per epoch with 6.4 GiB of peak memory.</li><li class="en">The GCN takes 68.76 seconds and 14.1 GiB, and the GAT 161.41 seconds and 20.7 GiB.</li><li class="en">The fixed operator matches or beats the GCN at about a thirteenth of the time per epoch.</li><li class="en">The reason is structural: the fixed operator runs once, the learned one at every step.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Por fim, onde o grafo ajuda?</span><span class="en">Finally, where does the graph help?</span></p>
+</article>
+<article class="card" id="s41" data-part="Results">
+  <header>
+    <span class="num">41</span>
+    <div class="meta"><span class="part"><span class="pt">Resultados</span><span class="en">Results</span></span>
+      <h2>The graph helps where there is graph</h2></div>
+    <div class="time"><b>1:15</b><span><span class="pt">aos</span><span class="en">at</span> 39:30</span></div>
+  </header>
+  <ul><li class="pt">Toda rota com ProtT5 vai pior nas proteínas conectadas do que nas isoladas, e o controle sem grafo mostra isso também.</li><li class="pt">Os hubs tendem a ser multifuncionais e mais difíceis para um modelo de sequência.</li><li class="pt">O ganho sobre o controle cresce com o grau, até 9.05 pp em BP, 8.71 em CC e 4.64 em MF.</li><li class="pt">O grafo ajuda onde existe grafo.</li><li class="en">Every ProtT5 route scores worse on connected proteins than on isolated ones, and the graph-free control shows it too.</li><li class="en">Hubs tend to be multifunctional and harder for a sequence model.</li><li class="en">The gain over the control grows with degree, up to 9.05 pp in BP, 8.71 in CC and 4.64 in MF.</li><li class="en">The graph helps where there is graph.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Parte seis: as conclusões, começando pelas respostas.</span><span class="en">Part six: the conclusions, starting with the answers.</span></p>
+</article>
+<article class="card" id="s42" data-part="Conclusions">
+  <header>
+    <span class="num">42</span>
+    <div class="meta"><span class="part"><span class="pt">Conclusões</span><span class="en">Conclusions</span></span>
+      <h2>Answers to the research questions</h2></div>
+    <div class="time"><b>1:30</b><span><span class="pt">aos</span><span class="en">at</span> 40:45</span></div>
+  </header>
+  <ul><li class="pt">A melhor representação da rede é o perfil sem redução com um MLP; impor localidade atrapalha.</li><li class="pt">A maior parte do ganho vem do ProtT5; no teste, a propagação acrescenta 1.87 pp em BP, 2.15 em CC e nada em MF.</li><li class="pt">A late fusion lidera com 67.06 na validação e ajuda de 1.26 a 2.18 pp; um ou dois saltos com α de 0.7 a 0.8 funcionam melhor.</li><li class="pt">O NEXUS-GO/Late supera a literatura por 9.77, 8.67 e 4.93 pp de wF<sub>max</sub>, numa única rede global agregada.</li><li class="en">The best network representation is the unreduced profile with an MLP; imposing locality hurts.</li><li class="en">Most of the gain comes from ProtT5; on test, propagation adds 1.87 pp in BP, 2.15 in CC and nothing in MF.</li><li class="en">Late fusion leads at 67.06 on validation and helps by 1.26 to 2.18 pp; one or two hops with α of 0.7 to 0.8 work best.</li><li class="en">NEXUS-GO/Late beats the literature by 9.77, 8.67 and 4.93 pp of wF<sub>max</sub>, on one global aggregated network.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Esses resultados vêm com limitações.</span><span class="en">These results come with limitations.</span></p>
+</article>
+<article class="card" id="s43" data-part="Conclusions">
+  <header>
+    <span class="num">43</span>
+    <div class="meta"><span class="part"><span class="pt">Conclusões</span><span class="en">Conclusions</span></span>
+      <h2>Limitations</h2></div>
+    <div class="time"><b>1:00</b><span><span class="pt">aos</span><span class="en">at</span> 42:15</span></div>
+  </header>
+  <ul><li class="pt">Todas as execuções usam uma única seed, então o piso de 0.5 pp é uma convenção de leitura, não um intervalo de confiança.</li><li class="pt">A partição aleatória no nível da proteína mede interpolação transdutiva, e pode haver alguma homologia.</li><li class="pt">Os scores do STRING incluem bases curadas e mineração de texto, o que pode vazar conhecimento funcional.</li><li class="pt">Fixo contra aprendido não é uma ablação de fator único, e os baselines foram adaptados ao nosso cenário.</li><li class="en">All runs use a single seed, so the 0.5 pp floor is a reading convention, not a confidence interval.</li><li class="en">The random protein-level split measures transductive interpolation, and some homology is possible.</li><li class="en">STRING scores include curated databases and text mining, which may leak functional knowledge.</li><li class="en">Fixed versus learned is not a single-factor ablation, and the baselines were adapted to our setting.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Essas limitações apontam os próximos passos.</span><span class="en">These limitations point to the next steps.</span></p>
+</article>
+<article class="card" id="s44" data-part="Conclusions">
+  <header>
+    <span class="num">44</span>
+    <div class="meta"><span class="part"><span class="pt">Conclusões</span><span class="en">Conclusions</span></span>
+      <h2>Next steps</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 43:15</span></div>
+  </header>
+  <ul><li class="pt">Separar o grafo por organismo, ou treinar um modelo por organismo.</li><li class="pt">Manter separados os canais de evidência do STRING, para que evidência experimental conte diferente de mineração de texto.</li><li class="pt">Testar grafos heterogêneos, comparando com métodos como o ProtHGT, e agregação amostrada como no GraphSAGE.</li><li class="pt">Features de nó mais ricas são mais promissoras para MF, onde a rede contribuiu menos.</li><li class="en">Separate the graph by organism, or train one model per organism.</li><li class="en">Keep STRING evidence channels apart, so experimental evidence counts differently from text mining.</li><li class="en">Try heterogeneous graphs, compared with methods such as ProtHGT, and sampled aggregation as in GraphSAGE.</li><li class="en">Richer node features are most promising for MF, where the network contributed the least.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Vou concluir.</span><span class="en">Let me conclude.</span></p>
+</article>
+<article class="card" id="s45" data-part="Conclusions">
+  <header>
+    <span class="num">45</span>
+    <div class="meta"><span class="part"><span class="pt">Conclusões</span><span class="en">Conclusions</span></span>
+      <h2>Thank you</h2></div>
+    <div class="time"><b>0:45</b><span><span class="pt">aos</span><span class="en">at</span> 44:00</span></div>
+  </header>
+  <ul><li class="pt">O NEXUS-GO propaga o ProtT5 sobre o STRING com um operador fixo e se iguala a um encoder aprendido por uma fração do custo.</li><li class="pt">A fusão dele com uma GCN é o melhor método avaliado em todas as ontologias.</li><li class="pt">O código é público no GitHub, com um artigo no VISAPP 2026 e uma versão estendida aceita no CCIS.</li><li class="pt">Agradeço à banca, aos meus orientadores, à CAPES, ao BTG Pactual e ao Instituto de Computação.</li><li class="en">NEXUS-GO propagates ProtT5 over STRING with a fixed operator and matches a learned encoder at a fraction of its cost.</li><li class="en">Its fusion with a GCN is the best evaluated method in every ontology.</li><li class="en">The code is public on GitHub, with a VISAPP 2026 paper and an extended version accepted in CCIS.</li><li class="en">I thank the committee, my advisors, CAPES, BTG Pactual and the Institute of Computing.</li></ul>
+  <p class="next"><span class="lbl"><span class="pt">Próximo</span><span class="en">Next</span></span><span class="pt">Muito obrigado; fico à disposição para as perguntas.</span><span class="en">Thank you very much; I am happy to take your questions.</span></p>
+</article>
+</div>
+
+<script>
+const root = document.getElementById('root');
+const chips = document.querySelectorAll('.chip');
+const cards = document.querySelectorAll('.card');
+function show(f) {
+  chips.forEach(c => c.setAttribute('aria-pressed', String(c.dataset.f === f)));
+  cards.forEach(c => { c.hidden = !!f && c.dataset.part !== f; });
+  try { localStorage.setItem('part', f); } catch (e) {}
+}
+function lang(l) {
+  root.dataset.lang = l;
+  document.documentElement.lang = l === 'pt' ? 'pt-BR' : 'en';
+  document.getElementById('lang-pt').setAttribute('aria-pressed', String(l === 'pt'));
+  document.getElementById('lang-en').setAttribute('aria-pressed', String(l === 'en'));
+  try { localStorage.setItem('lang', l); } catch (e) {}
+}
+chips.forEach(c => c.addEventListener('click', () => show(c.dataset.f)));
+document.getElementById('lang-pt').addEventListener('click', () => lang('pt'));
+document.getElementById('lang-en').addEventListener('click', () => lang('en'));
+let saved = '', savedLang = 'pt';
+try { saved = localStorage.getItem('part') || ''; savedLang = localStorage.getItem('lang') || 'pt'; } catch (e) {}
+if ([...chips].some(c => c.dataset.f === saved)) show(saved);
+lang(savedLang === 'en' ? 'en' : 'pt');
+</script>

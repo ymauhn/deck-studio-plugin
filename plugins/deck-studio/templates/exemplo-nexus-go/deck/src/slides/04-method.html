@@ -1,0 +1,302 @@
+<section class="slide" id="s18" data-part="4 · Method">
+<h2 class="title">Two generations, three decisions</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 9">
+    <div class="plate"><div class="fig">
+      <img src="img/fig_5_1.webp" alt="Map of the chapter: representation, propagation and prediction head; generation 1 uses the network alone, about one third of proteins are isolated and get a null descriptor, generation 2 adds ProtT5">
+      <div class="mask fo" data-f="2" style="left:0; right:0; top:15%; height:34%"></div>
+      <div class="mask fo" data-f="3" style="left:0; right:0; top:49%; height:17%"></div>
+      <div class="mask fo" data-f="4" style="left:0; right:0; top:66%; bottom:0"></div>
+    </div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.1</span></figcaption>
+  </figure>
+  <ul class="b" style="grid-column: 9 / 13">
+    <li class="f" data-f="1"><b>Every model:</b> representation → propagation → prediction head</li>
+    <li class="f net" data-f="2"><b>Generation 1:</b> network only
+      <ul class="sub"><li class="f" data-f="3">About one third isolated: null descriptor</li></ul></li>
+    <li class="f seq" data-f="4"><b>Generation 2 (NEXUS-GO):</b> ProtT5 + network</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Every model decomposes into the same three decisions: representation, propagation and prediction head.</p>
+<p>The limitation of the first generation is a property of its input, about one third of the proteins get a null descriptor, and it motivates the second.</p>
+</aside>
+</section>
+
+<section class="slide" id="s19" data-part="4 · Method">
+<h2 class="title">Generation 1: the network alone</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 4">
+    <div class="plate"><div class="fig"><img src="img/fig_5_3.webp" alt="Generation 1 pipeline: a protein's row of the weighted adjacency is pooled and fed to a vector head or turned into an image for a CNN" style="height:540px; width:auto; margin:0 auto"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.3</span></figcaption>
+  </figure>
+  <div style="grid-column: 4 / 13; display:flex; flex-direction:column; gap:22px">
+    <ul class="b sm">
+      <li class="f net" data-f="1"><b>Input:</b> row of the weighted adjacency, against training proteins</li>
+      <li class="f net" data-f="2"><b>Pooling:</b> raw, max, avg</li>
+      <li class="f" data-f="3"><b>Vector route:</b> MLP or 1-D CNN</li>
+      <li class="f" data-f="4"><b>Image route:</b> outer-difference matrix <span class="m">|v_i - v_j|</span>, 224 × 224, ResNet-50 or ConvNeXt-Tiny</li>
+      <li class="f" data-f="5"><b>Floor:</b> a naive guilt-by-association baseline</li>
+    </ul>
+    <figure class="f fitw" data-f="4">
+      <div class="plate"><div class="fig"><img src="img/fig_5_4.webp" alt="The outer-difference image: every pixel compares two coordinates of the pooled profile" style="height:250px"></div></div>
+      <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.4</span></figcaption>
+    </figure>
+  </div>
+</div>
+<aside class="notes">
+<p>The descriptor is already a one-hop aggregation, so there is no separate propagation stage.</p>
+<p>The image route imports a convolutional bias into a non-visual vector, as SUPERMAGOv2 and DeepInsight did with isolated descriptors.</p>
+</aside>
+</section>
+
+<section class="slide" id="s20" data-part="4 · Method">
+<h2 class="title">An isolated protein has no input</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 26px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_5_5.webp" alt="An isolated protein has a null profile, a null outer-difference matrix and a uniform image; a connected protein has structure"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 5.5 · </span>Isolated vs connected</figcaption>
+  </figure>
+  <figure class="f" data-f="1" style="grid-column: 7 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_5_4.webp" alt="For contrast, the outer-difference image of a connected protein"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 5.4 · </span>For contrast</figcaption>
+  </figure>
+  <ul class="b" style="grid-column: 1 / 8">
+    <li class="f" data-f="2">Null profile → null matrix → uniform image</li>
+    <li class="f" data-f="3">The head can only return the class prior</li>
+    <li class="f" data-f="4">No architecture can recover what is absent</li>
+  </ul>
+  <p class="accent f" data-f="5" style="grid-column: 7 / 13; align-self:start">Requirement: a representation that exists for every protein</p>
+</div>
+<aside class="notes">
+<p>For a third of the corpus the first generation sees nothing.</p>
+<p>The amino-acid sequence satisfies the requirement by construction, and that is where the second generation starts.</p>
+</aside>
+</section>
+
+<section class="slide" id="s21" data-part="4 · Method" data-steps="6">
+<h2 class="title">Generation 2: NEXUS-GO</h2>
+<div class="bd" style="grid-template-rows: 1fr auto; row-gap: 18px">
+  <div class="col-w" data-component="INT-PIPE" style="height:540px">
+    <img class="pipe-fig" src="img/fig_5_6.webp" alt="Dissertation Figure 5.6, cropped above the late-fusion box: the sequence and network branches, the fixed and learned propagation routes and the early fusion head">
+  </div>
+  <div class="band3 col-w">
+    <div class="seq f" data-f="1">Sequence → ProtT5 → <span class="m">\mathbf{H}^{(0)} \in \mathbb{R}^{3072}</span></div>
+    <div class="net f" data-f="2">STRING → weighted graph <span class="m">W</span> → <span class="nw"><span class="m">P = W D_c^{-1}</span></span></div>
+    <div class="fuse f" data-f="3">Routes: /Fixed · /GNN · /Early · /Late</div>
+  </div>
+</div>
+<aside class="notes">
+<p>Two inputs, two propagation routes and two ways of combining them.</p>
+<p>The first generation is reported as a topology-only control and carries no route name.</p>
+</aside>
+</section>
+
+<section class="slide" id="s22" data-part="4 · Method">
+<h2 class="title">ProtT5-XL-U50, three layers, frozen</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 26px">
+  <figure class="f fitw" data-f="1" style="grid-column: 1 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_5_7.webp" alt="Each sequence is cut into chunks, three encoder layers are mean-pooled per chunk, averaged over chunks and concatenated" style="height:400px"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.7</span></figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: repeat(3, 1fr); column-gap: 32px">
+    <li class="f seq" data-f="1">Chunks of at most 1,022 residues; masked mean-pool, then mean over chunks</li>
+    <li class="f seq" data-f="2">Layers 24, 23, 22, concatenated: 3 × 1024 = 3072 dimensions</li>
+    <li class="f seq" data-f="3">Exists for every protein, isolated or not</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Reading three adjacent layers avoids committing to one point between the pretraining objective and structural signal, at no tuning cost.</p>
+<p>Extraction is inherited from SUPERMAGOv2.</p>
+</aside>
+</section>
+
+<section class="slide" id="s23" data-part="4 · Method">
+<h2 class="title">From records to an operator</h2>
+<div class="bd">
+  <ul class="b col-a s23-list">
+    <li class="f net" data-f="1">Symmetric, no self-loops, sparse COO: at most 1,133,132 stored entries (dense: 25 to 35 GB)</li>
+    <li class="f net" data-f="2"><b>Deduplication:</b> max keeps the score; sum multiplies it by the record count</li>
+    <li class="f net" data-f="3">Column-stochastic <span class="m">P = W D_c^{-1}</span>: weights are relative to each protein's neighbours</li>
+  </ul>
+  <div class="col-b f" data-f="2" data-component="INT-DEDUP"></div>
+</div>
+<aside class="notes">
+<p>Repeated records carry no extra score, so summing rewards how often a pair was written down. The maximum keeps the STRING score on its own scale.</p>
+<p>Normalization does not undo the reordering.</p>
+</aside>
+</section>
+
+<section class="slide" id="s24" data-part="4 · Method">
+<h2 class="title">Fixed propagation: no parameters</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 6" class="stack s24-left">
+    <div class="f" data-f="1">
+      <div class="m d">\mathbf{H}^{(h)} = \alpha\, \mathbf{H}^{(h-1)} + (1-\alpha)\, P^{\top} \mathbf{H}^{(h-1)}</div>
+      <p class="small" style="margin:8px 0 0"><span class="m">h = 1, \dots, T</span></p>
+    </div>
+    <ul class="b sm">
+      <li class="f net" data-f="3"><b>Closed form:</b> hop <span class="m">k</span> gets weight <span class="m">\binom{T}{k}\, \alpha^{T-k} (1-\alpha)^{k}</span></li>
+      <li class="f net" data-f="4">Computed once, cached, reused every epoch</li>
+      <li class="f" data-f="5"><span class="m">T = 0</span> or <span class="m">\alpha = 1</span>: the graph is switched off (internal control)</li>
+    </ul>
+  </div>
+  <div style="grid-column: 6 / 13; height:630px" class="f" data-f="2" data-component="INT-PROP"></div>
+</div>
+<aside class="notes">
+<p>α retains part of the previous step, not of the original, so it slows mixing instead of re-injecting the input.</p>
+<p>The weights over hop counts are binomial with mean T(1 − α). Unlike personalized PageRank, the initial state is never reintroduced.</p>
+</aside>
+</section>
+
+<section class="slide" id="s25" data-part="4 · Method">
+<h2 class="title">Propagation on four real proteins</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 9">
+    <div class="plate"><div class="fig"><img src="img/fig_5_8.webp" alt="After six steps at alpha 0.4 the three connected proteins keep their patterns while the isolated protein fades toward a uniform grey"></div></div>
+    <figcaption class="cap"><span class="src">Dissertation, Fig. 5.8 · </span>CC, top <span class="m">T = 0</span>, bottom <span class="m">T = 6,\ \alpha = 0.4</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">Connected proteins keep their structure and absorb their neighbourhood</li>
+    <li class="f" data-f="3">An isolated protein becomes <span class="m">\alpha^{T} \mathbf{H}^{(0)}</span>: same direction, smaller scale</li>
+    <li class="f" data-f="4">So degree-zero gains cannot come from neighbourhood information</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>The rescaling is a structural property of the operator, not a tuned setting.</p>
+<p>The learned route adds self-loops and never mixes an isolated node with others.</p>
+</aside>
+</section>
+
+<section class="slide" id="s26" data-part="4 · Method">
+<h2 class="title">Learned propagation: GCN and GAT</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f net" data-f="1"><b>GCN:</b> symmetric normalization of <span class="nw"><span class="m">W + I</span>,</span> then a trained transform</li>
+    <li class="f net" data-f="2"><b>GAT:</b> attention over neighbours, 4 heads, edge score as attribute</li>
+    <li class="f" data-f="3">2 layers, width 1024, output <span class="m">\mathbf{g} \in \mathbb{R}^{1024}</span> for the head</li>
+    <li class="f warn" data-f="4">Full-graph forward on every step: about 289 propagations per epoch</li>
+  </ul>
+  <div class="col-b stack" style="gap:34px">
+    <div class="f s26-eq" data-f="1">
+      <div class="lbl-mono">GCN</div>
+      <div class="m d">\mathbf{H}^{(\ell+1)} = \phi\!\left( \tilde{D}^{-1/2}\,\tilde{W}\,\tilde{D}^{-1/2}\,\mathbf{H}^{(\ell)}\,\Theta^{(\ell)} \right), \quad \tilde{W} = W + I</div>
+    </div>
+    <div class="f s26-eq" data-f="2">
+      <div class="lbl-mono">GAT</div>
+      <div class="m d">e_{ij} = \operatorname{LeakyReLU}\!\left( \mathbf{q}^{\top} \left[\, \Theta \mathbf{h}_i \,\|\, \Theta \mathbf{h}_j \,\|\, \Theta_e\, w_{ij} \,\right] \right)</div>
+      <div class="m d">a_{ij} = \frac{\exp(e_{ij})}{\sum_{k \in \mathcal{N}(i) \cup \{i\}} \exp(e_{ik})}</div>
+    </div>
+    <div class="strip f" data-f="4">
+      <span>fixed</span><span class="ticks"><i class="once"></i></span>
+      <span></span><span class="small" style="font-size:20px; margin-top:-6px">computed once</span>
+      <span>learned</span><span class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span></span><span class="small" style="font-size:20px; margin-top:-6px">recomputed every optimization step</span>
+    </div>
+  </div>
+</div>
+<aside class="notes">
+<p>The GCN takes the STRING confidence as an edge weight; the GAT re-estimates it.</p>
+<p>Exact propagation with a mini-batch loss forces a full-graph pass for every batch, which is where the cost comes from.</p>
+</aside>
+</section>
+
+<section class="slide" id="s27" data-part="4 · Method">
+<h2 class="title">Vector head and vision head</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 24px">
+  <figure class="f fitw" data-f="2" style="grid-column: 1 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_5_9.webp" alt="The 3072-dimensional embedding is clipped, squashed by a sigmoid and reshaped into three 32 by 32 channels, one per ProtT5 layer" style="height:330px"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.9</span></figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: 1fr 1fr; column-gap: 40px">
+    <li class="f" data-f="1"><b>Vector:</b> MLP [1024, 512], batch norm, dropout 0.4</li>
+    <li class="f" data-f="3"><b>Backbones:</b> ResNet-50 and ConvNeXt-Tiny (ImageNet), fully fine-tuned</li>
+    <li class="f" data-f="2"><b>Vision:</b> <span class="m">\sigma(\mathrm{clip}(z))</span> split into three 32 × 32 channels, one per ProtT5 layer</li>  </ul>
+</div>
+<aside class="notes">
+<p>The image is built inside the forward pass and never written to disk.</p>
+<p>Neighbouring pixels are neighbouring embedding coordinates only by storage order, a caveat that the results confirm.</p>
+</aside>
+</section>
+
+<section class="slide" id="s28" data-part="4 · Method">
+<h2 class="title">Training objective: ProteinLoss</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 36px">
+  <div class="col-w f s28-eq" data-f="1"><div class="m d">\mathcal{L} = \mathcal{L}_{\text{ZLPR}} \cdot \bigl(1 - \mathrm{wF}_1^{\text{GO}}\bigr) \cdot \bigl(1 - \mathrm{wF}_1^{\text{prot}}\bigr)</div></div>
+  <ul class="b col-a">
+    <li class="f" data-f="2">ZLPR separates positive from negative terms at threshold zero</li>
+    <li class="f" data-f="3">Two soft, IC-weighted <span class="m">F_1</span> factors: one across terms, one across proteins</li>
+    <li class="f" data-f="4">Brings training closer to the evaluation criterion</li>
+  </ul>
+  <div class="col-b f" data-f="3">
+    <svg class="s28-grid" viewBox="-70 0 710 330" role="img" aria-label="A batch as a grid of proteins by terms; one factor computes F1 down each term column, the other along each protein row">
+      <g class="cells"><rect x="112" y="22" width="32" height="32" class="on"/><rect x="148" y="22" width="32" height="32"/><rect x="184" y="22" width="32" height="32"/><rect x="220" y="22" width="32" height="32"/><rect x="256" y="22" width="32" height="32"/><rect x="292" y="22" width="32" height="32"/><rect x="328" y="22" width="32" height="32"/><rect x="364" y="22" width="32" height="32" class="on"/><rect x="400" y="22" width="32" height="32"/><rect x="436" y="22" width="32" height="32" class="on"/><rect x="472" y="22" width="32" height="32"/><rect x="508" y="22" width="32" height="32"/><rect x="112" y="58" width="32" height="32"/><rect x="148" y="58" width="32" height="32"/><rect x="184" y="58" width="32" height="32"/><rect x="220" y="58" width="32" height="32" class="on"/><rect x="256" y="58" width="32" height="32" class="on"/><rect x="292" y="58" width="32" height="32"/><rect x="328" y="58" width="32" height="32"/><rect x="364" y="58" width="32" height="32"/><rect x="400" y="58" width="32" height="32"/><rect x="436" y="58" width="32" height="32"/><rect x="472" y="58" width="32" height="32" class="on"/><rect x="508" y="58" width="32" height="32"/><rect x="112" y="94" width="32" height="32"/><rect x="148" y="94" width="32" height="32"/><rect x="184" y="94" width="32" height="32"/><rect x="220" y="94" width="32" height="32"/><rect x="256" y="94" width="32" height="32"/><rect x="292" y="94" width="32" height="32"/><rect x="328" y="94" width="32" height="32" class="on"/><rect x="364" y="94" width="32" height="32"/><rect x="400" y="94" width="32" height="32" class="on"/><rect x="436" y="94" width="32" height="32"/><rect x="472" y="94" width="32" height="32"/><rect x="508" y="94" width="32" height="32"/><rect x="112" y="130" width="32" height="32"/><rect x="148" y="130" width="32" height="32"/><rect x="184" y="130" width="32" height="32" class="on"/><rect x="220" y="130" width="32" height="32" class="on"/><rect x="256" y="130" width="32" height="32"/><rect x="292" y="130" width="32" height="32"/><rect x="328" y="130" width="32" height="32"/><rect x="364" y="130" width="32" height="32"/><rect x="400" y="130" width="32" height="32"/><rect x="436" y="130" width="32" height="32" class="on"/><rect x="472" y="130" width="32" height="32"/><rect x="508" y="130" width="32" height="32"/><rect x="112" y="166" width="32" height="32"/><rect x="148" y="166" width="32" height="32"/><rect x="184" y="166" width="32" height="32"/><rect x="220" y="166" width="32" height="32"/><rect x="256" y="166" width="32" height="32"/><rect x="292" y="166" width="32" height="32" class="on"/><rect x="328" y="166" width="32" height="32"/><rect x="364" y="166" width="32" height="32" class="on"/><rect x="400" y="166" width="32" height="32"/><rect x="436" y="166" width="32" height="32"/><rect x="472" y="166" width="32" height="32"/><rect x="508" y="166" width="32" height="32"/><rect x="112" y="202" width="32" height="32"/><rect x="148" y="202" width="32" height="32" class="on"/><rect x="184" y="202" width="32" height="32" class="on"/><rect x="220" y="202" width="32" height="32"/><rect x="256" y="202" width="32" height="32"/><rect x="292" y="202" width="32" height="32"/><rect x="328" y="202" width="32" height="32"/><rect x="364" y="202" width="32" height="32"/><rect x="400" y="202" width="32" height="32" class="on"/><rect x="436" y="202" width="32" height="32"/><rect x="472" y="202" width="32" height="32"/><rect x="508" y="202" width="32" height="32" class="on"/><rect x="112" y="238" width="32" height="32"/><rect x="148" y="238" width="32" height="32"/><rect x="184" y="238" width="32" height="32"/><rect x="220" y="238" width="32" height="32"/><rect x="256" y="238" width="32" height="32" class="on"/><rect x="292" y="238" width="32" height="32"/><rect x="328" y="238" width="32" height="32" class="on"/><rect x="364" y="238" width="32" height="32"/><rect x="400" y="238" width="32" height="32"/><rect x="436" y="238" width="32" height="32"/><rect x="472" y="238" width="32" height="32"/><rect x="508" y="238" width="32" height="32" class="on"/></g>
+      <rect class="col" x="254" y="20" width="36" height="252"/>
+      <rect class="row" x="110" y="128" width="432" height="36"/>
+      <text x="326" y="306" text-anchor="middle">terms c (one column: <tspan class="code">F1(B × {c})</tspan>, averaged into wF1 GO)</text>
+      <text x="92" y="146" text-anchor="end">protein i</text>
+      <text x="92" y="174" text-anchor="end" class="sub">row: wF1 prot</text>
+      <text x="92" y="40" text-anchor="end" class="sub">batch B</text>
+    </svg>
+  </div>
+</div>
+<aside class="notes">
+<p>Inherited from InterLabelGO+ through the group's sequence-only line.</p></aside>
+</section>
+
+<section class="slide" id="s29" data-part="4 · Method">
+<h2 class="title">Combining the fixed and learned routes</h2>
+<div class="bd" style="grid-template-rows: 1fr 110px; row-gap: 20px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_5_10.webp" alt="Early fusion joins the two representations before one head; late fusion trains each route and combines their probabilities"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertation, Fig. 5.10</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 7 / 13">
+    <li class="f fuse" data-f="2"><b>Early:</b> join representations, train one head (concat 4096 or block-wise add 3072)</li>
+    <li class="f fuse" data-f="3"><b>Late:</b> train each route, combine probabilities</li>
+    <li class="f fuse" data-f="4"><b>Eleven late rules:</b> linear <span class="m">\gamma</span>, max, min, IC sigmoid, degree sigmoid, master equation, five stacking meta-classifiers</li>
+    <li class="f" data-f="5">Coefficients chosen on validation (71 configurations per ontology)</li>
+  </ul>
+  <div class="col-w" data-component="INT-RULES" style="height:110px"></div>
+</div>
+<aside class="notes">
+<p>The two routes are alternatives, no model is shared.</p>
+<p>Early fusion lets one head learn how to weigh the sources; late fusion leaves each route to its own optimization and needs no training to combine.</p>
+</aside>
+</section>
+
+<style>
+.dd { display: flex; flex-direction: column; gap: 34px; }
+.dd-main { display: grid; grid-template-columns: 330px 1fr; gap: 44px; align-items: center; }
+.dd-graph { width: 330px; height: auto; overflow: visible; }
+.dd-graph line { stroke: var(--net); stroke-linecap: round; transition: all 400ms var(--ease); }
+.dd-graph .dd-n { fill: var(--slide); stroke: var(--net); stroke-width: 3; }
+.dd-graph .dd-i { fill: var(--ink); }
+.dd-graph .dd-nodes text { font: 700 24px var(--font-body); fill: var(--ink); }
+.dd-graph .dd-nodes text:first-of-type { fill: var(--slide); }
+.dd-graph .dd-lab { font: 400 19px var(--font-data); fill: var(--ink-2); }
+.dd-panels { display: flex; flex-direction: column; gap: 44px; }
+.dd-h { font: 400 20px/1.2 var(--font-data); color: var(--ink-2); margin-bottom: 14px; }
+.dd-row { display: grid; grid-template-columns: 34px 1fr 84px; align-items: center; gap: 14px; height: 48px; }
+.dd-k { font: 700 26px var(--font-body); }
+.dd-track { position: relative; height: 30px; border-left: 2px solid var(--ink-2); }
+.dd-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--net); border-radius: 0 4px 4px 0; transition: width 450ms var(--ease); }
+.dd-v { font-size: 26px; text-align: right; }
+.dd-instant .dd-bar, .dd-instant line { transition: none; }
+.s23-list > li { margin-bottom: 30px; }
+.pipe-fig { display: none; }
+.s24-left { gap: 34px; }
+.s24-left .eq { font-size: 30px; }
+.lbl-mono { font: 400 16px/1 var(--font-data); color: var(--ink-2); margin-bottom: 10px; }
+.s26-eq .eq { font-size: 28px; }
+.s26-eq .eq + .eq { margin-top: 12px; }
+.s28-eq .eq { font-size: 44px; }
+.s28-grid { width: 100%; height: auto; }
+.s28-grid text { font: 400 19px var(--font-body); fill: var(--ink); }
+.s28-grid text.sub { fill: var(--ink-2); font-size: 18px; }
+.s28-grid .col, .s28-grid .row { fill: none; stroke-width: 3.5; }
+.s28-grid .col { stroke: var(--ink); }
+.s28-grid .row { stroke: var(--ink-2); stroke-dasharray: 8 6; }
+.s28-grid .cells rect { fill: var(--hair); }
+.s28-grid .cells rect.on { fill: var(--ink-2); }
+</style>

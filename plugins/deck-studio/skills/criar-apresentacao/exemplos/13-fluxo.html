@@ -1,0 +1,36 @@
+<!-- TIPO: diagrama do método, animado (componente FLUXO)
+QUANDO USAR: o slide central do método: o caminho dos dados, da entrada ao resultado, com as etapas como caixas e as
+setas por onde o fluxo corre. Todo deck tem pelo menos um (o briefing pode tirar). Use rotas quando o trabalho tem
+variantes (dois ramos, duas versões do modelo): cada rota acende o caminho dela e escreve a nota embaixo.
+REGRAS: no máximo 6 colunas e 4 linhas; o rótulo da caixa com até 3 palavras, o detalhe no "sub" (até 4 palavras) e o
+resto na "dica" (aparece ao passar o mouse, e a fala a explica); a cor de conceito (c1, c2, c3) igual à do resto do
+deck; as colunas entram uma por passo, na ordem da fala (ou "passo" por caixa), e data-steps diz quantos passos o
+slide tem; os números de "sub" e "dica" vêm do FACTS.md, com a página nas notas. O componente desenha tudo: o slide só
+traz data-opts. Os nomes abaixo são de mentira: troque todos. -->
+<section class="slide" id="s30" data-part="[Parte]" data-steps="4">
+<h2 class="title">[Título afirmativo: o que o método faz, em uma frase]</h2>
+<div class="bd">
+  <div class="col-w" data-component="FLUXO" data-opts='{
+    "nos": [
+      {"id": "entrada", "rotulo": "[Entrada]", "sub": "[o que entra]", "cor": "c1", "col": 0, "lin": 0, "dica": "[detalhe da entrada]"},
+      {"id": "outra", "rotulo": "[Outra fonte]", "sub": "[o que entra]", "cor": "c2", "col": 0, "lin": 1, "dica": "[detalhe]"},
+      {"id": "etapa1", "rotulo": "[Etapa 1]", "sub": "[como]", "cor": "c1", "col": 1, "lin": 0, "dica": "[detalhe da etapa 1]"},
+      {"id": "etapa2", "rotulo": "[Etapa 2]", "sub": "[como]", "cor": "c2", "col": 1, "lin": 1, "dica": "[detalhe da etapa 2]"},
+      {"id": "junta", "rotulo": "[Combinação]", "sub": "[como junta]", "cor": "c3", "col": 2, "lin": 0, "dica": "[detalhe]"},
+      {"id": "saida", "rotulo": "[Resultado]", "sub": "[o que sai]", "cor": "c3", "col": 3, "lin": 0, "dica": "[detalhe da saída]"}
+    ],
+    "ligacoes": [
+      {"de": "entrada", "para": "etapa1"}, {"de": "outra", "para": "etapa2"},
+      {"de": "etapa1", "para": "junta"}, {"de": "etapa2", "para": "junta"}, {"de": "junta", "para": "saida"}
+    ],
+    "rotas": [
+      {"nome": "[Variante A]", "nos": ["entrada", "etapa1", "junta", "saida"], "nota": "[o que a variante A usa]"},
+      {"nome": "[Variante B]", "nos": ["outra", "etapa2", "junta", "saida"], "nota": "[o que a variante B usa]"}
+    ],
+    "altura": 420
+  }'></div>
+</div>
+<aside class="notes">
+<p>[Passo 1: a entrada. Passo 2: as etapas. Passo 3: a combinação. Passo 4: o resultado. Clique numa rota para mostrar uma variante.] (p. [p], Fig. [n])</p>
+</aside>
+</section>

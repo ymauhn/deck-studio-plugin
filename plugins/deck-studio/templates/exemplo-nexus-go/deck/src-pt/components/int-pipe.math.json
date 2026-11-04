@@ -1,0 +1,10 @@
+{
+  "i:pipe-h0": "\\mathbf{H}^{(0)} \\in \\mathbb{R}^{3072}",
+  "i:pipe-W": "W",
+  "i:pipe-P": "P = W D_c^{-1}",
+  "i:pipe-HT": "\\mathbf{H}^{(T)}",
+  "i:pipe-g": "\\mathbf{g} \\in \\mathbb{R}^{1024}",
+  "i:pipe-pfix": "p_{\\text{fix}}",
+  "i:pipe-pgnn": "p_{\\text{gnn}}",
+  "i:pipe-gamma": "\\gamma"
+}

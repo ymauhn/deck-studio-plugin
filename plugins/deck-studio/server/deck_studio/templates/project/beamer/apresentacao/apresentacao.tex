@@ -1,0 +1,78 @@
+% !TEX program = pdflatex
+% Beamer deck (pdfLaTeX, 16:9). Deck Studio compiles it with latexmk; Overleaf reads latexmkrc.
+% One \begin{frame} ... \end{frame} per slide, each of them on a line of its own; figures go in figures/.
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme{Madrid}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[{{BABEL}}]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\graphicspath{{figures/}}
+
+% ---- colours: navy title bar, footline in three blues, light blocks ------------------------------
+\definecolor{navy}{HTML}{0D3366}
+\definecolor{midblue}{HTML}{03506F}
+\definecolor{greyblue}{HTML}{668CA6}
+\definecolor{blockhead}{HTML}{CCDCEE}
+\definecolor{blockbody}{HTML}{F5F8FC}
+\definecolor{accent}{HTML}{9B1B30}
+\setbeamercolor{structure}{fg=navy}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{bg=navy, fg=white}
+\setbeamercolor{title}{bg=navy, fg=white}
+\setbeamercolor{author in head/foot}{bg=greyblue, fg=white}
+\setbeamercolor{title in head/foot}{bg=midblue, fg=white}
+\setbeamercolor{page number in head/foot}{bg=navy, fg=white}
+\setbeamercolor{block title}{bg=blockhead, fg=black}
+\setbeamercolor{block body}{bg=blockbody, fg=black}
+\setbeamercolor{alerted text}{fg=accent}
+\setbeamercolor{caption name}{fg=navy}
+
+% ---- layout: full-width title bar, footline with author, title and n / N --------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth, ht=0.72cm, dp=0.33cm, leftskip=0.45cm]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}\vspace{0.15cm}}
+\setbeamerfont{frametitle}{size=\Large}
+\setbeamertemplate{footline}{%
+  \leavevmode\hbox{%
+    \begin{beamercolorbox}[wd=.25\paperwidth, ht=2.4ex, dp=1ex, left, leftskip=1em]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.6\paperwidth, ht=2.4ex, dp=1ex, center]{title in head/foot}%
+      \usebeamerfont{title in head/foot}\insertshorttitle
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.15\paperwidth, ht=2.4ex, dp=1ex, right, rightskip=1em]{page number in head/foot}%
+      \usebeamerfont{page number in head/foot}\insertframenumber{} / \inserttotalframenumber
+    \end{beamercolorbox}}%
+  \vskip0pt}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{caption}[numbered]
+\setbeamerfont{caption}{size=\scriptsize}
+\setbeamersize{text margin left=0.6cm, text margin right=0.6cm}
+
+% A long title also needs a short one for the footline: \title[Short title]{Full title}
+\title{{{TITLE}}}
+% From the PDF or the author's instructions: the authors, their institution, and the event and date of the talk. What
+% neither names keeps its [placeholder], never a description such as "Master's thesis": \author is in every footline
+\author{{{UI_AUTHOR}}}
+\institute{{{UI_INSTITUTION}}}
+\date{{{UI_EVENT}}}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{\contentsname}
+  \tableofcontents
+\end{frame}
+
+\end{document}

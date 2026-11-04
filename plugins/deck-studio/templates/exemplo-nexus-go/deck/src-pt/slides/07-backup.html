@@ -1,0 +1,70 @@
+<section class="slide backup" id="b1" data-part="Backup">
+<h2 class="title">Hiperparâmetros</h2>
+<div class="bd">
+  <div class="tbl sm wrap" data-table="hyperparams" data-rows="0-11" style="grid-column: 1 / 7"></div>
+  <div class="tbl sm wrap" data-table="hyperparams" data-rows="12-22" style="grid-column: 7 / 13"></div>
+</div>
+<aside class="notes"><p>Configurações de otimização da campanha final da segunda geração (Tabela A.2). Os valores marcados como variáveis fazem parte do espaço de busca.</p></aside>
+</section>
+
+<section class="slide backup" id="b2" data-part="Backup">
+<h2 class="title">Fusão tardia: grade e coeficientes escolhidos</h2>
+<div class="bd">
+  <div class="tbl sm wrap" data-table="fusion_grid" style="grid-column: 1 / 8"></div>
+  <div class="tbl sm" data-table="fusion_selected" style="grid-column: 8 / 13"></div>
+</div>
+<aside class="notes"><p>71 configurações por ontologia, escolhidas na validação. As duas regras condicionais convergiram para a sigmoide mais plana que a grade oferece.</p></aside>
+</section>
+
+<section class="slide backup" id="b3" data-part="Backup">
+<h2 class="title">Fusão precoce: proveniência × fonte</h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="early_grid" data-rank="4,5,6"></div>
+</div>
+<aside class="notes"><p>Proveniência é a cabeça com que o embedding GNN consumido foi treinado; fonte é a cabeça cuja profundidade e retenção foram usadas no ramo fixo. Conjunto de validação.</p></aside>
+</section>
+
+<section class="slide backup" id="b4" data-part="Backup">
+<h2 class="title">Proteínas isoladas e conectadas</h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="isolated_vs_connected" data-head="2" data-rank="1,2,4,5,7,8"></div>
+</div>
+<aside class="notes"><p>wF<sub>max</sub> no conjunto de teste. Toda rota com ProtT5 pontua pior nas proteínas conectadas; a Primeira Geração é a única rota que melhora com a conectividade.</p></aside>
+</section>
+
+<section class="slide backup" id="b5" data-part="Backup">
+<h2 class="title">Grau e F<sub>1</sub> por proteína</h2>
+<div class="bd">
+  <div class="tbl sm col-w" data-table="degree_correlation" data-head="2" data-rank="3,6,9"></div>
+</div>
+<aside class="notes"><p>Correlação de postos entre o grau e o F<sub>1</sub> por proteína, conjunto de teste. Todas as rotas que usam a sequência têm correlações negativas pequenas; as rotas com grafo as tornam menos negativas.</p></aside>
+</section>
+
+<section class="slide backup" id="b6" data-part="Backup">
+<h2 class="title"><i>Baselines</i>: adaptações, custo e cobertura</h2>
+<div class="bd" style="row-gap: 18px; grid-template-rows: auto auto">
+  <div class="tbl sm wrap col-w" data-table="baselines_adapt" data-cols="0,2"></div>
+  <div class="tbl sm wrap col-w" data-table="baselines_cost_coverage"></div>
+</div>
+<aside class="notes"><p>Os hiperparâmetros vêm da configuração de referência de cada método; as mudanças são restrições de hardware, não uma busca. Cobertura é a fração das proteínas de teste que recebem predição.</p></aside>
+</section>
+
+<section class="slide backup" id="b7" data-part="Backup">
+<h2 class="title">O fechamento hierárquico usa só <code>is_a</code></h2>
+<div class="bd">
+  <ul class="b col-w">
+    <li>Ancestrais alcançáveis só por <code>part_of</code> não recebem os escores dos descendentes</li>
+    <li>Afeta 387 de 3.507 pares ancestral-descendente em BP (11,0%), 2.056 de 4.405 em CC (46,7%) e um único par em MF</li>
+    <li>Aplicado igualmente a todo método; o padrão-ouro fecha sobre <code>is_a</code> e <code>part_of</code></li>
+  </ul>
+</div>
+<aside class="notes"><p>Segue a convenção de avaliação do DeepGO. O sentido do seu efeito nas métricas não é garantido, e ele pesa mais em Componente Celular.</p></aside>
+</section>
+
+<section class="slide backup" id="b8" data-part="Backup">
+<h2 class="title">Ambientes computacionais</h2>
+<div class="bd">
+  <div class="tbl sm wrap col-w" data-table="machines"></div>
+</div>
+<aside class="notes"><p>Os dois aceleradores do servidor pertencem ao mesmo nó físico. 23 execuções visuais na GTX 1080 Ti ficam fora das comparações de tempo.</p></aside>
+</section>

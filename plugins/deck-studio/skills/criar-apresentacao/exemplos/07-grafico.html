@@ -1,0 +1,41 @@
+<!-- TIPO: gráfico
+QUANDO USAR: só quando o gráfico precisa ser estático (uma figura que o componente não faz). Para barras, use o 14
+(BARRAS), animado; para etapas, o 15 (ESCADA); para antes e depois, o 16 (PONTOS). Se a fonte já tem a
+figura do gráfico, use a figura (03 ou 04); faça este só quando a fonte dá a tabela e não o gráfico.
+REGRAS: SVG estático escrito à mão (nenhum script roda num slide): um eixo, barras de até 24 px de espessura com 2 px
+de folga, o valor escrito na ponta de cada barra (.val), o rótulo de cada barra em texto; cada barra tem um <title>
+(a dica ao passar o mouse); a cor de conceito só na barra que é daquele conceito, o resto em var(--ink-2);
+os mesmos números numa tabela dentro de <details><summary>Tabela</summary>, para quem quiser ler os valores; o
+subtítulo diz de onde vêm os números. Validação e teste nunca no mesmo gráfico. -->
+<section class="slide" id="s25" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: a comparação em uma frase]</h2>
+<div class="bd">
+  <figure class="chart col-a f" data-f="1">
+    <svg viewBox="0 0 620 300" role="img" aria-label="[Métrica] por método, [conjunto]">
+      <line class="axis" x1="200" y1="20" x2="200" y2="280"/>
+      <text x="190" y="62" text-anchor="end">[Método A]</text>
+      <rect x="200" y="44" width="300" height="24" rx="4" fill="var(--ink-2)"><title>[Método A]: [0,00]</title></rect>
+      <text class="val" x="512" y="62">[0,00]</text>
+      <text x="190" y="152" text-anchor="end">[Método B]</text>
+      <rect x="200" y="134" width="340" height="24" rx="4" fill="var(--ink-2)"><title>[Método B]: [0,00]</title></rect>
+      <text class="val" x="552" y="152">[0,00]</text>
+      <text x="190" y="242" text-anchor="end">[Este trabalho]</text>
+      <rect x="200" y="224" width="380" height="24" rx="4" fill="var(--c3)"><title>[Este trabalho]: [0,00]</title></rect>
+      <text class="val" x="592" y="242">[0,00]</text>
+    </svg>
+    <details><summary>Tabela</summary>
+      <table class="t"><thead><tr><th>[Método]</th><th>[Métrica]</th></tr></thead>
+        <tbody><tr><td>[Método A]</td><td>[0,00]</td></tr><tr><td>[Método B]</td><td>[0,00]</td></tr><tr><td>[Este trabalho]</td><td>[0,00]</td></tr></tbody>
+      </table>
+    </details>
+    <figcaption class="cap">[Fonte], Tab. [n], p. [p]: [métrica], [conjunto]</figcaption>
+  </figure>
+  <ul class="b col-b">
+    <li class="f" data-f="2">[A leitura do gráfico]</li>
+    <li class="f c3" data-f="3">[O ganho do trabalho, com o número]</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>[O que o gráfico compara e o que concluir.] (p. [p], Tab. [n])</p>
+</aside>
+</section>

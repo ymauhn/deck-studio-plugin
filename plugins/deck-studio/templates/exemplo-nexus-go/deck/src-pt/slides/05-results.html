@@ -1,0 +1,237 @@
+<section class="slide" id="s30" data-part="5 · Resultados">
+<h2 class="title">170 execuções, um funil</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 40px">
+  <ul class="b col-w" style="display:grid; grid-template-columns: repeat(3, 1fr); column-gap: 40px">
+    <li class="f" data-f="1">170 execuções, cerca de 136,3 horas de GPU (147 delas numa RTX A5500)</li>
+    <li class="f" data-f="2">Cada etapa escolhe sua vencedora na validação e a passa adiante</li>
+    <li class="f fuse" data-f="3">Teste lido uma única vez, no final</li>
+  </ul>
+  <div class="col-w" data-component="INT-FUNNEL" style="height:360px"></div>
+</div>
+<aside class="notes">
+<p>A seleção nunca toca a partição de teste. Todo número de teste reportado é uma única avaliação de uma configuração congelada.</p>
+<p>Duas etapas não são escolhas puras de validação: a deduplicação max se apoia num argumento analítico (todas as 170 execuções a usam; os números de soma vêm da campanha anterior), e o ConvNeXt-Tiny segue adiante por uma margem de 0,57 p.p. somada à campanha do VISAPP.</p>
+</aside>
+</section>
+
+<section class="slide" id="s31" data-part="5 · Resultados">
+<h2 class="title">A Geração 1 resolve três escolhas</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f" data-f="1"><i>Baseline</i> ingênuo de frequência de termos: 43,56 de wF<sub>max</sub> médio</li>
+    <li class="f" data-f="2">ProteinLoss supera a entropia cruzada binária: +5,47 p.p. na média (+8,87 em MF)</li>
+    <li class="f" data-f="3">MLP sobre o perfil bruto vence: 44,51; melhor CNN 1-D: 41,16</li>
+    <li class="f" data-f="4"><b><i>Backbones</i> visuais:</b> de 36,99 a 37,62</li>
+  </ul>
+  <div class="col-b" data-component="INT-G1" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>A topologia sozinha mal supera um preditor que não olha para nada: 0,95 p.p. na média, e fica abaixo dele em BP.</p>
+<p>A rota vetorial vence, e o ConvNeXt-Tiny segue adiante por uma margem de 0,57 p.p. somada à campanha anterior do VISAPP.</p>
+</aside>
+</section>
+
+<section class="slide" id="s32" data-part="5 · Resultados">
+<h2 class="title">Um ou dois saltos, alta retenção</h2>
+<div class="bd s32" style="grid-template-rows: auto 1fr; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_1.webp" alt="Cabeça vetorial: o wFmax de validação atinge o pico com um salto em BP e dois em CC, e é máximo sem propagação em MF"></div></div>
+    <figcaption class="cap"><span class="src">Dissertação, Fig. 6.1 · </span>Cabeça vetorial, profundidade, validação</figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 7 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_6_2.webp" alt="Cabeça vetorial: retenção entre 0,5 e 0,8 fica perto do ótimo; retenção baixa perde vários pontos"></div></div>
+    <figcaption class="cap"><span class="src">Dissertação, Fig. 6.2 · </span>Cabeça vetorial, retenção, validação</figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: 1fr 1fr; column-gap: 32px">
+    <li class="f" data-f="1"><b>Pico de profundidade:</b> <span class="m">T = 1</span> BP, <span class="m">T = 2</span> CC, <span class="m">T = 0</span> MF</li>
+    <li class="f" data-f="3"><b>Melhor retenção:</b> <span class="m">\alpha = 0{,}7</span> BP, <span class="m">\alpha = 0{,}8</span> CC</li>
+    <li class="f" data-f="2">Além do pico, o desempenho cai de 12,80 a 17,60 p.p. até <span class="m">T = 10</span></li>
+    <li class="f net" data-f="4">O grafo corrige a representação da própria proteína; não a substitui</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Em MF, nenhuma quantidade de propagação ajuda; a melhor configuração desliga o grafo.</p>
+<p>Em CC, tudo abaixo de α = 0,4 é pior que tudo acima; em BP, a única exceção é α = 0,9.</p>
+</aside>
+</section>
+
+<section class="slide" id="s33" data-part="5 · Resultados">
+<h2 class="title">A cabeça visual quer propagação profunda</h2>
+<div class="bd s32" style="grid-template-rows: auto 1fr; row-gap: 22px">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_3.webp" alt="Cabeça visual: o wFmax de validação sobe até um platô em torno de seis ou sete saltos em BP e CC"></div></div>
+    <figcaption class="cap"><span class="src">Dissertação, Fig. 6.3 · </span>Cabeça visual, profundidade, validação</figcaption>
+  </figure>
+  <figure class="f" data-f="3" style="grid-column: 7 / 13">
+    <div class="plate"><div class="fig"><img src="img/fig_6_4.webp" alt="Cabeça visual: o desempenho colapsa quando a retenção é 0,2 ou menor"></div></div>
+    <figcaption class="cap"><span class="src">Dissertação, Fig. 6.4 · </span>Cabeça visual, retenção, validação</figcaption>
+  </figure>
+  <ul class="b sm col-w" style="display:grid; grid-template-columns: 1fr 1fr; column-gap: 32px">
+    <li class="f" data-f="1"><b>Pico de profundidade:</b> <span class="m">T = 7</span> BP, <span class="m">T = 6</span> CC, <span class="m">T = 0</span> MF; um platô, não um pico</li>
+    <li class="f" data-f="3">Colapso em <span class="m">\alpha \le 0{,}2</span>: nós isolados encolhem como <span class="m">\alpha^{T}</span> <span class="nw">(<span class="m">10^{-7}</span> em <span class="m">T = 7</span>)</span></li>
+    <li class="f" data-f="2">Ganhos sobre <span class="m">T = 0</span>: +5,84 BP, +2,93 CC (cabeça vetorial: +1,85, +0,92)</li>
+    <li class="f" data-f="4">Seu melhor valor em BP, 52,17, ainda fica abaixo dos 53,36 da cabeça vetorial sem grafo</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>A cabeça visual extrai menos do próprio nó, então a diluição lhe custa menos e a média da vizinhança ajuda mais.</p>
+<p>MF tem pico em T = 0 nas duas cabeças, a forma mais forte dessa observação.</p>
+</aside>
+</section>
+
+<section class="slide" id="s34" data-part="5 · Resultados">
+<h2 class="title">Aprender a agregação não compensa</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f net" data-f="1">A GCN supera a GAT nos 6 pares (de 3,88 a 9,31 p.p.) e em 30 de 30 pares de fusão</li>
+    <li class="f net" data-f="2">Fixa 65,12 contra GCN 63,32 de wF<sub>max</sub> médio</li>
+    <li class="f net" data-f="3">GCN à frente em BP por 0,55 (empate); atrás em CC por 0,59 e em MF por 5,35</li>
+    <li class="f" data-f="4"><b>Deduplicação:</b> max nunca perde além do ruído; a GAT é a que mais ganha (+3,83 visual)</li>
+  </ul>
+  <div class="col-b" data-component="INT-FL" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>A atenção não recupera uma ponderação melhor que o escore do STRING que ela recebeu.</p>
+<p>Uma razão plausível: a perda é mascarada para os nós de treino, então os parâmetros de atenção só recebem gradiente por um campo receptivo de dois saltos.</p>
+</aside>
+</section>
+
+<section class="slide" id="s35" data-part="5 · Resultados">
+<h2 class="title">A fusão ajuda; combinar predições ajuda mais</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f fuse" data-f="1">Fusão precoce, uma configuração (soma, GCN, vetorial): 65,80, +0,68 sobre a fixa sozinha</li>
+    <li class="f fuse" data-f="2">Fusão tardia, <span class="m">\gamma</span> linear (0,50 BP, 0,55 CC e MF): 67,06, a melhor em toda ontologia</li>
+    <li class="f fuse" data-f="3"><b>Ganhos sobre o melhor componente:</b> +2,18 BP, +1,85 CC, +1,26 MF</li>
+    <li class="f" data-f="4"><b>Importâncias no empilhamento:</b> as duas probabilidades levam quase todo o peso</li>
+  </ul>
+  <div class="col-b" data-component="INT-LATE" style="height:600px"></div>
+</div>
+<aside class="notes">
+<p>Um único escalar supera toda regra elaborada, inclusive o gradient boosting. Os atributos auxiliares não preveem qual rota está certa, e as regras condicionais convergiram para a sigmoide mais plana da grade.</p>
+<p>A fusão tardia ajusta um único parâmetro extra na validação.</p>
+</aside>
+</section>
+
+<section class="slide" id="s36" data-part="5 · Resultados">
+<h2 class="title">A cabeça vetorial vence 12 de 12</h2>
+<div class="bd">
+  <div data-component="INT-VV" data-opts='{"at":[0,1,2,2,3]}' style="grid-column: 1 / 9; height:600px"></div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2"><b>Margem na média:</b> +6,62, +3,96, +2,69, +3,35 p.p. nas quatro etapas</li>
+    <li class="f" data-f="3">Sem tendência a zero</li>
+    <li class="f warn" data-f="4">Nenhuma das imagens tem a localidade que uma convolução pressupõe</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>As imagens da Geração 1 indexam proteínas de treino arbitrárias; as da Geração 2 remodelam coordenadas do embedding.</p>
+<p>Três evidências independentes concordam: a ordem do pooling, a falha da CNN 1-D e esta tabela.</p>
+</aside>
+</section>
+
+<section class="slide" id="s37" data-part="5 · Resultados" data-steps="4">
+<h2 class="title">De onde vêm os ganhos</h2>
+<div class="bd" style="grid-template-rows: auto 1fr; row-gap: 26px">
+  <div class="col-w" data-component="INT-JOURNEY" style="height:430px"></div>
+  <div class="col-w s37-tbl">
+  <div class="tbl sm f" data-f="3"><table class="t">
+    <thead><tr><th></th><th><i>Baseline</i> ingênuo</th><th>Geração 1</th><th>Só ProtT5</th><th>NEXUS-GO/GNN</th><th>NEXUS-GO/Fixed</th><th>NEXUS-GO/Early</th><th>NEXUS-GO/Late</th></tr></thead>
+    <tbody><tr><td class="txt">wF<sub>max</sub> médio, validação</td><td>43,56</td><td>44,51</td><td>63,92</td><td>63,32</td><td>65,12</td><td class="second">65,84</td><td class="best">67,06</td></tr></tbody>
+  </table></div>
+  <ul class="b sm">
+    <li class="f seq" data-f="4">A maior parte do salto vem do modelo de linguagem; o grafo acrescenta o resto</li>
+  </ul>
+  </div>
+</div>
+<aside class="notes">
+<p>Esta é a dissertação inteira num só eixo. O modelo de linguagem de proteínas explica a maior parte da distância, e o grafo contribui com um restante consistente em BP e CC.</p>
+<p>Cada valor é uma média dos campeões por ontologia na validação. A tabela inclui a GNN aprendida sozinha, 63,32: ela fica abaixo do controle ProtT5 por causa de MF, por isso não é um degrau da escada no gráfico.</p>
+</aside>
+</section>
+
+<section class="slide" id="s38" data-part="5 · Resultados">
+<h2 class="title">Teste: NEXUS-GO contra cinco métodos</h2>
+<div class="bd">
+  <ul class="b sm col-a">
+    <li class="f fuse" data-f="1">NEXUS-GO/Late é o melhor em todas as colunas das três tabelas, exceto AuPRC em MF</li>
+    <li class="f fuse" data-f="2">Margem de wF<sub>max</sub> sobre o <i>baseline</i> mais forte: +9,77 BP, +8,67 CC, +4,93 MF</li>
+    <li class="f fuse" data-f="3">S<sub>min</sub>: 17,12 contra 20,11 (BP), 8,22 contra 9,67 (CC), 5,14 contra 5,67 (MF)</li>
+    <li class="f seq" data-f="4">O <i>baseline</i> ProtT5 sozinho já supera todos os métodos da literatura em wF<sub>max</sub></li>
+  </ul>
+  <div class="col-b" data-component="INT-TEST" style="height:630px"></div>
+</div>
+<aside class="notes">
+<p>Todo baseline foi retreinado no mesmo corpus e avaliado com o mesmo código.</p>
+<p>Três deles perdem seu mecanismo multirrede numa única rede agregada, então a ordem descreve essas configurações adaptadas, não os artigos originais.</p>
+</aside>
+</section>
+
+<section class="slide" id="s39" data-part="5 · Resultados">
+<h2 class="title">Toda proteína recebe uma predição</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f fuse" data-f="1"><b>NEXUS-GO:</b> 100% da partição de teste em BP, CC, MF</li>
+    <li class="f" data-f="2"><b>DeepGraphGO e SEGT-GO:</b> 95,1–96,3% (busca de homologia)</li>
+    <li class="f" data-f="3"><b>Mashup, MELISSA, deepNF:</b> 63,6–68,7% (só membros da rede)</li>
+  </ul>
+  <div class="col-b" data-component="INT-COV" data-opts='{"at":[0,1,2,2]}' style="height:520px"></div>
+</div>
+<aside class="notes">
+<p>Proteínas ausentes contam como erros na comparação, então parte da distância para os métodos só de rede é alcance, não qualidade do ranqueamento.</p>
+<p>As proteínas que eles não alcançam são justamente a faixa em que as rotas com sequência pontuam mais alto.</p>
+</aside>
+</section>
+
+<section class="slide" id="s40" data-part="5 · Resultados">
+<h2 class="title">1/13 do tempo por época</h2>
+<div class="bd">
+  <figure class="f" data-f="1" style="grid-column: 1 / 7">
+    <div class="plate"><div class="fig"><img src="img/fig_6_5.webp" alt="Segundos por época e pico de memória por família: a propagação fixa é uma ordem de grandeza mais rápida que os codificadores aprendidos e usa menos da metade da memória"></div></div>
+    <figcaption class="cap src-only"><span class="src">Dissertação, Fig. 6.5</span></figcaption>
+  </figure>
+  <ul class="b sm" style="grid-column: 7 / 13">
+    <li class="f net" data-f="2"><b>Fixa + vetorial:</b> 5,24 s/época, pico de 6,4 GiB</li>
+    <li class="f" data-f="3"><b>Só a GCN:</b> 68,76 s/época, 14,1 GiB; GAT 161,41 s, 20,7 GiB</li>
+    <li class="f" data-f="4">Iguala ou supera a GCN com cerca de 1/13 do tempo e menos da metade da memória</li>
+    <li class="f fuse" data-f="5">A fusão precoce custa o mesmo que a propagação fixa quando <span class="m">\mathbf{g}</span> já está armazenado</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>O operador fixo roda uma vez por experimento; os aprendidos recalculam uma propagação no grafo inteiro a cada passo de otimização.</p>
+<p>O custo da fusão precoce não inclui o treino da GCN cujo embedding ela consome.</p>
+</aside>
+</section>
+
+<section class="slide" id="s41" data-part="5 · Resultados">
+<h2 class="title">O grafo ajuda onde há grafo</h2>
+<div class="bd">
+  <div style="grid-column: 1 / 9" class="stack s41-left">
+    <figure class="f fitw" data-f="1">
+      <div class="plate"><div class="fig"><img src="img/fig_6_6.webp" alt="F1 por proteína e faixa de grau no conjunto de teste: as rotas com sequência pontuam mais alto nas proteínas isoladas, e a distância entre as rotas de grafo e o controle cresce com o grau" style="height:350px"></div></div>
+      <figcaption class="cap"><span class="src">Dissertação, Fig. 6.6 · </span>Teste</figcaption>
+    </figure>
+    <div class="f" data-f="4" data-component="INT-GAIN" data-opts='{"at":[0,1,2,2,3]}' style="height:170px; width:938px"></div>
+  </div>
+  <ul class="b sm" style="grid-column: 9 / 13">
+    <li class="f" data-f="2">Toda rota com ProtT5 pontua pior nas proteínas conectadas que nas isoladas</li>
+    <li class="f" data-f="3">O controle sem grafo já mostra isso, então não é o grafo que causa</li>
+    <li class="f net" data-f="4">O ganho do grafo cresce com o grau: até +9,05 BP, +8,71 CC, +4,64 MF com grau ≥ 50</li>
+  </ul>
+</div>
+<aside class="notes">
+<p>Hubs tendem a ser multifuncionais e mais difíceis para um modelo de sequência. Em BP, as proteínas mais difíceis têm grau de 3 a 5, não zero.</p>
+<p>As diferenças no grau zero vêm de reescala e reajuste, então leia os ganhos topológicos a partir do grau um.</p>
+</aside>
+</section>
+
+<style>
+.s32 .fig img { height: 330px; width: auto; max-width: 100%; margin: 0 auto; }
+.s41-left { gap: 16px; }
+</style>
+
+<style>
+.s37-tbl { display: flex; flex-direction: column; gap: 18px; }
+.s37-tbl .t { width: 100%; }
+.s37-tbl .t th, .s37-tbl .t td { text-align: center; white-space: normal; }
+.s37-tbl .t td.txt { text-align: left; }
+</style>

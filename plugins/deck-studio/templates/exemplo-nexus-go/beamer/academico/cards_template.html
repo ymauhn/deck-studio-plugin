@@ -1,0 +1,87 @@
+<title>NEXUS-GO Speaker Cards</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* layout: a single reading column of cue cards, slide number in the margin, running clock at right */
+:root {
+  --bg: #f5f6f8; --card: #ffffff; --ink: #1b2a41; --muted: #4c5768; --rule: #dde1e8; --accent: #9b1b30;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171f; --card: #1a212c; --ink: #e6e9ef; --muted: #9aa4b3; --rule: #2c3543; --accent: #e0707f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12171f; --card: #1a212c; --ink: #e6e9ef; --muted: #9aa4b3; --rule: #2c3543; --accent: #e0707f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+.top h1 { font: 600 2.2rem/1.1 var(--display); margin: 0; text-wrap: balance; }
+.top p { margin: 6px 0 0; color: var(--muted); }
+.top .stats { font: 500 0.85rem var(--mono); color: var(--muted); margin-top: 10px; letter-spacing: .02em; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); padding-block: 10px; z-index: 2; }
+.chip { font: 600 0.8rem var(--body); border: 1px solid var(--rule); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px; display: grid; gap: 10px; min-width: 0; }
+.card header { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; }
+.num { font: 500 1.1rem var(--mono); color: var(--accent); padding-top: 4px; font-variant-numeric: tabular-nums; }
+.part { font: 600 0.72rem var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.card h2 { font: 600 1.35rem/1.2 var(--display); margin: 2px 0 0; text-wrap: balance; }
+.time { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.time b { display: block; font-weight: 500; font-size: 1.05rem; }
+.time span { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.card ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 68ch; }
+.next { margin: 0; padding-top: 10px; border-top: 1px dashed var(--rule); color: var(--muted); font-style: italic; }
+.next .lbl { font: 600 0.72rem var(--body); font-style: normal; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-right: 8px; }
+@media (max-width: 480px) { .card header { grid-template-columns: auto 1fr; } .time { grid-column: 2; text-align: left; } .time b, .time span { display: inline; margin-right: 8px; } }
+[data-lang="pt"] .en, [data-lang="en"] .pt { display: none; }
+.titlebar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.lang { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.lbtn { font: 500 0.85rem var(--mono); background: var(--card); color: var(--ink); border: 0; padding: 6px 12px; cursor: pointer; }
+.lbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.lbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+</style>
+
+<div class="wrap" id="root" data-lang="pt">
+  <div class="top">
+    <div class="titlebar">
+      <h1><span class="pt">Roteiro da defesa NEXUS-GO</span><span class="en">NEXUS-GO speaker cards</span></h1>
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" id="lang-pt" class="lbtn" aria-pressed="true">PT</button><button type="button" id="lang-en" class="lbtn" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <p><span class="pt">Um card por slide do Beamer acadêmico: o que falar, quanto tempo e como passar para o próximo slide. Os títulos ficam em inglês, como nos slides.</span><span class="en">One card per slide of the academic Beamer deck: what to say, how long, and how to hand over to the next slide.</span></p>
+    <div class="stats"><span class="pt">45 slides · {{TOTAL}} no total · tempos do ensaio narrado, arredondados a 15 s · "aos" é o relógio acumulado</span><span class="en">45 slides · {{TOTAL}} total · times from the narrated rehearsal, rounded to 15 s · "at" is the running clock</span></div>
+  </div>
+  <nav class="filters" aria-label="Partes / Parts">
+    <button type="button" class="chip" data-f="" aria-pressed="true"><span class="pt">Todas</span><span class="en">All</span></button>{{CHIPS}}
+  </nav>
+  {{CARDS}}
+</div>
+
+<script>
+const root = document.getElementById('root');
+const chips = document.querySelectorAll('.chip');
+const cards = document.querySelectorAll('.card');
+function show(f) {
+  chips.forEach(c => c.setAttribute('aria-pressed', String(c.dataset.f === f)));
+  cards.forEach(c => { c.hidden = !!f && c.dataset.part !== f; });
+  try { localStorage.setItem('part', f); } catch (e) {}
+}
+function lang(l) {
+  root.dataset.lang = l;
+  document.documentElement.lang = l === 'pt' ? 'pt-BR' : 'en';
+  document.getElementById('lang-pt').setAttribute('aria-pressed', String(l === 'pt'));
+  document.getElementById('lang-en').setAttribute('aria-pressed', String(l === 'en'));
+  try { localStorage.setItem('lang', l); } catch (e) {}
+}
+chips.forEach(c => c.addEventListener('click', () => show(c.dataset.f)));
+document.getElementById('lang-pt').addEventListener('click', () => lang('pt'));
+document.getElementById('lang-en').addEventListener('click', () => lang('en'));
+let saved = '', savedLang = 'pt';
+try { saved = localStorage.getItem('part') || ''; savedLang = localStorage.getItem('lang') || 'pt'; } catch (e) {}
+if ([...chips].some(c => c.dataset.f === saved)) show(saved);
+lang(savedLang === 'en' ? 'en' : 'pt');
+</script>

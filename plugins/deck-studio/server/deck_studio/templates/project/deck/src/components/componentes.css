@@ -1,0 +1,72 @@
+/* Interactive components (deck/src/components/*.js): the build adds this file after deck.css. */
+.cp { position: relative; display: flex; flex-direction: column; gap: 14px; }
+.cp svg { display: block; width: 100%; height: auto; overflow: visible; }
+.cp text { font: 400 20px var(--font-data); fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cp text.lab { font: 400 22px var(--font-body); fill: var(--ink); }
+.cp text.val { font: 500 22px var(--font-data); fill: var(--ink); }
+.cp text.tick { font-size: 17px; fill: var(--muted); }
+.cp .grid { stroke: var(--hair); stroke-width: 1; }
+.cp .base { stroke: var(--ink-2); stroke-width: 1.5; }
+.cp [data-tl] { cursor: default; outline: none; }
+.cp [data-tl]:focus-visible { outline: 3px solid var(--focus); }
+.cp .tip { transform: translateX(-50%); }
+.cp-controls { justify-content: flex-end; }
+.cp-table { align-self: flex-start; }
+.cp-view[hidden], .cp-table[hidden] { display: none; }
+
+/* BARRAS: the bar grows from the base, the value counts */
+.cp-barras .cp-row { opacity: 0; transition: opacity 300ms var(--ease); }
+.cp-barras .cp-row.on { opacity: 1; }
+.cp-barras .bar { transform-box: fill-box; transform: scaleX(0); transition: transform 700ms var(--ease); }
+.cp-barras .cp-row.on .bar { transform: none; }
+
+/* ESCADA: the stair draws itself, then its area shows */
+.cp-escada .cp-step { opacity: 0; transition: opacity 250ms var(--ease); }
+.cp-escada .cp-step.on { opacity: 1; }
+.cp-escada .line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 700ms var(--ease); }
+.cp-escada .cp-step.on .line { stroke-dashoffset: 0; }
+.cp-escada .area { opacity: 0; transition: opacity 500ms var(--ease) 400ms; }
+.cp-escada .cp-step.on .area { opacity: .12; }
+.cp-escada text.delta { font: 600 20px var(--font-data); }
+
+/* PONTOS: the new series' dot slides from the previous one */
+.cp-pontos .dot { opacity: 0; stroke: var(--slide); stroke-width: 2; transition: cx 800ms var(--ease), opacity 250ms var(--ease); }
+.cp-pontos .dot.on { opacity: 1; }
+.cp-pontos .link { stroke: var(--hair); stroke-width: 6; stroke-linecap: round; opacity: 0; transition: opacity 400ms var(--ease) 500ms; }
+.cp-pontos .link.on { opacity: 1; }
+.cp-pontos .key { opacity: .25; transition: opacity 250ms var(--ease); }
+.cp-pontos .key.on { opacity: 1; }
+.cp-pontos .legend text { font: 400 20px var(--font-body); fill: var(--ink); }
+
+/* FLUXO: boxes over a layer of arrows; the flow runs on the visible arrows */
+.cp-stage { position: relative; }
+.cp-edges { position: absolute; inset: 0; }
+.cp-edge { opacity: 0; transition: opacity 350ms var(--ease); }
+.cp-edge.on { opacity: 1; }
+.cp-edge.dim, .cp-node.dim { opacity: .18 !important; }
+.cp-edge .base { fill: none; stroke-width: 3; opacity: .55; }
+.cp-edge .flow { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 2 16; animation: cp-flow 1.1s linear infinite; }
+.cp-edge.dim .flow { animation: none; opacity: 0; }
+@keyframes cp-flow { to { stroke-dashoffset: -36; } }
+.cp-node {
+  position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
+  background: var(--slide); border: 2.5px solid var(--ink-2); border-radius: 8px; padding: 0 10px; text-align: center;
+  font: 400 21px/1.15 var(--font-body); color: var(--ink); opacity: 0; transform: translateY(10px);
+  transition: opacity 350ms var(--ease), transform 350ms var(--ease);
+}
+.cp-node.on { opacity: 1; transform: none; }
+.cp-node .l1 { font-weight: 700; }
+.cp-node .l2 { font-size: 18px; color: var(--ink-2); margin-top: 4px; }
+.cp-node:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.cp-nota { margin: 0; min-height: 1.4em; font: 400 22px/1.35 var(--font-body); color: var(--ink-2); }
+.cp-still .flow { animation: none; }
+
+/* NUMERO */
+.cp-numero { font-variant-numeric: tabular-nums; }
+
+/* no motion in the PDF, the overview or with reduced motion: everything in its final state */
+html.printing .cp *, #deck.ov .cp * { transition: none !important; animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .cp * { transition: none !important; animation: none !important; } }
+
+/* the big number (example 18) */
+.big { display: block; margin-bottom: 10px; font: 650 72px/1.05 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }

@@ -1,0 +1,66 @@
+% NEXUS-GO: Master's dissertation defense, Beamer version.
+% Compile with XeLaTeX, twice (the slides are drawn on a remember-picture overlay):
+%   xelatex nexus-go-defense && xelatex nexus-go-defense
+% Speaker notes on a second screen: compile with -jobname=nexus-go-defense-notes "\def\withnotes{}\input{nexus-go-defense}"
+% slides.tex is generated from the HTML deck by beamer/tools/make_tex.py.
+\documentclass[aspectratio=169,11pt]{beamer}
+\ifdefined\withnotes\setbeameroption{show notes on second screen=right}\fi
+\usepackage{lmodern}% scalable Computer Modern shapes for math at the deck's sizes
+\usepackage[no-math]{fontspec}
+\usefonttheme[onlymath]{serif}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{animate}
+\hypersetup{pdftitle={NEXUS-GO: Master's dissertation defense}, pdfauthor={Yeonatan Mauhnoom}, hidelinks}
+\date{November 16, 2026}% shown on the notes pages
+\setbeamertemplate{navigation symbols}{}
+
+% fonts of the HTML deck (latin subsets, see beamer/tools/fonts.py)
+\defaultfontfeatures{Path=fonts/}
+\newfontfamily\fbR{AtkinsonNext-Regular.ttf}
+\newfontfamily\fbB{AtkinsonNext-Bold.ttf}
+\newfontfamily\fbI{AtkinsonNext-Regular.ttf}[FakeSlant=0.18]
+\newfontfamily\fbBI{AtkinsonNext-Bold.ttf}[FakeSlant=0.18]
+\newfontfamily\fmR{PlexMono-Regular.ttf}
+\newfontfamily\fmM{PlexMono-Medium.ttf}
+\newfontfamily\fdA{Bricolage-w650-o96.ttf}
+\newfontfamily\fdB{Bricolage-w700-o96.ttf}
+\setsansfont{AtkinsonNext-Regular.ttf}[BoldFont=AtkinsonNext-Bold.ttf, ItalicFont=AtkinsonNext-Regular.ttf, ItalicFeatures={FakeSlant=0.18}]
+\setmonofont{PlexMono-Regular.ttf}
+
+% colour tokens (docs/DESIGN.md, light theme)
+\definecolor{ink}{HTML}{0F1D29}
+\definecolor{inkii}{HTML}{43525F}
+\definecolor{muted}{HTML}{74828F}
+\definecolor{hair}{HTML}{D9E0E6}
+\definecolor{plate}{HTML}{FFFFFF}
+\definecolor{plateedge}{HTML}{D9E0E6}
+\definecolor{slide}{HTML}{FBFCFD}
+\definecolor{seq}{HTML}{2A78D6}
+\definecolor{net}{HTML}{EB6834}
+\definecolor{fuse}{HTML}{1BAF7A}
+\definecolor{warn}{HTML}{C2410C}
+\setbeamercolor{background canvas}{bg=slide}
+\setbeamercolor{normal text}{fg=ink}
+
+% the 1600 x 900 px canvas of the HTML deck: 1 px = 0.1 mm
+\newlength\px \setlength\px{0.1mm}
+\newcommand\fz[2]{\fontsize{#1\px}{#2\px}\selectfont}
+\newcommand\ls[1]{\addfontfeatures{LetterSpace=#1}}
+\newcommand\Ll[1]{\begin{tabular}[t]{@{}l@{}}#1\end{tabular}}
+\newcommand\Lc[1]{\begin{tabular}[t]{@{}c@{}}#1\end{tabular}}
+\newcommand\Lr[1]{\begin{tabular}[t]{@{}r@{}}#1\end{tabular}}
+% invisible link box of #1 x #2 px to destination #3 (\hyperlink drops boxes with nothing drawn in them)
+\newcommand\hot[3]{\hbox to #1\px{\special{pdf:ann width \the\dimexpr#1\px\relax\space height \the\dimexpr#2\px\relax\space depth 0pt
+  <</Type/Annot/Subtype/Link/Border[0 0 0]/A<</S/GoTo/D(#3)>>>>}\vrule width 0pt height #2\px\hfil}}
+\tikzset{
+  deck/.style={remember picture, overlay, shift={(current page.north west)}, x=\px, y=-\px},
+  box/.style={anchor=north west, inner sep=0pt, outer sep=0pt},
+  tl/.style={anchor=base west, inner sep=0pt, outer sep=0pt},
+  tc/.style={anchor=base, inner sep=0pt, outer sep=0pt},
+  tr/.style={anchor=base east, inner sep=0pt, outer sep=0pt},
+}
+
+\begin{document}
+\input{slides}
+\end{document}

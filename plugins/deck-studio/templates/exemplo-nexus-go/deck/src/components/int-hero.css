@@ -1,0 +1,12 @@
+/* INT-HERO */
+.hero { position: relative; overflow: hidden; }
+.hero svg { display: block; }
+.hero .hero-seq { fill: var(--seq); }
+.hero .hero-net { fill: var(--net); }
+.hero .hero-fuse { fill: var(--fuse); }
+.hero .hero-bond { fill: none; stroke: var(--seq); stroke-width: 3; stroke-opacity: .45; stroke-linejoin: round; }
+.hero .hero-chain circle { fill: var(--seq); stroke: var(--slide); stroke-width: 2.5; }
+.hero .hero-graph line { stroke: var(--net); stroke-linecap: round; }
+.hero .hero-graph circle { fill: var(--net); stroke: var(--slide); stroke-width: 3; }
+.hero-calm .hero-chain, .hero-calm .hero-graph { opacity: .55; }
+.hero-calm rect { opacity: .8; }

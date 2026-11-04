@@ -1,0 +1,27 @@
+<!-- TIPO: bullets com figura
+QUANDO USAR: o slide mais comum. Uma ideia, explicada em 2 a 4 itens à esquerda, com a figura da fonte que a mostra à
+direita. A figura entra no passo do item que fala dela.
+REGRAS: no máximo 4 itens (cerca de 12 palavras cada), um item por passo (class="f", data-f="1", "2"...); a cor de
+conceito (.c1, .c2, .c3) só no item que fala daquele conceito, .warn para ressalva; a figura numa placa
+(figure > .plate > .fig > img), com alt real e a legenda da fonte na figcaption.cap (oculta por padrão, mas lida pela
+checagem de figuras). Texto que não cabe: encurte, nunca diminua a fonte. -->
+<section class="slide" id="s07" data-part="[Parte]">
+<h2 class="title">[Título afirmativo: a conclusão do slide em uma frase]</h2>
+<div class="bd">
+  <ul class="b col-a">
+    <li class="f" data-f="1">[Primeiro ponto, com o número da fonte se houver]</li>
+    <li class="f c1" data-f="2">[Ponto ligado ao conceito 1]</li>
+    <li class="f c2" data-f="3">[Ponto ligado ao conceito 2]</li>
+    <li class="f warn" data-f="4">[A ressalva, se houver]</li>
+  </ul>
+  <figure class="col-b fitw f" data-f="2">
+    <div class="plate"><div class="fig">
+      <img src="img/exemplo-figura.png" alt="[O que a figura mostra, em uma frase]" style="max-height:560px">
+    </div></div>
+    <figcaption class="cap">[Fonte], Fig. [n], p. [p]</figcaption>
+  </figure>
+</div>
+<aside class="notes">
+<p>[O que dizer neste slide, em 2 a 4 frases. Os números vêm da fonte.] (p. [p])</p>
+</aside>
+</section>
