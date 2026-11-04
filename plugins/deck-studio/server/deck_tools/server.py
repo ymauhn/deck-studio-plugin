@@ -102,13 +102,15 @@ async def novo_projeto(fonte: str, nome: str, pasta: str = "", idioma: str = "pt
         pdfs = [rel for rel in files if rel.lower().endswith(".pdf")]
         await asyncio.to_thread(projects.create_from_files, target, nome, slug, formato, idioma, files,
                                 pdfs[0] if pdfs else "")
-        lines, taken = [], set()
+        lines, taken, extracted = [], set(), []
         for pdf in pdfs:
             out = projects.slug_of(Path(pdf).stem, taken | {slug}) if len(pdfs) > 1 else slug
             taken.add(out)
+            extracted.append(out)
             info = await projects.extract(target / "context" / pdf, target / "context" / out)
             lines.append(f"- context/{pdf}: texto em context/{out}/texto.md, figuras em context/{out}/figuras "
                          f"({info.get('pages', '?')} páginas)")
+        projects.point_to_sources(target, slug, {pdf: out for pdf, out in zip(pdfs, extracted)})
         lines += [f"- context/{rel}" for rel in files if rel not in pdfs]
         _current["path"] = target
         return (f"Projeto criado em {target}.\n" + "\n".join(lines) +

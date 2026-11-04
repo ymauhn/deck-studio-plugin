@@ -1,6 +1,6 @@
 {
   "name": "deck-studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Cria e edita apresentações (HTML e Beamer) a partir de um artigo, uma tese ou uma pasta, com o método do kit NEXUS-GO: storyline, fatos com fonte, componentes animados, QA de números e de layout e um juiz.",
   "author": {
     "name": "ymauhn"

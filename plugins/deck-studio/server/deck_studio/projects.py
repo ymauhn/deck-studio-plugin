@@ -171,6 +171,25 @@ def create(folder, name, slug, fmt, language, pdf_name, pdf):
     create_from_files(folder, name, slug, fmt, language, {pdf_name: pdf}, pdf_name)
 
 
+def point_to_sources(folder, slug, extracted):
+    """A project made from a folder with several PDFs: its CLAUDE.md names them all and their extraction folders
+    (extracted: {PDF's context-relative path: its folder in context/}). The template's own text names one PDF and
+    context/<slug>/, which then does not exist. Nothing changes with one PDF or none."""
+    if len(extracted) < 2:
+        return
+    claude = Path(folder) / "CLAUDE.md"
+    text = claude.read_text(encoding="utf-8")
+    first_pdf, first_out = next(iter(extracted.items()))
+    pdfs = ", ".join(f"`context/{p}`" for p in extracted)
+    folders = ", ".join(f"`context/{out}/` (from `{p}`)" for p, out in extracted.items())
+    text = text.replace(f"comes from the imported PDF, `context/{first_pdf}`.",
+                        f"comes from the imported PDFs ({pdfs}) and the other files in `context/`.")
+    text = text.replace(f"- **The extracted PDF** is in `context/{slug}/`:",
+                        f"- **The extracted PDFs** are in `context/`, one folder each: {folders}. In each folder:")
+    text = text.replace(f"{slug}/figuras/", f"{first_out}/figuras/")
+    claude.write_text(text, encoding="utf-8")
+
+
 def create_from_files(folder, name, slug, fmt, language, files, main):
     """The template filled into `folder` (absent or empty), its studio.json, and `files` ({context-relative path:
     bytes}) under context/; `main` is the file the template names as the source (a PDF, or "" for the folder)."""
