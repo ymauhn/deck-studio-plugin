@@ -3,6 +3,7 @@ lists the tools, makes a project from a small generated PDF, builds it, checks a
 check and asks the write guard about three files. Run from the server folder: uv run python tests/fumaca.py
 Exits 1 on the first failure."""
 import asyncio
+import contextlib
 import json
 import os
 import re
@@ -18,6 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import netlify_falso  # noqa: E402
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.shared.message import SessionMessage
+import anyio
 from playwright.async_api import async_playwright
 
 SERVER = Path(__file__).resolve().parent.parent
@@ -31,7 +34,8 @@ MAIS = """<section class="slide" id="s02" data-part="Teste">
 </section>
 """
 TOOLS = {"novo_projeto", "construir", "screenshot_slide", "check_slide", "add_image", "run_qa", "compile_beamer",
-         "screenshot_beamer_page", "exportar", "verificar", "abrir_editor", "ler_selecao", "abrir_exemplo", "publicar"}
+         "screenshot_beamer_page", "exportar", "verificar", "abrir_editor", "ler_selecao", "abrir_exemplo", "publicar",
+         "responder_no_editor"}
 
 
 def pdf(path):
@@ -70,13 +74,44 @@ def guard(file):
     return json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] if out.stdout.strip() else "allow"
 
 
+CHANNEL = []  # what the server pushed as channel events (Claude Code would put them in the session)
+
+
+@contextlib.asynccontextmanager
+async def tee(read):
+    """The server's messages, less the channel events, which go to CHANNEL: the test client plays Claude Code."""
+    send, out = anyio.create_memory_object_stream(100)
+
+    async def pump():
+        async with send:
+            async for m in read:
+                msg = getattr(getattr(m, "message", None), "root", getattr(m, "message", None))
+                if isinstance(m, SessionMessage) and getattr(msg, "method", "") == "notifications/claude/channel":
+                    CHANNEL.append(msg.params)
+                    continue
+                await send.send(m)
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(pump)
+        yield out
+        tg.cancel_scope.cancel()
+
+
+async def channel_has(text):
+    for _ in range(100):
+        if any(text in c["content"] for c in CHANNEL):
+            return
+        await asyncio.sleep(0.1)
+    raise AssertionError(f"{text!r} not pushed: {CHANNEL}")
+
+
 async def main():
     work = Path(tempfile.mkdtemp(prefix="deck-plugin-fumaca-"))
     pdf(work / "artigo.pdf")
     api, deploys, fake = netlify_falso.start()
     params = launch(work, {"DECK_NO_BROWSER": "1", "NETLIFY_API": api, "NETLIFY_AUTH_TOKEN": "falso"})
-    async with stdio_client(params) as (read, write), ClientSession(read, write) as s:
-        await s.initialize()
+    async with stdio_client(params) as (raw, write), tee(raw) as read, ClientSession(read, write) as s:
+        init = await s.initialize()
+        assert "claude/channel" in (init.capabilities.experimental or {}), init.capabilities
         names = {t.name for t in (await s.list_tools()).tools}
         assert names == TOOLS, names
         project = work / "Projeto de teste"
@@ -99,7 +134,13 @@ async def main():
             await page.locator("section.slide.active h1, section.slide.active h2").first.click()
             await page.get_by_label("O que mudar").fill("Encurte o título.")
             await page.get_by_role("button", name="Enviar ao Claude").click()
-            await page.get_by_text("Enviado.").wait_for()
+            await page.get_by_text("Enviado. O Claude responde aqui.").wait_for()
+            # the chat: the message (with the box's loc) goes into the session as a channel event; the reply shows
+            await channel_has("Encurte o título.\nCaixas selecionadas")
+            assert "deck/src/slides/" in CHANNEL[-1]["content"], CHANNEL[-1]
+            assert "ok" == text(await s.call_tool("responder_no_editor", {"texto": "Título encurtado no slide 1."}))
+            await page.locator(".ds-claude", has_text="Título encurtado no slide 1.").wait_for()
+            await page.locator(".ds-autor", has_text="Encurte o título.").wait_for()
             # Ir para o slide
             await page.get_by_label("Ir para o slide").fill("2")
             await page.get_by_label("Ir para o slide").press("Enter")
@@ -132,9 +173,17 @@ async def main():
             page = await b.new_page(viewport={"width": 1600, "height": 900})
             await page.goto(url_en)
             await page.wait_for_function("() => window.deck && window.deck.state")
-            await page.get_by_role("button", name="Send to Claude").wait_for()
             await page.get_by_label("Go to slide").wait_for()
             await page.get_by_text("Follow the agent").wait_for()
+            await page.locator("section.slide.active h1, section.slide.active h2").first.click()
+            await page.get_by_label("What to change").fill("Make it shorter.")
+            await page.get_by_label("What to change").press("Enter")  # Enter sends
+            await page.get_by_text("Sent. Claude answers here.").wait_for()
+            await channel_has("Make it shorter.\nSelected boxes")
+            assert "ok" == text(await s.call_tool("responder_no_editor", {"texto": "Done: slide 1 is shorter."}))
+            await page.locator(".ds-claude", has_text="Done: slide 1 is shorter.").wait_for()
+            await page.reload()  # the chat survives the reload after a build
+            await page.locator(".ds-claude", has_text="Done: slide 1 is shorter.").wait_for()
             await b.close()
         await s.call_tool("construir", {"projeto": str(project)})  # back to the Portuguese project for what follows
         pub = text(await s.call_tool("publicar", {"site": "deck-teste"}))
@@ -145,7 +194,7 @@ async def main():
     assert guard(project / "deck/dist/deck.html") == "deny"
     assert guard(project / "qa/check_deck.py") == "ask"
     assert guard(work / "fora-do-projeto.txt") == "allow"
-    print(f"fumaça ok: {len(names)} ferramentas, projeto, build, check, captura, QA, editor (ir para o slide, seguir o agente), publicar, os dois idiomas e guarda ({work})")
+    print(f"fumaça ok: {len(names)} ferramentas, projeto, build, check, captura, QA, editor (chat pelo canal, ir para o slide, seguir o agente), publicar, os dois idiomas e guarda ({work})")
 
 
 if __name__ == "__main__":

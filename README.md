@@ -55,6 +55,18 @@ Abra uma sessão nova e rode `/deck-studio:verificar`. Ela diz o que falta nesta
 - **Editor visual:** peça "abra o editor". O deck abre no navegador, e você clica nas caixas (Shift soma), escreve o que mudar e envia ao Claude. No painel do editor:
   - **Ir para o slide:** um número, ou B1 para a reserva;
   - **Seguir o agente:** o deck vai sozinho ao slide que o Claude acabou de mudar.
+- **Chat no editor (0.3.0):** o painel do editor também conversa com a sessão do Claude Code que você abriu. Você escreve no painel (as caixas selecionadas vão junto), o Claude faz a mudança e responde no próprio painel, e o deck segue a mudança. Para ligar, abra o Claude Code assim:
+
+  ```
+  claude --dangerously-load-development-channels plugin:deck-studio@ymauhn-deck
+  ```
+
+  - **Como funciona:** o painel usa os [canais](https://code.claude.com/docs/en/channels) do Claude Code, o caminho oficial para uma mensagem de fora entrar numa sessão aberta. Os canais estão em prévia de pesquisa. Enquanto o plugin não está na lista aprovada pela Anthropic, o Claude Code só carrega o canal com esse flag, e mostra um aviso na abertura: escolha "I am using this for local development".
+  - **O que o flag faz:** ele só libera o canal deste plugin, o que o nome depois do flag indica, pulando a lista de canais aprovados. Ele não desliga permissões nem outras proteções do Claude Code, e o aviso aparece toda vez que você abre a sessão assim.
+  - **Próximo passo:** pedir a listagem do plugin no marketplace oficial da Anthropic. Com o plugin listado, bastará `claude --channels plugin:deck-studio@...`, sem o flag.
+  - **Quem roda é o seu Claude Code**, com a sua conta. O plugin não tem login, não guarda token e não chama a API: o painel só fala com o servidor do plugin no seu computador (127.0.0.1, com uma chave na URL), e o servidor só passa a mensagem para a sua sessão.
+  - **Em plano Team ou Enterprise**, o administrador precisa ligar os canais (`channelsEnabled`).
+  - **Sem o flag**, o editor funciona como antes: envie pelo painel e diga no Claude Code "aplique a seleção do editor". O painel lembra disso quando a resposta não chega.
 - **Publicar:** peça "publique o deck". A ferramenta `publicar` põe o deck HTML no Netlify como um site de uma página, sem indexação, pelo seu login da Netlify CLI (`netlify login`). Na primeira vez, ela pergunta o nome do site (NOME.netlify.app).
 - **Idioma:** o Claude responde no idioma em que você escreve. Os slides seguem o idioma escolhido no projeto.
 
@@ -71,7 +83,7 @@ O build dele precisa do Node.
 
 ## Privacidade
 
-Os artigos e os decks ficam no seu computador, e o plugin não envia nada a servidor próprio. O que vai para a Anthropic é o que o Claude Code envia na sua sessão, sob os termos da sua conta.
+Os artigos e os decks ficam no seu computador, e o plugin não envia nada a servidor próprio. O que vai para a Anthropic é o que o Claude Code envia na sua sessão, sob os termos da sua conta. O chat do editor não muda isso: a mensagem do painel entra na sua sessão como qualquer pedido seu.
 
 ## Uso da assinatura
 

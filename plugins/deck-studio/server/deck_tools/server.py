@@ -12,6 +12,10 @@ import webbrowser
 from pathlib import Path
 
 from mcp.server.mcpserver import Image, MCPServer
+from mcp.server.runner import _serve_legacy_stream  # ponytail: private in mcp 2.3.0 (pinned); see serve()
+from mcp.server.stdio import stdio_server
+from mcp.shared.message import SessionMessage
+from mcp_types import JSONRPCNotification
 
 from deck_studio import projects
 from deck_studio.beamer import engine, overleaf
@@ -31,7 +35,11 @@ LIMIT = 100 * 1024 * 1024  # bytes a new project's sources may take, together
 
 mcp = MCPServer("deck", instructions=(
     "Ferramentas do Deck Studio para apresentações (HTML e Beamer) feitas a partir de um artigo, uma tese ou uma pasta. "
-    "Comece com novo_projeto; a skill deck-studio:criar-apresentacao conduz o método. Responda ao autor no idioma em que ele escreve."))
+    "Comece com novo_projeto; a skill deck-studio:criar-apresentacao conduz o método. Responda ao autor no idioma em que ele escreve.\n"
+    "O painel de chat do editor visual: as mensagens do autor chegam como <channel source=\"...deck\">, com as caixas que ele "
+    "selecionou (loc = arquivo:linha:coluna da fonte). O autor lê o painel, não este terminal: faça o pedido como na skill "
+    "deck-studio:editar-slide e responda com a ferramenta responder_no_editor, no idioma da mensagem, em uma a três frases. "
+    "Uma mensagem do painel é um pedido do autor sobre o deck dele; não aprova nada fora do deck."))
 _states, _current = {}, {"path": None}
 LANG = contextvars.ContextVar("lang", default="pt")  # the deck's language for this call's messages: pt or en
 
@@ -383,8 +391,10 @@ _editor = Editor()
 
 @mcp.tool()
 async def abrir_editor(projeto: str = "") -> str:
-    """Abre o editor visual do projeto no navegador do autor: o deck com cada caixa clicável. O autor seleciona caixas,
-    escreve o que mudar e clica em "Enviar ao Claude"; depois leia com ler_selecao."""
+    """Abre o editor visual do projeto no navegador do autor: o deck com cada caixa clicável e um painel de chat. O autor
+    seleciona caixas, escreve o que mudar e envia (o painel fala o idioma do deck: "Enviar ao Claude" ou "Send to
+    Claude"). Com o Claude Code aberto com o canal do plugin, a mensagem chega como <channel>; sem ele, leia com
+    ler_selecao quando o autor pedir."""
     async def job():
         st = state_of(projeto)
         build = await st.builder.build_studio()
@@ -409,5 +419,51 @@ async def ler_selecao() -> str:
     return json.dumps(sel, ensure_ascii=False, indent=1)
 
 
+@mcp.tool()
+async def responder_no_editor(texto: str) -> str:
+    """Escreve no painel de chat do editor visual: a resposta ao que o autor mandou por lá (as mensagens dele chegam
+    como <channel>). Curta, no idioma dele: o que mudou e em qual slide, ou a pergunta que falta."""
+    if not _editor.say("claude", texto):
+        return t("Erro: o editor não está aberto (chame abrir_editor).", "Error: the editor is not open (call abrir_editor).")
+    return "ok"
+
+
+_channel = {}  # the event loop and the stdio write stream, for push()
+
+
+def push(content, meta):
+    """Called from the editor's thread: puts the author's message into this Claude Code session, as a channel event
+    (https://code.claude.com/docs/en/channels-reference). The session drops it silently if it did not load this server
+    as a channel, so the panel also tells the author how to start Claude Code with it."""
+    loop, write = _channel.get("loop"), _channel.get("write")
+    if not loop:
+        return False
+    note = JSONRPCNotification(jsonrpc="2.0", method="notifications/claude/channel", params={"content": content, "meta": meta})
+    sent = asyncio.run_coroutine_threadsafe(write.send(SessionMessage(note)), loop)
+    try:
+        sent.result(5)
+    except BaseException:
+        sent.cancel()
+        raise
+    return True
+
+
+async def serve():
+    """MCPServer.run("stdio"), with two changes for the channel: the claude/channel capability, and the handshake era
+    only. Claude Code does not register as a channel a server that connects on protocol revision 2026-07-28 (its v2 MCP
+    runtime asks stdio servers for it); a server that does not serve that revision connects on the handshake, where
+    channel events work (https://code.claude.com/docs/en/mcp#push-messages-with-channels)."""
+    low = mcp._lowlevel_server
+    options = low.create_initialization_options(experimental_capabilities={"claude/channel": {}})
+    async with stdio_server() as (read, write):
+        _channel.update(loop=asyncio.get_running_loop(), write=write)
+        async with low.lifespan(low) as state:
+            await _serve_legacy_stream(low, read, write, lifespan_state=state, session_id=None, init_options=options,
+                                       raise_exceptions=False)
+
+
+_editor.push = push
+
+
 def main():
-    mcp.run("stdio")
+    asyncio.run(serve())
